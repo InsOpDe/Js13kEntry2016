@@ -1,0 +1,13 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "devDependencies" : {
+    "gulp" : "*",
+    "gulp-concat" : "*",
+    "gulp-uglify" : "*",
+    "gulp-watch" : "*",
+    "gulp-rename" : "*",
+    "gulp-zip" : "*",
+    "gulp-sourcemaps" : "*"
+  }
+}
