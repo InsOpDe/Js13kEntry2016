@@ -12,8 +12,10 @@ var game = function(){
 
 
 
-    function init() {
+    function init(cb) {
         player = new entity();
+        map = new map();
+        debugWindow = new debug();
         player.init({
             isPlayer : true,
             width: 34,
@@ -23,9 +25,14 @@ var game = function(){
             numberOfFrames: 5,
             ticksPerFrame: 4
             //todo: sprite position
+        }, function(){
+            entities.push(player);
+            map.init({
+                pos : player.getPos()
+            }, cb)
         });
 
-        entities.push(player);
+
     }
 
 
@@ -52,11 +59,17 @@ var game = function(){
 
         input();
         draw();
+
+        debugWindow.update({
+            playerpos: player.getPos()
+        });
     }
 
     function draw(){
 
         context.clearRect(0, 0, canvas.width, canvas.height);
+
+        map.update(player.getPos());
 
         for(var i in entities){
             entities[i].draw();

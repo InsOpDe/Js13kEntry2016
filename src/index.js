@@ -5,8 +5,8 @@
 var canvas,
     context,
     stage,
+    debugWindow,
     keysDown = [];
-
 window.onload = function() {
 
     init();
@@ -51,8 +51,10 @@ function init() {
 
 
     stage = new game();
-    stage.init();
-    stage.run();
+    stage.init(function(){
+        stage.run();
+    });
+
 
 }
 

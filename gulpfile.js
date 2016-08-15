@@ -17,9 +17,9 @@ gulp.task('default', function () {
     }, function(){
         gulp.src('./src/**/*.js')
             .pipe(gp_sourcemaps.init())
-            .pipe(gp_concat('concat.js'))
-            .pipe(gulp.dest('build'))
-            .pipe(gp_rename('uglify.js'))
+            //.pipe(gp_concat('concat.js'))
+            //.pipe(gulp.dest('build'))
+            .pipe(gp_concat('uglify.js'))
             .pipe(gp_uglify())
             .pipe(gp_sourcemaps.write('./'))
             .pipe(gulp.dest('build'));

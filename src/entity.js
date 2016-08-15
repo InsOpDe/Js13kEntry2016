@@ -71,11 +71,14 @@ var entity = function(){
         if(!toggleAnimation) indexW = 0;
 
 
+        //todo: determine center of screen
        drawImage(
            indexW,
             indexH,
-            x,
-            y,
+            500,
+            250,
+            //x,
+            //y,
             0,
             false);
 
@@ -88,29 +91,29 @@ var entity = function(){
         var flipScale;
         var flopScale;
 
-// Set rotation point to center of image, instead of top/left
+        // Set rotation point to center of image, instead of top/left
 //        if(center) {
         //todo: zoom
         //    x -= w/2;
         //    y -= h/2;
         //}
 
-// Set the origin to the center of the image
+        // Set the origin to the center of the image
         //todo: zoom
         context.translate(x + w/2, y + h/2);
 
-// Rotate the canvas around the origin
+        // Rotate the canvas around the origin
         var rad = 2 * Math.PI - deg * Math.PI / 180;
         context.rotate(rad);
 
-// Flip/flop the canvas //TODO: enhance
+        // Flip/flop the canvas //TODO: enhance
         if(flop) flopScale = -1; else flopScale = 1;
         context.scale(flip, flopScale);
         x *= flip;
         if(flip == -1) x += w * zoom / 2;
         y *= flopScale;
 
-// Draw the image
+        // Draw the image
         context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
 
         context.restore();
@@ -132,11 +135,16 @@ var entity = function(){
         y += d;
     }
 
+    function getPos(){
+        return {x : x, y : y}
+    }
+
     return {
         init : init,
         draw : draw,
         moveX : moveX,
         moveY : moveY,
         shoot : shoot,
+        getPos : getPos,
     }
 };
