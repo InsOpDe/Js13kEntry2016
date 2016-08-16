@@ -47,8 +47,8 @@ var entity = function(){
         },
         crate : {
             url: 'crate',
-            w:56,
-            h:50,
+            w:20,
+            h:20,
         }
     }
 
@@ -110,8 +110,13 @@ var entity = function(){
         var indexH = offsetY * h;
         if(!toggleAnimation) indexW = 0;
 
-        var posX = isPlayer ? cWidth/2 : x-pX;
-        var posY =  isPlayer ? cHeight/2 : y-pY;
+        //var posX = isPlayer ? cWidth/2 : x-pX;
+        //var posY =  isPlayer ? cHeight/2 : y-pY;
+        var posX = isPlayer ? cWidth/2 : (cWidth/2)+x-pX;
+        var posY =  isPlayer ? cHeight/2 : (cHeight/2)+y-pY;
+        if(!isPlayer){
+            //console.log(x,y);
+        }
 
 
         //todo: determine center of screen
@@ -138,7 +143,9 @@ var entity = function(){
 //        if(center) {
         //todo: zoom
             x += w*numberOfCols/2;
-             y += h*numberOfRows;
+            //y += h*numberOfRows;
+            //x += w*numberOfCols;
+            //y += h*zoom;
 
         //}
 
@@ -160,8 +167,8 @@ var entity = function(){
 
         // Draw the image
         context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
-        //context.fillStyle = '#ff0000';
-        //context.fillRect(x,y,10,10);
+        context.fillStyle = '#ff0000';
+        context.fillRect(x,y,10,10);
 
         context.restore();
     }

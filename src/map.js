@@ -18,8 +18,10 @@ var map = function(){
             var crate = new entity();
             crate.init({
                 name : 'crate',
-                x: 10,
-                y: 10,
+                x: 0,
+                y: 0,
+                //x: 1000,
+                //y: 700,
                 ticksPerFrame: 4
                 //todo: sprite position
             }, function(){
@@ -45,8 +47,8 @@ var map = function(){
         }
         //context.fillStyle = '#000000';
         //context.fillRect(0,0,cWidth,cHeight);
-    //    context.fillStyle = '#00ff00';
-    //    context.fillRect(cWidth/2,cHeight/2,10,10);
+        //context.fillStyle = '#00ff00';
+        //context.fillRect(cWidth/2,cHeight/2,10,10);
     }
 
     //todo: obstacles

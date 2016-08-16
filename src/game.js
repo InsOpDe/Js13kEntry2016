@@ -21,7 +21,6 @@ var game = function(){
             x: 0,
             y: 0,
             ticksPerFrame: 4
-            //todo: sprite position
         }, function(){
             entities.push(player);
             map.init({
@@ -67,6 +66,11 @@ var game = function(){
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         map.update(player.getPos());
+
+        entities.sort(function(a,b){
+            //console.log(b.getPos().y, a.getPos().y);
+            return a.getPos().y - b.getPos().y
+        });
 
         for(var i in entities){
             entities[i].update(player.getPos()).draw();
