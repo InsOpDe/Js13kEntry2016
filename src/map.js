@@ -3,7 +3,7 @@
  */
 
 var map = function(){
-    var pX, pY, image, tilesize = 30;
+    var pX, pY, image, tilesize;
 
     function init(opts, cb){
         // Create sprite sheet
@@ -12,7 +12,21 @@ var map = function(){
         pY = opts.pos.y;
 
         // Load sprite sheet
-        image.addEventListener("load", cb);
+        image.addEventListener("load", function(){
+            tilesize = this.width;
+
+            var crate = new entity();
+            crate.init({
+                name : 'crate',
+                x: 10,
+                y: 10,
+                ticksPerFrame: 4
+                //todo: sprite position
+            }, function(){
+                entities.push(crate);
+                cb();
+            });
+        });
         image.src = "../res/area.png"; //todo: path
     }
 

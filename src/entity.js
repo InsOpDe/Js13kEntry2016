@@ -8,8 +8,13 @@ var entity = function(){
         y,
         w,
         h,
+        pX,
+        pY,
+        name,
+        imgW,
+        imgH,
         ticksPerFrame = 0,
-        numberOfFrames = 1,
+        numberOfCols = 1,
         numberOfRows = 1,
         frameIndex = 0,
         tickCount = 0,
@@ -21,31 +26,63 @@ var entity = function(){
         zoom = 1,
         offsetY = 0,
         visible = false,
+        that = {
+            init : init,
+            draw : draw,
+            update : update,
+            moveX : moveX,
+            moveY : moveY,
+            shoot : shoot,
+            getPos : getPos,
+        },
         isPlayer = false;
 
 
 
+    var sprites = {
+        player : {
+            url: 'neopixel',
+            w:34,
+            h:30,
+        },
+        crate : {
+            url: 'crate',
+            w:56,
+            h:50,
+        }
+    }
+
+
+
     function init(opts, cb) {
-        isPlayer = !!opts.isPlayer;
         // Create sprite sheet
         image = new Image();
-        h = opts.height;
-        w = opts.width;
+        name = opts.name;
+        isPlayer = name == 'player';
+        var sprite = sprites[name];
+        h = sprite.h;
+        w = sprite.w;
         x = opts.x;
         y = opts.y;
-        numberOfFrames = opts.numberOfFrames;
-        numberOfRows = opts.numberOfRows;
         ticksPerFrame = opts.ticksPerFrame;
         //todo zoom
         zoom = overallZoom;
 
         // Load sprite sheet
-        image.addEventListener("load", cb);
-        image.src = "../res/neopixel.png"; //todo: path
+        image.addEventListener("load", function(){
+            imgW = this.width;
+            imgH = this.height;
+            numberOfCols = imgW/w;
+            numberOfRows = imgH/h;
+            cb();
+        });
+        image.src = "../res/" + sprite.url + ".png";
     }
 
 
-    function update(){
+    function update(pPos){
+        pX = pPos.x;
+        pY = pPos.y;
         if(toggleAnimation)
             tickCount += 1;
 
@@ -54,19 +91,18 @@ var entity = function(){
             tickCount = 0;
 
             // If the current frame index is in range
-            if (frameIndex < numberOfFrames - 1) {
+            if (frameIndex < numberOfCols - 1) {
                 // Go to the next frame
                 frameIndex += 1;
             } else {
                 frameIndex = 0;
             }
         }
+        return that;
     }
 
 
     function draw() {
-        update();
-
 
         // Draw the animation
         var indexW = frameIndex * w;
@@ -74,20 +110,22 @@ var entity = function(){
         var indexH = offsetY * h;
         if(!toggleAnimation) indexW = 0;
 
+        var posX = isPlayer ? cWidth/2 : x-pX;
+        var posY =  isPlayer ? cHeight/2 : y-pY;
+
 
         //todo: determine center of screen
        drawImage(
            indexW,
             indexH,
            //todo: only player
-            cWidth/2,
-            cHeight/2,
-            //x,
-            //y,
+            posX,
+           posY,
             0,
             false);
 
         toggleAnimation = 0;
+        return that;
     }
 
     function drawImage(indX, indY, x, y, deg, center) {
@@ -99,7 +137,7 @@ var entity = function(){
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
         //todo: zoom
-            x += w*numberOfFrames/2;
+            x += w*numberOfCols/2;
              y += h*numberOfRows;
 
         //}
@@ -148,12 +186,5 @@ var entity = function(){
         return {x : x, y : y}
     }
 
-    return {
-        init : init,
-        draw : draw,
-        moveX : moveX,
-        moveY : moveY,
-        shoot : shoot,
-        getPos : getPos,
-    }
+    return that
 };

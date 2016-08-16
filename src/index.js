@@ -7,6 +7,7 @@ var canvas,
     stage,
     debugWindow,
     overallZoom = 10;
+    entities = [],
     cWidth = window.innerWidth,
     cHeight = window.innerHeight,
     //cWidth = 900,

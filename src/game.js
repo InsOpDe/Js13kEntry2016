@@ -7,8 +7,8 @@ var game = function(){
         factor,
         last,
         player,
-        isPaused = false,
-        entities = [];
+        isPaused = false;
+
 
 
 
@@ -17,13 +17,9 @@ var game = function(){
         map = new map();
         debugWindow = new debug();
         player.init({
-            isPlayer : true,
-            width: 34,
-            height: 30,
-            x: 500,
-            y: 250,
-            numberOfFrames: 5,
-            numberOfRows: 2,
+            name : 'player',
+            x: 0,
+            y: 0,
             ticksPerFrame: 4
             //todo: sprite position
         }, function(){
@@ -73,7 +69,7 @@ var game = function(){
         map.update(player.getPos());
 
         for(var i in entities){
-            entities[i].draw();
+            entities[i].update(player.getPos()).draw();
         }
     }
 
