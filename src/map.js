@@ -15,8 +15,7 @@ var map = function(){
         image.addEventListener("load", function(){
             tilesize = this.width;
 
-            var crate = new entity();
-            crate.init({
+            var crate = new entity({
                 name : 'crate',
                 x: 0,
                 y: 0,

@@ -2,14 +2,19 @@
  * Created by Marcel Michelfelder on 14.08.2016.
  */
 
-var entity = function(){
+var entity = function(opts,cb) {
 
     var x,
         y,
-        w,
-        h,
+        w = 1,
+        h = 1,
+        sx,
+        sy,
+        vx,
+        vy,
         pX,
         pY,
+        d = 0,
         name,
         imgW,
         imgH,
@@ -18,6 +23,8 @@ var entity = function(){
         numberOfRows = 1,
         frameIndex = 0,
         tickCount = 0,
+        lastShot = 0,
+        cooldown = 300,
         image,
         toggleAnimation,
         flip = 1,
@@ -27,56 +34,66 @@ var entity = function(){
         offsetY = 0,
         visible = false,
         that = {
-            init : init,
-            draw : draw,
-            update : update,
-            moveX : moveX,
-            moveY : moveY,
-            shoot : shoot,
-            getPos : getPos,
+            init: init,
+            draw: draw,
+            update: update,
+            moveX: moveX,
+            moveY: moveY,
+            shoot: shoot,
+            getPos: getPos,
         },
+        isBullet = false,
         isPlayer = false;
 
 
-
     var sprites = {
-        player : {
+        player: {
             url: 'neopixel',
-            w:34,
-            h:30,
+            w: 34,
+            h: 30,
         },
-        crate : {
+        crate: {
             url: 'crate',
-            w:20,
-            h:20,
+            w: 20,
+            h: 20,
         }
     }
 
+    if (opts) {
+        init(opts, cb)
+    }
 
 
     function init(opts, cb) {
         // Create sprite sheet
-        image = new Image();
+
         name = opts.name;
         isPlayer = name == 'player';
-        var sprite = sprites[name];
-        h = sprite.h;
-        w = sprite.w;
-        x = opts.x;
-        y = opts.y;
+        isBullet = name == 'bullet';
+        if (!isBullet) {
+            var sprite = sprites[name];
+            h = sprite.h;
+            w = sprite.w;
+            image = new Image();
+            // Load sprite sheet
+            image.addEventListener("load", function () {
+                imgW = this.width;
+                imgH = this.height;
+                numberOfCols = imgW / w;
+                numberOfRows = imgH / h;
+                if (cb) cb();
+            });
+            image.src = "../res/" + sprite.url + ".png";
+        }
+
+        x = sx = opts.x;
+        y = sy = opts.y;
+        vx = opts.vx;
+        vy = opts.vy;
         ticksPerFrame = opts.ticksPerFrame;
         //todo zoom
         zoom = overallZoom;
 
-        // Load sprite sheet
-        image.addEventListener("load", function(){
-            imgW = this.width;
-            imgH = this.height;
-            numberOfCols = imgW/w;
-            numberOfRows = imgH/h;
-            cb();
-        });
-        image.src = "../res/" + sprite.url + ".png";
     }
 
 
@@ -98,6 +115,14 @@ var entity = function(){
                 frameIndex = 0;
             }
         }
+
+        if(isBullet){
+            d+=30;
+            x = vx * d + pX;
+            y = vy * d + pY;
+            //todo: check for collision
+        }
+
         return that;
     }
 
@@ -134,7 +159,6 @@ var entity = function(){
     }
 
     function drawImage(indX, indY, x, y, deg, center) {
-
         context.save();
         var flipScale;
         var flopScale;
@@ -148,7 +172,6 @@ var entity = function(){
             //y += h*zoom;
 
         //}
-
         // Set the origin to the center of the image
         //todo: zoom
         //context.translate(x + w/2, y + h/2);
@@ -164,9 +187,9 @@ var entity = function(){
         if(flip == -1) x += w * zoom / 2;
         y *= flopScale;
 
-
         // Draw the image
-        context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+        if(!isBullet)
+            context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
         context.fillStyle = '#ff0000';
         context.fillRect(x,y,10,10);
 
@@ -175,6 +198,25 @@ var entity = function(){
 
     function shoot(shooting){
         isShooting = shooting;
+        var now = Date.now();
+        if(!isShooting || (lastShot > now - cooldown)){
+            return;
+        }
+        lastShot = Date.now();
+        //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
+        var sy = pY, sx = pX, tx = mouseposition.x +pX, ty = mouseposition.y + pY;
+
+        var angleRadians = Math.atan2(ty - sy, tx - sx);
+        //var d = Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
+        //console.log(d*Math.cos(angleRadians),d*Math.sin(angleRadians));
+        //console.log(angleDeg,angle,angleRadians);
+        entities.push(new entity({
+            name : 'bullet',
+            x : pX,
+            y : pY,
+            vx : Math.cos(angleRadians),
+            vy : Math.sin(angleRadians)
+        }))
     }
 
 

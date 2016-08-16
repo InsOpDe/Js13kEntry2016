@@ -13,10 +13,7 @@ var game = function(){
 
 
     function init(cb) {
-        player = new entity();
-        map = new map();
-        debugWindow = new debug();
-        player.init({
+        player = new entity({
             name : 'player',
             x: 0,
             y: 0,
@@ -27,6 +24,8 @@ var game = function(){
                 pos : player.getPos()
             }, cb)
         });
+        map = new map();
+        debugWindow = new debug();
 
 
     }
