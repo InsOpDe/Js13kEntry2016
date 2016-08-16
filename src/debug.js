@@ -7,8 +7,11 @@ var debug = function(){
     var debugWindow = document.getElementById('debug');
 
     function update(opts){
-        console.log(opts);
-        debugWindow.innerHTML = JSON.stringify(opts);
+        var html = "";
+        for(var i in opts){
+            html += i + ": " + JSON.stringify(opts[i]) + "<br>";
+        }
+        debugWindow.innerHTML = html;
     }
 
     return {

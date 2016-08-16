@@ -6,6 +6,11 @@ var canvas,
     context,
     stage,
     debugWindow,
+    overallZoom = 10;
+    cWidth = window.innerWidth,
+    cHeight = window.innerHeight,
+    //cWidth = 900,
+    //cHeight = 600,
     keysDown = [];
 window.onload = function() {
 
@@ -22,10 +27,12 @@ window.onload = function() {
 function init() {
 
     canvas = document.getElementById('canvas');
-    canvas.setAttribute('width', document.body.clientWidth);
-    canvas.setAttribute('height', document.documentElement.clientHeight);
+    //canvas.setAttribute('width', document.body.clientWidth);
+    //canvas.setAttribute('height', document.documentElement.clientHeight);
     //canvas.setAttribute('width', window.innerWidth);
     //canvas.setAttribute('height', window.innerHeight);
+    canvas.setAttribute('width', cWidth);
+    canvas.setAttribute('height', cHeight);
     context = canvas.getContext('2d');
     context.imageSmoothingEnabled = false;
     //context.webkitImageSmoothingEnabled = false;
@@ -58,4 +65,6 @@ function init() {
 
 }
 
-
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};

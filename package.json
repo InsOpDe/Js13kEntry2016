@@ -8,6 +8,8 @@
     "gulp-watch" : "*",
     "gulp-rename" : "*",
     "gulp-zip" : "*",
-    "gulp-sourcemaps" : "*"
+    "gulp-sourcemaps" : "*",
+    "gulp-tinypng-nokey" : "*",
+    "gulp-tinypng" : "*"
   }
 }

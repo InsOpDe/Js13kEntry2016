@@ -3,7 +3,7 @@
  */
 
 var map = function(){
-    var pX, pY, image, offset= 1000; //todo: determine screensize
+    var pX, pY, image, tilesize = 30;
 
     function init(opts, cb){
         // Create sprite sheet
@@ -22,7 +22,17 @@ var map = function(){
     }
 
     function draw() {
-        context.drawImage(image, 0, 0, offset, offset, offset/2 - pX, offset/2 - pY, offset, offset);
+        //context.drawImage(image, 0, 0, offset, offset, offset/2 - pX, offset/2 - pY, offset, offset);
+        var zoomedTilesize = tilesize * overallZoom;
+        for(var x = -zoomedTilesize;x < cWidth+zoomedTilesize; x+=zoomedTilesize){
+            for(var y = -zoomedTilesize;y < cHeight+zoomedTilesize; y+=zoomedTilesize){
+                context.drawImage(image, 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+            }
+        }
+        //context.fillStyle = '#000000';
+        //context.fillRect(0,0,cWidth,cHeight);
+    //    context.fillStyle = '#00ff00';
+    //    context.fillRect(cWidth/2,cHeight/2,10,10);
     }
 
     //todo: obstacles

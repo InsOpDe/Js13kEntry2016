@@ -10,6 +10,7 @@ var entity = function(){
         h,
         ticksPerFrame = 0,
         numberOfFrames = 1,
+        numberOfRows = 1,
         frameIndex = 0,
         tickCount = 0,
         image,
@@ -17,7 +18,7 @@ var entity = function(){
         flip = 1,
         flop,
         isShooting,
-        zoom = 20,
+        zoom = 1,
         offsetY = 0,
         visible = false,
         isPlayer = false;
@@ -33,7 +34,10 @@ var entity = function(){
         x = opts.x;
         y = opts.y;
         numberOfFrames = opts.numberOfFrames;
+        numberOfRows = opts.numberOfRows;
         ticksPerFrame = opts.ticksPerFrame;
+        //todo zoom
+        zoom = overallZoom;
 
         // Load sprite sheet
         image.addEventListener("load", cb);
@@ -75,8 +79,9 @@ var entity = function(){
        drawImage(
            indexW,
             indexH,
-            500,
-            250,
+           //todo: only player
+            cWidth/2,
+            cHeight/2,
             //x,
             //y,
             0,
@@ -94,13 +99,14 @@ var entity = function(){
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
         //todo: zoom
-        //    x -= w/2;
-        //    y -= h/2;
+            x += w*numberOfFrames/2;
+             y += h*numberOfRows;
+
         //}
 
         // Set the origin to the center of the image
         //todo: zoom
-        context.translate(x + w/2, y + h/2);
+        //context.translate(x + w/2, y + h/2);
 
         // Rotate the canvas around the origin
         var rad = 2 * Math.PI - deg * Math.PI / 180;
@@ -113,8 +119,11 @@ var entity = function(){
         if(flip == -1) x += w * zoom / 2;
         y *= flopScale;
 
+
         // Draw the image
         context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+        //context.fillStyle = '#ff0000';
+        //context.fillRect(x,y,10,10);
 
         context.restore();
     }

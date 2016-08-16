@@ -23,6 +23,7 @@ var game = function(){
             x: 500,
             y: 250,
             numberOfFrames: 5,
+            numberOfRows: 2,
             ticksPerFrame: 4
             //todo: sprite position
         }, function(){

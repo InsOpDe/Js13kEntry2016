@@ -8,10 +8,23 @@ var gulp = require('gulp'),
     gp_uglify = require('gulp-uglify'),
         watch = require('gulp-watch'),
         zip = require('gulp-zip'),
+    //tingpng = require('gulp-tinypng'),
+    tiny = require('gulp-tinypng-nokey'),
     gp_sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('default', function () {
-    return watch('./src/**/*.js',{
+
+    //watch('./res/*.*',{
+    //    verbose : true,
+    //    ignoreInitial : false
+    //}, function(){
+    //    gulp.src('.res/*.*')
+    //        .pipe(tiny())
+    //        //.pipe(tingpng('WllejupoIJwQYRq5kKwJMDbKNgGwcY3V'))
+    //        .pipe(gulp.dest('res'));
+    //});
+
+    watch('./src/**/*.js',{
         verbose : true,
         ignoreInitial : false
     }, function(){
