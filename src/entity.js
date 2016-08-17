@@ -174,7 +174,7 @@ var entity = function(opts,cb) {
             //todo: check for collision
         }
         //console.log(dist(pX,pY,x,y));
-        if(dist(pX,pY,x,y) > cWidth) {
+        if(dist(pX,pY,x,y) > cWidth/1.5) {
             deleteItem();
         }
 

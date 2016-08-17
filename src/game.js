@@ -29,12 +29,14 @@ var game = function(){
 
             cb()
         });
-
-
-
-
     }
 
+
+    function getAllDistances(){
+        for(var i in items){
+            console.log(items[i].getName(),dist(player.getPos().x,player.getPos().y,items[i].getPos().x,items[i].getPos().y),items[i].getPos().x,items[i].getPos().y)
+        }
+    }
 
     function pause() {
         isPaused ^= true;
@@ -114,6 +116,7 @@ var game = function(){
     return {
         init : init,
         pause : pause,
-        run : run
+        run : run,
+        getAllDistances:getAllDistances
     };
 };

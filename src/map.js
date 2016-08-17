@@ -59,13 +59,21 @@ var map = function(){
     }
 
     function addRandomItem(){
-        if(Math.random()>.99 && items.length <10) //TODO: abhängig davon machen wieviel kisten schon im spiel sind
-            addRandomCrate()
-    }
-    function addRandomCrate(){
-        if(lastX > pX){
-            var x = - cWidth/2 + pX;
-            var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+        if(Math.random()>items.length/15 && items.length < 10 && (lastX != pX || lastY != pY)){
+            //TODO: abhängig davon machen wieviel kisten schon im spiel sind
+            var x,y;
+            var xOrY = true;
+            if(lastX != pX && lastY != pY){
+                xOrY = Math.random() > .5;
+            }
+            if(lastX != pX && xOrY){
+                x = (lastX > pX?-1:1) * cWidth/2 + pX;
+                y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+            } else if(lastY != pY) {
+                y = (lastY > pY?-1:1) * cHeight/2 + pY;
+                x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+            }
+
             var crate = new entity({
                 name : 'crate',
                 x: x,
@@ -75,6 +83,7 @@ var map = function(){
             entities.push(crate);
             items.push(crate);
             crate.setRef(crate);
+
         }
     }
 
