@@ -5,15 +5,39 @@
 var map = function(){
     var pX, pY, lastX, lastY, tilesize;
     var imageNames = ['area', 'crate', 'player'];
+    var variations = {
+        'enemy1' : {
+            origin : 'player',
+            from : [RGBA(248,248,248)],
+            to : [RGBA(219,17,17)]
+        }
+    };
+    var tintVariations = {
+        'crate2' : {
+            origin : 'crate',
+            tint : RGBA(17,30,30),
+        }
+    }
 
     function init(cb){
         //pX = opts.pos.x;
         //pY = opts.pos.y;
 
         loadAssets(imageNames, function(){
+            for(var i in variations){
+                var tempSprite = images[variations[i].origin];
+                for(var j = 0; j < variations[i].from.length; j++){
+                    tempSprite = changeColorOfSprite(tempSprite,variations[i].from[j],variations[i].to[j]);
+                }
+                images[i] = tempSprite;
+            }
+            for(var i in tintVariations){
+                images[i] = tint(images[tintVariations[i].origin],tintVariations[i].tint);
+            }
             cb();
             tilesize = images["area"].width;
-            initCrates();
+            initItems();
+            initEnemy();
         });
 
         function loadAssets(names,cb){
@@ -29,17 +53,34 @@ var map = function(){
                 }
             });
         }
-
-
     }
 
-    function initCrates(){
+    function initEnemy(){
+        var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+        var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+        //TODO: mach daraus endlich ne funktion!
+        var enemy = new entity({
+            name : 'enemy1',
+            x: x,
+            y: y,
+            ticksPerFrame: 4
+        })
+        entities.push(enemy);
+        //items.push(enemy);
+        enemy.setRef(enemy);
+    }
+
+    function initItems(){
+
+        var availItems = ['crate', 'crate2'];
+
         for(var i = getRandomArbitrary(2,7); i > 0; i--){
+            var whichItem = Math.max((Math.round(Math.random()*availItems.length)-1),0);
             var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
             var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
             //TODO: mach daraus endlich ne funktion!
             var crate = new entity({
-                name : 'crate',
+                name : availItems[whichItem],
                 x: x,
                 y: y,
                 ticksPerFrame: 4

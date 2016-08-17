@@ -31,6 +31,29 @@ function tint(img,rgba){
     //};
 }
 
+function changeColorOfSprite(img,originRGBA,destRGBA){
+    var buffer = document.createElement('canvas');
+    //console.log(buffer, img);
+    buffer.width = img.width;
+    buffer.height = img.height;
+    var bx = buffer.getContext('2d');
+    bx.drawImage(img,0,0);
+
+    var imageData = bx.getImageData(0,0,buffer.width, buffer.height);
+    var pixels = imageData.data;
+    var numPixels = pixels.length;
+    for (var i = 0; i < numPixels; i++) {
+        if(originRGBA.r == pixels[i*4] && originRGBA.g == pixels[i*4+1] && originRGBA.b == pixels[i*4+1]){
+            pixels[i*4] = destRGBA.r;
+            pixels[i*4+1] = destRGBA.g;
+            pixels[i*4+2] = destRGBA.b;
+        }
+    }
+    bx.putImageData(imageData, 0, 0);
+
+    return buffer;
+}
+
 function splinterSingle(img){
     var buffer = document.createElement('canvas');
     //console.log(buffer, img);

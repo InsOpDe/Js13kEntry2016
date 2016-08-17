@@ -69,18 +69,18 @@ var entity = function(opts,cb) {
 
     var sprites = {
         player: {
-            url: 'neopixel',
             w: 34,
             h: 30,
             hp: 100,
         },
         crate: {
-            url: 'crate',
             w: 20,
             h: 20,
             hp: 30,
         }
-    }
+    };
+    sprites['enemy1'] = sprites.player;
+    sprites['crate2'] = sprites.crate;
 
     if (opts) {
         init(opts, cb)
