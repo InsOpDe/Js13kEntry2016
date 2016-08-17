@@ -22,7 +22,7 @@ var game = function(){
             entities.push(player);
             player.setRef(player);
             map.init({
-                pos : player.getPos()
+                pos : player.getRealPos()
             }, cb)
         });
         map = new map();
@@ -55,25 +55,31 @@ var game = function(){
 
         input();
         draw();
+        //todo: update
 
         debugWindow.update({
-            playerpos: player.getPos()
+            playerpos: player.getRealPos()
         });
     }
 
     function draw(){
 
+
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        map.update(player.getPos());
+        map.update(player.getRealPos());
 
         entities.sort(function(a,b){
             //console.log(b.getPos().y, a.getPos().y);
-            return a.getPos().y - b.getPos().y
+            return a.getRealPos().y - b.getRealPos().y
         });
 
+
         for(var i in entities){
-            entities[i].update(player.getPos()).draw();
+            entities[i].update(player.getRealPos()).draw();
+        }
+        for(var i in bullets){
+            bullets[i].update(player.getRealPos()).draw();
         }
     }
 

@@ -17,8 +17,13 @@ var entity = function(opts,cb) {
         vy,
         pX,
         pY,
+        hp = 0,
+        tintedImg = 0,
+        damage = 0,
         d = 0,
+        hitCd = 200,
         name,
+        gotHit,
         imgW,
         imgH,
         ticksPerFrame = 0,
@@ -48,7 +53,13 @@ var entity = function(opts,cb) {
             getName: getName,
             getBounding: getBounding,
             getPos: getPos,
+            dealDamage: dealDamage,
+            getRealPos: getRealPos,
             setRef: setRef,
+            getHp: getHp,
+            getRef: getRef,
+            setHp: setHp,
+            getImg: getImg,
         },
         isBullet = false,
         isPlayer = false;
@@ -59,11 +70,13 @@ var entity = function(opts,cb) {
             url: 'neopixel',
             w: 34,
             h: 30,
+            hp: 100,
         },
         crate: {
             url: 'crate',
             w: 20,
             h: 20,
+            hp: 300,
         }
     }
 
@@ -78,10 +91,12 @@ var entity = function(opts,cb) {
         name = opts.name;
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
+
         if (!isBullet) {
             var sprite = sprites[name];
             h = sprite.h;
             w = sprite.w;
+            hp = sprite.hp;
             image = new Image();
             // Load sprite sheet
             image.addEventListener("load", function () {
@@ -89,11 +104,18 @@ var entity = function(opts,cb) {
                 imgH = this.height;
                 numberOfCols = imgW / w;
                 numberOfRows = imgH / h;
-                if (cb) cb();
+                var hl = 150;
+                tint(image,RGBA(hl,hl,hl),function(img){
+                    tintedImg = img;
+                    if (cb) cb();
+                });
+
+
             });
             image.src = "../res/" + sprite.url + ".png";
         } else {
             originId = opts.id;
+            damage = 10; //TODO: iwo her damage wert nehmen
         }
 
         x = sx = opts.x;
@@ -132,19 +154,27 @@ var entity = function(opts,cb) {
             x = vx * d + pX;
             y = vy * d + pY;
             //todo: do exports for all entities
+            var ent
             for(var i in entities){
-                if(id == entities[i].getId() || originId == entities[i].getId())
+                ent = entities[i];
+                if(id == ent.getId() || originId == ent.getId())
                     continue;
 
-                var x2 = entities[i].getPos().x;
-                var y2 = entities[i].getPos().y;
-                var w2 = entities[i].getBounding().w;
-                var h2 = entities[i].getBounding().h;
+                var x2 = ent.getPos().x;
+                var y2 = ent.getPos().y;
+                var w2 = ent.getBounding().w;
+                var h2 = ent.getBounding().h;
                 if(hits(x,y,w,h,x2,y2,w2,h2)){
-                    entities.splice(entities.indexOf(that),1);
+                    bullets.splice(bullets.indexOf(that),1);
+                    if(ent.dealDamage(damage)<=0){
+                        entities.splice(entities.indexOf(ent.getRef(),1))
+                    }
                     break;
                     //todo: shoot through?
                 }
+            }
+            if(d > 1000) {
+                bullets.splice(bullets.indexOf(that),1);
             }
             //todo: check for collision
         }
@@ -181,23 +211,28 @@ var entity = function(opts,cb) {
         if(!isPlayer){
             //console.log(x,y);
         }
-
+        var tintedImage = tintedImg;
+        var delta = (gotHit - Date.now()) / hitCd;
 
         //todo: determine center of screen
        drawImage(
+           image,
            indexW,
             indexH,
            //todo: only player
             posX,
            posY,
             0,
-            false);
+           {
+               img : tintedImage,
+               alpha : delta
+           });
 
         toggleAnimation = 0;
         return exports;
     }
 
-    function drawImage(indX, indY, x, y, deg, center) {
+    function drawImage(image,indX, indY, x, y, deg, tintedImage) {
         context.save();
         var flipScale;
         var flopScale;
@@ -226,11 +261,20 @@ var entity = function(opts,cb) {
         if(flip == -1) x += w * zoom / 2;
         y *= flopScale;
 
+        //TODO: alpha
+        //context.globalAlpha = 0.5;
+
         // Draw the image
         if(!isBullet)
             context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
         context.fillStyle = '#ff0000';
         context.fillRect(x,y,10,10);
+
+        if(tintedImage.alpha > 0){
+            context.globalAlpha = tintedImage.alpha;
+            context.drawImage(tintedImage.img, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+        }
+
         //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);
 
         context.restore();
@@ -258,7 +302,7 @@ var entity = function(opts,cb) {
             vx : Math.cos(angleRadians),
             vy : Math.sin(angleRadians)
         });
-        entities.push(bullet);
+        bullets.push(bullet);
         bullet.setRef(bullet);
     }
 
@@ -274,6 +318,12 @@ var entity = function(opts,cb) {
         y += d;
     }
 
+    function getImg(){
+        return image;
+    }
+    function getRealPos(){
+        return {x : x, y : y}
+    }
     function getPos(){
         return {x : x-w*zoom/2, y : y-h*zoom/2}
     }
@@ -286,8 +336,21 @@ var entity = function(opts,cb) {
     function getId(){
         return id
     }
+    function getHp(){
+        return hp
+    }
+    function setHp(newHp){
+        hp = newHp
+    }
+    function dealDamage(d){
+        gotHit = Date.now() + hitCd;
+        return hp -= d;
+    }
     function setRef(ref){
         that = ref
+    }
+    function getRef(){
+        return that
     }
 
     return exports
