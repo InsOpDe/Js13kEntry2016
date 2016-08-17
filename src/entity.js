@@ -87,7 +87,7 @@ var entity = function(opts,cb) {
     }
 
 
-    function init(opts, cb) {
+    function init(opts) {
         // Create sprite sheet
 
         name = opts.name;
@@ -99,24 +99,17 @@ var entity = function(opts,cb) {
             h = sprite.h;
             w = sprite.w;
             hp = sprite.hp;
-            image = new Image();
-            // Load sprite sheet
-            image.addEventListener("load", function () {
-                imgW = this.width;
-                imgH = this.height;
-                numberOfCols = imgW / w;
-                numberOfRows = imgH / h;
-                var hl = 150;
-                tint(image,RGBA(hl,hl,hl),function(img){
-                    tintedImg = img;
-                    if (cb) cb();
-                });
+            image = images[name];
+            imgW = image.width;
+            imgH = image.height;
+            numberOfCols = imgW / w;
+            numberOfRows = imgH / h;
+            var hl = 150;
+            tintedImg = tint(image,RGBA(hl,hl,hl));
 
-                if(!isPlayer)
-                    splinterSelf = new splinter(image);
+            if(!isPlayer)
+                splinterSelf = new splinter(image);
 
-            });
-            image.src = "../res/" + sprite.url + ".png";
         } else {
             originId = opts.id;
             damage = 10; //TODO: iwo her damage wert nehmen
@@ -161,7 +154,7 @@ var entity = function(opts,cb) {
             var ent
             for(var i in entities){
                 ent = entities[i];
-                if(id == ent.getId() || originId == ent.getId())
+                if(id == ent.getId() || originId == ent.getId() || ent.getHp() <= 0)
                     continue;
 
                 var x2 = ent.getPos().x;
@@ -175,16 +168,28 @@ var entity = function(opts,cb) {
                     //todo: shoot through?
                 }
             }
-            if(d > 1000) {
-                bullets.splice(bullets.indexOf(that),1);
-            }
+            //if(d > 1000) {
+            //    bullets.splice(bullets.indexOf(that),1);
+            //}
             //todo: check for collision
+        }
+        //console.log(dist(pX,pY,x,y));
+        if(dist(pX,pY,x,y) > cWidth) {
+            deleteItem();
         }
 
         return exports;
     }
 
-    //TODO: DELETE ENTITY IF ITS TOO FAR AWAY!
+    function deleteItem(){
+        if(isBullet){
+            bullets.splice(bullets.indexOf(that),1);
+        } else {
+            entities.splice(entities.indexOf(that),1);
+            items.splice(items.indexOf(that),1);
+        }
+    }
+
 
     function hits(x1, y1, w1, h1,
                        x2, y2, w2, h2){
@@ -241,7 +246,6 @@ var entity = function(opts,cb) {
 
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
-        //todo: zoom
         //    x += w//*numberOfCols/2;
             //y += h*numberOfRows;
             //x += w*numberOfCols;
@@ -277,7 +281,8 @@ var entity = function(opts,cb) {
                 context.drawImage(splinterImg, indX, indY, sW, sH, x+sW, y+sH, -sW/2 * zoom, -sH/2 * zoom);
                 if(finished){
                     //console.log(entities.indexOf(beingDestroyed));
-                    entities.splice(entities.indexOf(beingDestroyed),1);
+                    //entities.splice(entities.indexOf(beingDestroyed),1);
+                    deleteItem()
                 }
             } else {
                 context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
@@ -286,9 +291,12 @@ var entity = function(opts,cb) {
 
         }
 
+        //DEBUG
+        if(isBullet){
+            context.fillStyle = '#ff0000';
+            context.fillRect(x,y,10,10);
+        }
 
-        context.fillStyle = '#ff0000';
-        context.fillRect(x,y,10,10);
 
         if(tintedImage.alpha > 0){
             context.globalAlpha = tintedImage.alpha;

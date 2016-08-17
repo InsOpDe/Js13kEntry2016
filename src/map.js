@@ -3,38 +3,79 @@
  */
 
 var map = function(){
-    var pX, pY, image, tilesize;
+    var pX, pY, lastX, lastY, tilesize;
+    var imageNames = ['area', 'crate', 'player'];
 
-    function init(opts, cb){
-        // Create sprite sheet
-        image = new Image();
-        pX = opts.pos.x;
-        pY = opts.pos.y;
+    function init(cb){
+        //pX = opts.pos.x;
+        //pY = opts.pos.y;
 
-        // Load sprite sheet
-        image.addEventListener("load", function(){
-            tilesize = this.width;
+        loadAssets(imageNames, function(){
+            cb();
+            tilesize = images["area"].width;
+            initCrates();
+        });
 
+        function loadAssets(names,cb){
+            var image = new Image();
+            var name = names.pop();
+            image.src = "../res/" + name + ".png";
+            image.addEventListener("load", function(){
+                images[name] = this;
+                if(names.length){
+                    loadAssets(names,cb)
+                } else {
+                    cb();
+                }
+            });
+        }
+
+
+    }
+
+    function initCrates(){
+        for(var i = getRandomArbitrary(2,7); i > 0; i--){
+            var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+            var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+            //TODO: mach daraus endlich ne funktion!
             var crate = new entity({
                 name : 'crate',
-                x: 0,
-                y: 0,
-                //x: 1000,
-                //y: 700,
+                x: x,
+                y: y,
                 ticksPerFrame: 4
-                //todo: sprite position
-            }, function(){
-                entities.push(crate);
-                crate.setRef(crate);
-                cb();
-            });
-        });
-        image.src = "../res/area.png"; //todo: path
+            })
+            entities.push(crate);
+            items.push(crate);
+            crate.setRef(crate);
+        }
     }
 
     function update(playerPos){
         pX = playerPos.x, pY = playerPos.y;
+        addRandomItem();
+        lastX = pX;
+        lastY = pY;
         draw();
+    }
+
+    function addRandomItem(){
+        if(Math.random()>.99 && items.length <10) //TODO: abhängig davon machen wieviel kisten schon im spiel sind
+            addRandomCrate()
+    }
+    function addRandomCrate(){
+        if(lastX > pX){
+            var x = - cWidth/2 + pX;
+            var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+            var crate = new entity({
+                name : 'crate',
+                x: x,
+                y: y,
+                ticksPerFrame: 4
+            });
+            entities.push(crate);
+            items.push(crate);
+            crate.setRef(crate);
+        }
     }
 
     function draw() {
@@ -42,7 +83,7 @@ var map = function(){
         var zoomedTilesize = tilesize * overallZoom;
         for(var x = -zoomedTilesize;x < cWidth+zoomedTilesize; x+=zoomedTilesize){
             for(var y = -zoomedTilesize;y < cHeight+zoomedTilesize; y+=zoomedTilesize){
-                context.drawImage(image, 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+                context.drawImage(images["area"], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
             }
         }
         //context.fillStyle = '#000000';

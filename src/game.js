@@ -13,20 +13,24 @@ var game = function(){
 
 
     function init(cb) {
-        player = new entity({
-            name : 'player',
-            x: 0,
-            y: 0,
-            ticksPerFrame: 4
-        }, function(){
+
+        _map = new map();
+        _map.init(function(){
+            player = new entity({
+                name : 'player',
+                x: 0,
+                y: 0,
+                ticksPerFrame: 4
+            });
             entities.push(player);
             player.setRef(player);
-            map.init({
-                pos : player.getRealPos()
-            }, cb)
+
+            debugWindow = new debug();
+
+            cb()
         });
-        map = new map();
-        debugWindow = new debug();
+
+
 
 
     }
@@ -67,7 +71,7 @@ var game = function(){
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        map.update(player.getRealPos());
+        _map.update(player.getRealPos());
 
         entities.sort(function(a,b){
             //console.log(b.getPos().y, a.getPos().y);

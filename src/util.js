@@ -2,7 +2,7 @@
  * Created by Marcel Michelfelder on 17.08.2016.
  */
 
-function tint(img,rgba, cb){
+function tint(img,rgba){
 
     var buffer = document.createElement('canvas');
     //console.log(buffer, img);
@@ -23,11 +23,12 @@ function tint(img,rgba, cb){
     }
     bx.putImageData(imageData, 0, 0);
 
-    var image = new Image();
-    image.src = buffer.toDataURL();
-    image.onload = function(){
-        cb(image);
-    };
+    return buffer;
+    //var image = new Image();
+    //image.src = buffer.toDataURL();
+    //image.onload = function(){
+    //    cb(image);
+    //};
 }
 
 function splinterSingle(img){
@@ -130,3 +131,7 @@ function RGBA(r,g,b,a){
         a:a||1
     }
 };
+
+function dist (sx,sy,tx,ty){
+    return Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
+}
