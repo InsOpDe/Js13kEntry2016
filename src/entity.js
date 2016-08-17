@@ -26,7 +26,9 @@ var entity = function(opts,cb) {
         gotHit,
         imgW,
         imgH,
+        beingDestroyed,
         ticksPerFrame = 0,
+        splinterSelf,
         numberOfCols = 1,
         numberOfRows = 1,
         frameIndex = 0,
@@ -76,7 +78,7 @@ var entity = function(opts,cb) {
             url: 'crate',
             w: 20,
             h: 20,
-            hp: 300,
+            hp: 30,
         }
     }
 
@@ -110,6 +112,8 @@ var entity = function(opts,cb) {
                     if (cb) cb();
                 });
 
+                if(!isPlayer)
+                    splinterSelf = new splinter(image);
 
             });
             image.src = "../res/" + sprite.url + ".png";
@@ -166,9 +170,7 @@ var entity = function(opts,cb) {
                 var h2 = ent.getBounding().h;
                 if(hits(x,y,w,h,x2,y2,w2,h2)){
                     bullets.splice(bullets.indexOf(that),1);
-                    if(ent.dealDamage(damage)<=0){
-                        entities.splice(entities.indexOf(ent.getRef(),1))
-                    }
+                    ent.dealDamage(damage);
                     break;
                     //todo: shoot through?
                 }
@@ -240,7 +242,7 @@ var entity = function(opts,cb) {
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
         //todo: zoom
-            x += w*numberOfCols/2;
+        //    x += w//*numberOfCols/2;
             //y += h*numberOfRows;
             //x += w*numberOfCols;
             //y += h*zoom;
@@ -264,9 +266,27 @@ var entity = function(opts,cb) {
         //TODO: alpha
         //context.globalAlpha = 0.5;
 
+
         // Draw the image
-        if(!isBullet)
-            context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+        if(!isBullet){
+            if(beingDestroyed){
+                var splinterImg = splinterSelf.draw();
+                var finished = splinterSelf.finished();
+                var sW = splinterImg.width;
+                var sH = splinterImg.height;
+                context.drawImage(splinterImg, indX, indY, sW, sH, x+sW, y+sH, -sW/2 * zoom, -sH/2 * zoom);
+                if(finished){
+                    //console.log(entities.indexOf(beingDestroyed));
+                    entities.splice(entities.indexOf(beingDestroyed),1);
+                }
+            } else {
+                context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+
+            }
+
+        }
+
+
         context.fillStyle = '#ff0000';
         context.fillRect(x,y,10,10);
 
@@ -344,7 +364,11 @@ var entity = function(opts,cb) {
     }
     function dealDamage(d){
         gotHit = Date.now() + hitCd;
-        return hp -= d;
+        hp -= d;
+        if(hp <= 0){
+            beingDestroyed = that;
+        }
+        return hp;
     }
     function setRef(ref){
         that = ref
