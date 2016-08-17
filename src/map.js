@@ -25,6 +25,7 @@ var map = function(){
                 //todo: sprite position
             }, function(){
                 entities.push(crate);
+                crate.setRef(crate);
                 cb();
             });
         });

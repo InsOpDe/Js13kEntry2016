@@ -3,11 +3,14 @@
  */
 
 var entity = function(opts,cb) {
+    idCounter++;
 
     var x,
         y,
         w = 1,
         h = 1,
+        id = idCounter,
+        originId,
         sx,
         sy,
         vx,
@@ -33,14 +36,19 @@ var entity = function(opts,cb) {
         zoom = 1,
         offsetY = 0,
         visible = false,
-        that = {
+        that,
+        exports = {
             init: init,
             draw: draw,
             update: update,
             moveX: moveX,
             moveY: moveY,
             shoot: shoot,
+            getId: getId,
+            getName: getName,
+            getBounding: getBounding,
             getPos: getPos,
+            setRef: setRef,
         },
         isBullet = false,
         isPlayer = false;
@@ -84,10 +92,13 @@ var entity = function(opts,cb) {
                 if (cb) cb();
             });
             image.src = "../res/" + sprite.url + ".png";
+        } else {
+            originId = opts.id;
         }
 
         x = sx = opts.x;
         y = sy = opts.y;
+        //todo: streuung
         vx = opts.vx;
         vy = opts.vy;
         ticksPerFrame = opts.ticksPerFrame;
@@ -120,10 +131,38 @@ var entity = function(opts,cb) {
             d+=30;
             x = vx * d + pX;
             y = vy * d + pY;
+            //todo: do exports for all entities
+            for(var i in entities){
+                if(id == entities[i].getId() || originId == entities[i].getId())
+                    continue;
+
+                var x2 = entities[i].getPos().x;
+                var y2 = entities[i].getPos().y;
+                var w2 = entities[i].getBounding().w;
+                var h2 = entities[i].getBounding().h;
+                if(hits(x,y,w,h,x2,y2,w2,h2)){
+                    entities.splice(entities.indexOf(that),1);
+                    break;
+                    //todo: shoot through?
+                }
+            }
             //todo: check for collision
         }
 
-        return that;
+        return exports;
+    }
+
+    //TODO: DELETE ENTITY IF ITS TOO FAR AWAY!
+
+    function hits(x1, y1, w1, h1,
+                       x2, y2, w2, h2){
+        if (x1 + w1 > x2)
+            if (x1 < x2 + w2)
+                if (y1 + h1 > y2)
+                    if (y1 < y2 + h2)
+                        return true;
+
+        return false;
     }
 
 
@@ -155,7 +194,7 @@ var entity = function(opts,cb) {
             false);
 
         toggleAnimation = 0;
-        return that;
+        return exports;
     }
 
     function drawImage(indX, indY, x, y, deg, center) {
@@ -192,6 +231,7 @@ var entity = function(opts,cb) {
             context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
         context.fillStyle = '#ff0000';
         context.fillRect(x,y,10,10);
+        //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);
 
         context.restore();
     }
@@ -210,13 +250,16 @@ var entity = function(opts,cb) {
         //var d = Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
         //console.log(d*Math.cos(angleRadians),d*Math.sin(angleRadians));
         //console.log(angleDeg,angle,angleRadians);
-        entities.push(new entity({
+        var bullet = new entity({
             name : 'bullet',
             x : pX,
             y : pY,
+            id : id,
             vx : Math.cos(angleRadians),
             vy : Math.sin(angleRadians)
-        }))
+        });
+        entities.push(bullet);
+        bullet.setRef(bullet);
     }
 
 
@@ -232,8 +275,20 @@ var entity = function(opts,cb) {
     }
 
     function getPos(){
-        return {x : x, y : y}
+        return {x : x-w*zoom/2, y : y-h*zoom/2}
+    }
+    function getBounding(){
+        return {w : w*zoom/2, h : h*zoom/2}
+    }
+    function getName(){
+        return name
+    }
+    function getId(){
+        return id
+    }
+    function setRef(ref){
+        that = ref
     }
 
-    return that
+    return exports
 };

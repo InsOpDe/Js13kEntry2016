@@ -20,6 +20,7 @@ var game = function(){
             ticksPerFrame: 4
         }, function(){
             entities.push(player);
+            player.setRef(player);
             map.init({
                 pos : player.getPos()
             }, cb)
