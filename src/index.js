@@ -9,6 +9,7 @@ var canvas,
     idCounter = 0,
     overallZoom = 10,
     mouseposition = {x:0,y:0},
+    screenmouseposition = {x:0,y:0},
     entities = [],
     bullets = [],
     items = [],
@@ -52,6 +53,8 @@ function init() {
     document.onmousemove = function(e){
         mouseposition.x = -(cWidth/2)+ e.x;
         mouseposition.y = -(cHeight/2)+ e.y;
+        screenmouseposition.x = e.x;
+        screenmouseposition.y = e.y;
     }
 
     function setKey(event, down) {

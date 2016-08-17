@@ -8,8 +8,11 @@ var debug = function(){
 
     function update(opts){
         opts.mouseposition = {};
+        opts.screenmouseposition = {};
         opts.mouseposition.x =  mouseposition.x+opts.playerpos.x;
         opts.mouseposition.y =  mouseposition.y+opts.playerpos.y;
+        opts.screenmouseposition.x =  screenmouseposition.x
+        opts.screenmouseposition.y =  screenmouseposition.y
         //opts.mouseposition.x = -(cWidth/2)+ mouseposition.x+opts.playerpos.x;
         //opts.mouseposition.y = -(cHeight/2)+mouseposition.y+opts.playerpos.y;
         //(cWidth/2)+x-pX

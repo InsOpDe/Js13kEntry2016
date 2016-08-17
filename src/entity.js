@@ -11,8 +11,8 @@ var entity = function(opts,cb) {
         h = 1,
         id = idCounter,
         originId,
-        sx,
-        sy,
+        sX,
+        sY,
         vx,
         vy,
         pX,
@@ -64,6 +64,7 @@ var entity = function(opts,cb) {
             getImg: getImg,
         },
         isBullet = false,
+        isEnemy = false,
         isPlayer = false;
 
 
@@ -93,6 +94,7 @@ var entity = function(opts,cb) {
         name = opts.name;
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
+        isEnemy = name.match(/enemy/);
 
         if (!isBullet) {
             var sprite = sprites[name];
@@ -115,8 +117,8 @@ var entity = function(opts,cb) {
             damage = 10; //TODO: iwo her damage wert nehmen
         }
 
-        x = sx = opts.x;
-        y = sy = opts.y;
+        x = sX = opts.x;
+        y = sY = opts.y;
         //todo: streuung
         vx = opts.vx;
         vy = opts.vy;
@@ -148,10 +150,10 @@ var entity = function(opts,cb) {
 
         if(isBullet){
             d+=30;
-            x = vx * d + pX;
-            y = vy * d + pY;
+            x = vx * d + sX;
+            y = vy * d + sY;
             //todo: do exports for all entities
-            var ent
+            var ent;
             for(var i in entities){
                 ent = entities[i];
                 if(id == ent.getId() || originId == ent.getId() || ent.getHp() <= 0)
@@ -173,6 +175,15 @@ var entity = function(opts,cb) {
             //}
             //todo: check for collision
         }
+
+
+        if(isEnemy){
+            shoot(true, {x:pX, y:pY});
+        }
+
+
+
+
         //console.log(dist(pX,pY,x,y));
         if(dist(pX,pY,x,y) > cWidth/1.5) {
             deleteItem();
@@ -213,10 +224,12 @@ var entity = function(opts,cb) {
 
         //var posX = isPlayer ? cWidth/2 : x-pX;
         //var posY =  isPlayer ? cHeight/2 : y-pY;
+        //var posX = isPlayer ? cWidth/2 : (cWidth/2);
+        //var posY =  isPlayer ? cHeight/2 : (cHeight/2);
         var posX = isPlayer ? cWidth/2 : (cWidth/2)+x-pX;
         var posY =  isPlayer ? cHeight/2 : (cHeight/2)+y-pY;
-        if(!isPlayer){
-            //console.log(x,y);
+        if(isEnemy){
+            console.log(posX,posY);
         }
         var tintedImage = tintedImg;
         var delta = (gotHit - Date.now()) / hitCd;
@@ -308,7 +321,7 @@ var entity = function(opts,cb) {
         context.restore();
     }
 
-    function shoot(shooting){
+    function shoot(shooting, dest){
         isShooting = shooting;
         var now = Date.now();
         if(!isShooting || (lastShot > now - cooldown)){
@@ -316,7 +329,13 @@ var entity = function(opts,cb) {
         }
         lastShot = Date.now();
         //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
-        var sy = pY, sx = pX, tx = mouseposition.x +pX, ty = mouseposition.y + pY;
+        if(isPlayer){
+            var sy = pY, sx = pX, tx = dest.x +pX, ty = dest.y + pY;
+        } else {
+            var sy = y, sx = x, tx = dest.x, ty = dest.y;
+        }
+
+
 
         var angleRadians = Math.atan2(ty - sy, tx - sx);
         //var d = Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
@@ -324,8 +343,8 @@ var entity = function(opts,cb) {
         //console.log(angleDeg,angle,angleRadians);
         var bullet = new entity({
             name : 'bullet',
-            x : pX,
-            y : pY,
+            x : sx,
+            y : sy,
             id : id,
             vx : Math.cos(angleRadians),
             vy : Math.sin(angleRadians)
