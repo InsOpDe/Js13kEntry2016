@@ -120,6 +120,10 @@ function splitSpritesheet(image, spriteW, spriteH){
     return sprites;
 }
 
+function getAngleBetweenTwoPoints(sx,sy,tx,ty){
+    return Math.atan2(ty - sy, tx - sx);
+}
+
 
 function iterateSprites(sprites, fnc){
     var newSprites = [];

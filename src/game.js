@@ -101,7 +101,7 @@ var game = function(){
         var s = 5;
         var shooting = false;
         if (keysDown[900]) shooting = true;
-        player.shoot(shooting, mouseposition);
+
 
         if (keysDown[65]) {
             d = s * (-1);
@@ -117,6 +117,8 @@ var game = function(){
             d = s * (-1);
         }
         player.moveY(d);
+
+        player.shoot(shooting, mouseposition);
     }
 
     return {

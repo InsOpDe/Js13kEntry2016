@@ -21,7 +21,8 @@ var entity = function(opts,cb) {
         hp = 0,
         tintedImg = 0,
         damage = 0,
-        d = 0,
+    //todo: figure out anfangswert, ist der abstand zum mittelpunkt des spielers
+        d = 30,
         hitCd = 200,
         name,
         gotHit,
@@ -246,7 +247,7 @@ var entity = function(opts,cb) {
 //        if(center) {
         //    x += w//*numberOfCols/2;
             //y += h*numberOfRows;
-            //x += w*numberOfCols;
+            x += zoom*(w/4);
             //y += h*zoom;
 
         //}
@@ -255,8 +256,8 @@ var entity = function(opts,cb) {
         //context.translate(x + w/2, y + h/2);
 
         // Rotate the canvas around the origin
-        var rad = 2 * Math.PI - deg * Math.PI / 180;
-        context.rotate(rad);
+        //var rad = 2 * Math.PI - deg * Math.PI / 180;
+        //context.rotate(rad);
 
         // Flip/flop the canvas //TODO: enhance
         if(flop) flopScale = -1; else flopScale = 1;
@@ -264,6 +265,9 @@ var entity = function(opts,cb) {
         x *= flip;
         if(flip == -1) x += w * zoom / 2;
         y *= flopScale;
+
+        //if(isPlayer)
+        //console.log(x);
 
         //TODO: alpha
         //context.globalAlpha = 0.5;
@@ -316,20 +320,26 @@ var entity = function(opts,cb) {
         lastShot = Date.now();
         //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
         if(isPlayer){
-            var sy = pY, sx = pX, tx = dest.x +pX, ty = dest.y + pY;
+            var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
+            //var sy = pY, sx = pX, tx = dest.x +pX, ty = dest.y + pY;
         } else {
-            var sy = y, sx = x, tx = dest.x, ty = dest.y;
+            var sy = y - ((zoom * h/4)*1.3), sx = x, tx = dest.x, ty = dest.y;
         }
 
+        //if(isPlayer)
+            flip = sX < dest.x ? 1 : -1;
 
 
-        var angleRadians = Math.atan2(ty - sy, tx - sx);
+        var angleRadians = getAngleBetweenTwoPoints(sx,sy,tx,ty);
+        //var angleRadians = Math.atan2(ty - sy, tx - sx);
         //var d = Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
         //console.log(d*Math.cos(angleRadians),d*Math.sin(angleRadians));
         //console.log(angleDeg,angle,angleRadians);
         var bullet = new entity({
             name : 'bullet',
             x : sx,
+            //y : sy,
+            //x : sx - (zoom * w/2),
             y : sy,
             id : id,
             vx : Math.cos(angleRadians),
@@ -343,7 +353,8 @@ var entity = function(opts,cb) {
 
     function moveX(d) {
         toggleAnimation = toggleAnimation || d;
-        flip = d == 0 ? flip : d > 0 ? 1 : -1;
+        if((lastShot < Date.now() - cooldown))
+            flip = d == 0 ? flip : d > 0 ? 1 : -1;
         x += d;
     }
     function moveY(d) {
