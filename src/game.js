@@ -92,7 +92,7 @@ var game = function(){
 
 
         //fonts
-        context.drawImage(font.draw('Pixel Font', 24),0,0);
+        //context.drawImage(font.draw('Pixel Font', 24),0,0);
     }
 
 

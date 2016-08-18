@@ -17,6 +17,7 @@ var entity = function(opts,cb) {
         vy,
         pX,
         pY,
+        alreadyDebuged,
         hp = 0,
         tintedImg = 0,
         damage = 0,
@@ -24,8 +25,6 @@ var entity = function(opts,cb) {
         hitCd = 200,
         name,
         gotHit,
-        imgW,
-        imgH,
         beingDestroyed,
         ticksPerFrame = 0,
         splinterSelf,
@@ -35,7 +34,8 @@ var entity = function(opts,cb) {
         tickCount = 0,
         lastShot = 0,
         cooldown = 300,
-        image,
+        sprites,
+        hitSprites,
         toggleAnimation,
         flip = 1,
         flop,
@@ -68,20 +68,6 @@ var entity = function(opts,cb) {
         isPlayer = false;
 
 
-    var sprites = {
-        player: {
-            w: 34,
-            h: 30,
-            hp: 100,
-        },
-        crate: {
-            w: 20,
-            h: 20,
-            hp: 30,
-        }
-    };
-    sprites['enemy1'] = sprites.player;
-    sprites['crate2'] = sprites.crate;
 
     if (opts) {
         init(opts, cb)
@@ -97,20 +83,19 @@ var entity = function(opts,cb) {
         isEnemy = name.match(/enemy/);
 
         if (!isBullet) {
-            var sprite = sprites[name];
-            h = sprite.h;
-            w = sprite.w;
-            hp = sprite.hp;
-            image = images[name];
-            imgW = image.width;
-            imgH = image.height;
-            numberOfCols = imgW / w;
-            numberOfRows = imgH / h;
-            var hl = 150;
-            tintedImg = tint(image,RGBA(hl,hl,hl));
+            var obj = proto[name];
+            h = obj.h;
+            w = obj.w;
+            //todo: hp als para übergeben
+            hp = obj.hp;
+            sprites = obj.sprites;
+            hitSprites = obj.hitSprites;
+            numberOfCols = sprites[0].length;
+            numberOfRows = sprites.length;
+
 
             if(!isPlayer)
-                splinterSelf = new splinter(image);
+                splinterSelf = new splinter(sprites[0][0]);
 
         } else {
             originId = opts.id;
@@ -122,7 +107,8 @@ var entity = function(opts,cb) {
         //todo: streuung
         vx = opts.vx;
         vy = opts.vy;
-        ticksPerFrame = opts.ticksPerFrame;
+        ticksPerFrame = 4;
+        //ticksPerFrame = opts.ticksPerFrame;
         //todo zoom
         zoom = overallZoom;
 
@@ -217,10 +203,8 @@ var entity = function(opts,cb) {
     function draw() {
 
         // Draw the animation
-        var indexW = frameIndex * w;
         if(isShooting) offsetY = 1; else offsetY = 0;
-        var indexH = offsetY * h;
-        if(!toggleAnimation) indexW = 0;
+        if(!toggleAnimation) frameIndex = 0;
 
         //var posX = isPlayer ? cWidth/2 : x-pX;
         //var posY =  isPlayer ? cHeight/2 : y-pY;
@@ -231,20 +215,21 @@ var entity = function(opts,cb) {
         //if(isEnemy){
         //    console.log(posX,posY);
         //}
-        var tintedImage = tintedImg;
         var delta = (gotHit - Date.now()) / hitCd;
 
         //todo: determine center of screen
+        if(isPlayer && !alreadyDebuged){
+            alreadyDebuged = true;
+            //console.log(name,hitSprites,offsetY,frameIndex);
+        }
        drawImage(
-           image,
-           indexW,
-            indexH,
+           isBullet ? false : sprites[offsetY][frameIndex],
            //todo: only player
             posX,
            posY,
             0,
-           {
-               img : tintedImage,
+           isBullet ? false : {
+               img : hitSprites[offsetY][frameIndex],
                alpha : delta
            });
 
@@ -252,7 +237,7 @@ var entity = function(opts,cb) {
         return exports;
     }
 
-    function drawImage(image,indX, indY, x, y, deg, tintedImage) {
+    function drawImage(sprite, x, y, deg, tintedImage) {
         context.save();
         var flipScale;
         var flopScale;
@@ -291,14 +276,15 @@ var entity = function(opts,cb) {
                 var finished = splinterSelf.finished();
                 var sW = splinterImg.width;
                 var sH = splinterImg.height;
-                context.drawImage(splinterImg, indX, indY, sW, sH, x+sW, y+sH, -sW/2 * zoom, -sH/2 * zoom);
+                context.drawImage(splinterImg, 0, 0, sW, sH, x+sW, y+sH, -sW/2 * zoom, -sH/2 * zoom);
                 if(finished){
                     //console.log(entities.indexOf(beingDestroyed));
                     //entities.splice(entities.indexOf(beingDestroyed),1);
                     deleteItem()
                 }
             } else {
-                context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+                context.drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+                //context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
 
             }
 
@@ -313,7 +299,7 @@ var entity = function(opts,cb) {
 
         if(tintedImage.alpha > 0){
             context.globalAlpha = tintedImage.alpha;
-            context.drawImage(tintedImage.img, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+            context.drawImage(tintedImage.img, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
         }
 
         //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);

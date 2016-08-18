@@ -219,8 +219,9 @@ var pixelfont = function () {
     //    draw(input.value, Math.min(24, size));
     //});
 
-    function draw(string, size) {
+    function draw(string, size, color) {
         size = size || 24;
+        context.fillStyle = color || 'black';
         width = 0;
         height = 0;
         //context.clearRect(0, 0, canvas.width, canvas.height);
@@ -242,7 +243,7 @@ var pixelfont = function () {
         canvas.width = width;
         canvas.height = height;
 
-        context.fillStyle = 'black';
+
         var currX = 0;
         for (i = 0; i < needed.length; i++) {
             letter = needed[i];
@@ -263,9 +264,6 @@ var pixelfont = function () {
 
         return canvas;
     }
-
-    //todo: set color, set coords, etc
-    //todo: center image
 
     return {
         draw : draw

@@ -94,6 +94,43 @@ function splinterSingle(img){
     };
 }
 
+function splitSpritesheet(image, spriteW, spriteH){
+    var sprites = [];
+    var width = image.width;
+    var height = image.height;
+    var spritesW = width/spriteW;
+    var spritesH = height/spriteH;
+    var buffer;
+    var bx;
+    for(var j = 0; j < spritesH; j++){
+        sprites[j] = [];
+        for(var i = 0; i < spritesW; i++){
+            buffer = document.createElement('canvas');
+            buffer.width = spriteW;
+            buffer.height = spriteH;
+            bx = buffer.getContext('2d');
+
+            //console.log(i*spriteW,j*spriteH,spriteW,spriteH);
+            //bx.drawImage(image,i*spriteW,j*spriteH,spriteW,spriteH);
+            bx.drawImage(image,i*spriteW,j*spriteH,spriteW,spriteH,0,0,spriteW,spriteH);
+            //console.log(buffer.toDataURL());
+            sprites[j][i] = buffer;
+        }
+    }
+    return sprites;
+}
+
+
+function iterateSprites(sprites, fnc){
+    var newSprites = [];
+    for(var y in sprites){
+        newSprites[y] = [];
+        for(var x in sprites[y]){
+            newSprites[y][x] = fnc(sprites[y][x])
+        }
+    }
+    return newSprites;
+}
 
 
 function splinter(img){

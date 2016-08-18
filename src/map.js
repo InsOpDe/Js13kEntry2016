@@ -4,66 +4,27 @@
 
 var map = function(){
     var pX, pY, lastX, lastY, tilesize;
-    var imageNames = ['area', 'crate', 'player'];
-    var variations = {
-        'enemy1' : {
-            origin : 'player',
-            from : [RGBA(248,248,248)],
-            to : [RGBA(219,17,17)]
-        }
-    };
-    var tintVariations = {
-        'crate2' : {
-            origin : 'crate',
-            tint : RGBA(17,30,30),
-        }
-    }
 
     function init(cb){
-        //pX = opts.pos.x;
-        //pY = opts.pos.y;
-
-        loadAssets(imageNames, function(){
-            for(var i in variations){
-                var tempSprite = images[variations[i].origin];
-                for(var j = 0; j < variations[i].from.length; j++){
-                    tempSprite = changeColorOfSprite(tempSprite,variations[i].from[j],variations[i].to[j]);
-                }
-                images[i] = tempSprite;
-            }
-            for(var i in tintVariations){
-                images[i] = tint(images[tintVariations[i].origin],tintVariations[i].tint);
-            }
+        var loaderObj = new loader();
+        loaderObj.init(function(){
             cb();
-            tilesize = images["area"].width;
             initItems();
             initEnemy();
-        });
+            tilesize = proto['area'].w;
 
-        function loadAssets(names,cb){
-            var image = new Image();
-            var name = names.pop();
-            image.src = "../res/" + name + ".png";
-            image.addEventListener("load", function(){
-                images[name] = this;
-                if(names.length){
-                    loadAssets(names,cb)
-                } else {
-                    cb();
-                }
-            });
-        }
+        })
     }
 
     function initEnemy(){
         var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
         var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+        console.log();
         //TODO: mach daraus endlich ne funktion!
         var enemy = new entity({
             name : 'enemy1',
             x: x,
-            y: y,
-            ticksPerFrame: 4
+            y: y
         })
         entities.push(enemy);
         //items.push(enemy);
@@ -82,9 +43,8 @@ var map = function(){
             var crate = new entity({
                 name : availItems[whichItem],
                 x: x,
-                y: y,
-                ticksPerFrame: 4
-            })
+                y: y
+            });
             entities.push(crate);
             items.push(crate);
             crate.setRef(crate);
@@ -133,7 +93,7 @@ var map = function(){
         var zoomedTilesize = tilesize * overallZoom;
         for(var x = -zoomedTilesize;x < cWidth+zoomedTilesize; x+=zoomedTilesize){
             for(var y = -zoomedTilesize;y < cHeight+zoomedTilesize; y+=zoomedTilesize){
-                context.drawImage(images["area"], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+                context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
             }
         }
         //context.fillStyle = '#000000';
