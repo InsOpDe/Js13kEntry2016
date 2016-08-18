@@ -31,6 +31,7 @@ function tint(img,rgba){
     //};
 }
 
+
 function changeColorOfSprite(img,originRGBA,destRGBA){
     var buffer = document.createElement('canvas');
     //console.log(buffer, img);

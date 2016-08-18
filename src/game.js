@@ -7,7 +7,9 @@ var game = function(){
         factor,
         last,
         player,
+        font = new pixelfont(),
         isPaused = false;
+
 
 
 
@@ -87,6 +89,10 @@ var game = function(){
         for(var i in bullets){
             bullets[i].update(player.getRealPos()).draw();
         }
+
+
+        //fonts
+        context.drawImage(font.draw('Pixel Font', 24),0,0);
     }
 
 

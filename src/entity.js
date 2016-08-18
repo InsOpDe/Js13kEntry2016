@@ -228,9 +228,9 @@ var entity = function(opts,cb) {
         //var posY =  isPlayer ? cHeight/2 : (cHeight/2);
         var posX = isPlayer ? cWidth/2 : (cWidth/2)+x-pX;
         var posY =  isPlayer ? cHeight/2 : (cHeight/2)+y-pY;
-        if(isEnemy){
-            console.log(posX,posY);
-        }
+        //if(isEnemy){
+        //    console.log(posX,posY);
+        //}
         var tintedImage = tintedImg;
         var delta = (gotHit - Date.now()) / hitCd;
 
