@@ -17,6 +17,7 @@ var entity = function(opts,cb) {
         vy,
         pX,
         pY,
+        ai,
         alreadyDebuged,
         hp = 0,
         tintedImg = 0,
@@ -56,6 +57,7 @@ var entity = function(opts,cb) {
             getName: getName,
             getBounding: getBounding,
             getPos: getPos,
+            getDim: getDim,
             dealDamage: dealDamage,
             getRealPos: getRealPos,
             setRef: setRef,
@@ -66,6 +68,8 @@ var entity = function(opts,cb) {
         },
         isBullet = false,
         isEnemy = false,
+        isBot = false,
+        isItem = false,
         isPlayer = false;
 
 
@@ -82,6 +86,8 @@ var entity = function(opts,cb) {
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
         isEnemy = name.match(/enemy/);
+        isBot = opts.bot;
+
 
         if (!isBullet) {
             var obj = proto[name];
@@ -119,6 +125,10 @@ var entity = function(opts,cb) {
     function update(pPos){
         pX = pPos.x;
         pY = pPos.y;
+
+        if(ai) ai.update();
+
+
         if(toggleAnimation)
             tickCount += 1;
 
@@ -164,14 +174,16 @@ var entity = function(opts,cb) {
         }
 
 
-        if(isEnemy){
-            shoot(true, {x:pX, y:pY});
-        }
+
+
+        //todo: in Ai einbauen
+        //if(isEnemy){
+        //    shoot(true, {x:pX, y:pY});
+        //}
 
 
 
 
-        //console.log(dist(pX,pY,x,y));
         if(dist(pX,pY,x,y) > cWidth/1.5) {
             deleteItem();
         }
@@ -186,18 +198,6 @@ var entity = function(opts,cb) {
             entities.splice(entities.indexOf(that),1);
             items.splice(items.indexOf(that),1);
         }
-    }
-
-
-    function hits(x1, y1, w1, h1,
-                       x2, y2, w2, h2){
-        if (x1 + w1 > x2)
-            if (x1 < x2 + w2)
-                if (y1 + h1 > y2)
-                    if (y1 < y2 + h2)
-                        return true;
-
-        return false;
     }
 
 
@@ -219,9 +219,9 @@ var entity = function(opts,cb) {
         var delta = (gotHit - Date.now()) / hitCd;
 
         //todo: determine center of screen
-        if(isPlayer && !alreadyDebuged){
-            alreadyDebuged = true;
-            //console.log(name,hitSprites,offsetY,frameIndex);
+        if(isBot && !alreadyDebuged){
+            //alreadyDebuged = true;
+            //console.log(name,toggleAnimation,offsetY,frameIndex);
         }
        drawImage(
            isBullet ? false : sprites[offsetY][frameIndex],
@@ -323,7 +323,7 @@ var entity = function(opts,cb) {
             var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
             //var sy = pY, sx = pX, tx = dest.x +pX, ty = dest.y + pY;
         } else {
-            var sy = y - ((zoom * h/4)*1.3), sx = x, tx = dest.x, ty = dest.y;
+            var sy = y - ((zoom * h/4)*1.3), sx = x, tx = dest.x, ty = dest.y- ((zoom * h/4)*1.3);
         }
 
         //if(isPlayer)
@@ -362,6 +362,9 @@ var entity = function(opts,cb) {
         y += d;
     }
 
+    function getDim(){
+        return {w:w,h:h};
+    }
     function getImg(){
         return image;
     }
@@ -395,6 +398,8 @@ var entity = function(opts,cb) {
         return hp;
     }
     function setRef(ref){
+        if(isBot)
+            ai = new Ai(ref);
         that = ref
     }
     function getRef(){

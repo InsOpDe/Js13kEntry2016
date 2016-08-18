@@ -124,6 +124,17 @@ function getAngleBetweenTwoPoints(sx,sy,tx,ty){
     return Math.atan2(ty - sy, tx - sx);
 }
 
+function hits(x1, y1, w1, h1,
+              x2, y2, w2, h2){
+    if (x1 + w1 > x2)
+        if (x1 < x2 + w2)
+            if (y1 + h1 > y2)
+                if (y1 < y2 + h2)
+                    return true;
+
+    return false;
+}
+
 
 function iterateSprites(sprites, fnc){
     var newSprites = [];

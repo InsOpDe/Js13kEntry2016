@@ -24,7 +24,8 @@ var map = function(){
         var enemy = new entity({
             name : 'enemy1',
             x: x,
-            y: y
+            y: y,
+            bot: true
         })
         entities.push(enemy);
         //items.push(enemy);
