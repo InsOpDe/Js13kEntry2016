@@ -55,7 +55,7 @@ var Weapon = function(opts, id){
             var r = getRandomArbitrary(-randomizer, randomizer);
             if(type == 'pistol')
                 r = .025 * (i==0 ? 1 : -1);
-            var start = getRandomArbitrary(-startRandomizer, startRandomizer);
+            var start = getRandomArbitrary(-startRandomizer, startRandomizer) || 100;
 
             ammo += shots;
 

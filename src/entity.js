@@ -24,10 +24,9 @@ var entity = function(opts,cb) {
         tintedImg = 0,
         damage = 0,
     //todo: figure out anfangswert, ist der abstand zum mittelpunkt des spielers
-        d = 100,
+        d,
         lastPositions = [],
         lastShiftPositions = [],
-        //d = 30,
         hitCd = 200,
         name,
         gotHit,
