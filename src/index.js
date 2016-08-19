@@ -55,7 +55,7 @@ function init() {
         mouseposition.y = -(cHeight/2)+ e.y;
         screenmouseposition.x = e.x;
         screenmouseposition.y = e.y;
-    }
+    };
 
     function setKey(event, down) {
         if(++event.button) {

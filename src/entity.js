@@ -24,7 +24,8 @@ var entity = function(opts,cb) {
         tintedImg = 0,
         damage = 0,
     //todo: figure out anfangswert, ist der abstand zum mittelpunkt des spielers
-        d = 30,
+        d = 100,
+        //d = 30,
         hitCd = 200,
         name,
         gotHit,
@@ -35,8 +36,9 @@ var entity = function(opts,cb) {
         numberOfRows = 1,
         frameIndex = 0,
         tickCount = 0,
-        lastShot = 0,
+        weaponIndex = 0,
         weapon,
+        weapons = [],
         sprites,
         hitSprites,
         toggleAnimation,
@@ -51,6 +53,7 @@ var entity = function(opts,cb) {
             init: init,
             draw: draw,
             update: update,
+            switchWeapon: switchWeapon,
             moveX: moveX,
             moveY: moveY,
             shoot: shoot,
@@ -94,8 +97,7 @@ var entity = function(opts,cb) {
             var obj = proto[name];
             h = obj.h;
             w = obj.w;
-            //todo: hp als para übergeben
-            hp = obj.hp;
+            hp = opts.hp || obj.hp;
             sprites = obj.sprites;
             hitSprites = obj.hitSprites;
             numberOfCols = sprites[0].length;
@@ -109,10 +111,18 @@ var entity = function(opts,cb) {
             originId = opts.id;
             speed = opts.speed;
             damage = opts.damage;
+            d = opts.start;
         }
 
         if(isBot || isPlayer)
-            weapon = new Weapon(weapons['pistol'], id);
+            weapon = new Weapon(weaponsProto['rifle'], id);
+        weapons.push(weapon);
+
+        if(isPlayer){
+            //weapons.push(new Weapon(weaponsProto['machinegun'], id));
+            //weapons.push(new Weapon(weaponsProto['shotgun'], id));
+        }
+
 
         x = sX = opts.x;
         y = sY = opts.y;
@@ -126,12 +136,20 @@ var entity = function(opts,cb) {
 
     }
 
+    function switchWeapon(r){
+        weaponIndex += r;
+        if(weaponIndex < 0)
+            weaponIndex = weapons.length + weaponIndex;
+        weaponIndex.mod(weapons.length);
+        weapon = weapons[weaponIndex];
+    }
+
 
     function update(pPos){
         pX = pPos.x;
         pY = pPos.y;
 
-        if(ai) ai.update();
+        if(ai) ai.update(pPos);
 
 
         if(toggleAnimation)

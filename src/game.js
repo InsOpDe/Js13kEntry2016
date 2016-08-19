@@ -12,6 +12,19 @@ var game = function(){
 
 
 
+    registerSingleKeyEvents();
+    function registerSingleKeyEvents(){
+        document.body.onkeyup = function(event){
+            var code = event.keyCode;
+            if (code == 89) {
+                player.switchWeapon(1);
+            } else if (code == 88) {
+                player.switchWeapon(-1);
+            }
+        }
+    }
+
+
 
 
     function init(cb) {
@@ -22,7 +35,7 @@ var game = function(){
                 name : 'player',
                 x: 0,
                 y: 0,
-                ticksPerFrame: 4
+                hp: 1000
             });
             entities.push(player);
             player.setRef(player);
@@ -117,6 +130,7 @@ var game = function(){
             d = s * (-1);
         }
         player.moveY(d);
+
 
         player.shoot(shooting, mouseposition);
     }

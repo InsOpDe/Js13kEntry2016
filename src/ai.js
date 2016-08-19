@@ -3,12 +3,21 @@
  */
 var Ai = function(entity){
     var movementTimer = Date.now(), movementCooldown = 3000, moveOrder, movementSpeed = 5, f;
+    var pX, pY; //todo: get all enemies
 
 
-
-    function update(){
+    function update(pos){
+        pX = pos.x;
+        pY = pos.y;
         move();
+        shootEnemy()
     }
+
+    function shootEnemy(){
+        entity.shoot(true, {x:pX, y:pY});
+    }
+
+
 
     function move(){
         var now = Date.now();

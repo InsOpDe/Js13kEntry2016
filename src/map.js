@@ -10,7 +10,7 @@ var map = function(){
         loaderObj.init(function(){
             cb();
             initItems();
-            initEnemy();
+            //initEnemy();
             tilesize = proto['area'].w;
 
         })
