@@ -9,7 +9,7 @@ var Gui = function(player){
 
     function draw(){
         var weapon = player.getWeapon();
-        context.drawImage(font.draw(weapon.name, 10),margin,cHeight - margin);
+        context.drawImage(font.draw(weapon.name, 10, "green"),margin,cHeight - margin);
 
     }
 

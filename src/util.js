@@ -125,9 +125,11 @@ function getAngleBetweenTwoPoints(sx,sy,tx,ty){
 }
 
 
-function createEntity(opts){
+function createEntity(opts,array){
     var ent = new entity(opts);
-    opts.array.push(ent);
+    for(var i in array){
+        array[i].push(ent);
+    }
     ent.setRef(ent);
 }
 

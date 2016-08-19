@@ -30,6 +30,7 @@ var entity = function(opts,cb) {
         hitCd = 200,
         name,
         gotHit,
+        shootThrough,
         beingDestroyed,
         ticksPerFrame = 0,
         splinterSelf,
@@ -114,6 +115,7 @@ var entity = function(opts,cb) {
             originId = opts.id;
             speed = opts.speed;
             damage = opts.damage;
+            shootThrough = opts.shootThrough;
             shift = opts.shift;
             d = opts.start;
         }
@@ -201,7 +203,10 @@ var entity = function(opts,cb) {
                 var w2 = ent.getBounding().w;
                 var h2 = ent.getBounding().h;
                 if(hits(x,y,w,h,x2,y2,w2,h2)){
-                    bullets.splice(bullets.indexOf(that),1);
+
+                    //TODO: nach hit ggf vektoren abändern - das ist auch ne gute idee für nen glitch
+                    if(!shootThrough)
+                        bullets.splice(bullets.indexOf(that),1);
                     ent.dealDamage(damage);
                     break;
                     //todo: shoot through?

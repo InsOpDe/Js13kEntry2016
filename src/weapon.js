@@ -38,6 +38,7 @@ var weaponsProto = {
         shots : 1,
         speed : 70,
         damage : 60,
+        shootThrough : true
         //shift : 50
     }
 };
@@ -46,7 +47,7 @@ var weaponsProto = {
 var Weapon = function(opts, id){
     var ammo = opts.ammo, lastShot, cooldown = opts.cooldown, shots = opts.shots, type = opts.name,
         randomizer = opts.randomizer || 0, speed = opts.speed, damage = opts.damage, startRandomizer = opts.startRandomizer || 0,
-        shift = opts.shift || 0;
+        shift = opts.shift || 0, shootThrough = opts.shootThrough;
 
     function fire(sx,sy,tx,ty){
 
@@ -55,7 +56,7 @@ var Weapon = function(opts, id){
             var r = getRandomArbitrary(-randomizer, randomizer);
             if(type == 'pistol')
                 r = .025 * (i==0 ? 1 : -1);
-            var start = getRandomArbitrary(-startRandomizer, startRandomizer) || 100;
+            var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 100;
 
             ammo += shots;
 
@@ -69,10 +70,10 @@ var Weapon = function(opts, id){
                 start : start,
                 damage : damage,
                 shift : speed,
+                shootThrough : shootThrough,
                 vx : Math.cos(angleRadians),
                 vy : Math.sin(angleRadians),
-                array : bullets
-            });
+            },[bullets]);
         }
         lastShot = Date.now();
     }

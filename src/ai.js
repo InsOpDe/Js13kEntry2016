@@ -6,15 +6,15 @@ var Ai = function(entity){
     var pX, pY; //todo: get all enemies
 
 
-    function update(pos){
-        pX = pos.x;
-        pY = pos.y;
+    function update(posPlayer){
+        pX = posPlayer.x;
+        pY = posPlayer.y;
         move();
         shootEnemy()
     }
 
     function shootEnemy(){
-        entity.shoot(true, {x:pX, y:pY});
+        //entity.shoot(true, {x:pX, y:pY});
     }
 
 
@@ -34,10 +34,12 @@ var Ai = function(entity){
                 f = moveOrder.y < entity.getPos().y ? -1 : 1;
                 entity.moveY(f * movementSpeed);
             } else {
-                var dir = Math.random() <.5 ? -1 : 1;
+                //var dir = Math.random() <.5 ? -1 : 1;
+                var dir = entity.getPos().x > pX ? -1 : 1;
                 var dist = getRandomArbitrary(50,100);
                 var x = dir*dist + entity.getPos().x;
-                var dir = Math.random() <.5 ? -1 : 1;
+                var dir = entity.getPos().y > pY ? -1 : 1;
+                //var dir = Math.random() <.5 ? -1 : 1;
                 var dist = getRandomArbitrary(50,100);
                 var y = dir*dist + entity.getPos().y;
                 moveOrder = {x:x,y:y};

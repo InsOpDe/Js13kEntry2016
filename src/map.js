@@ -10,26 +10,24 @@ var map = function(){
         loaderObj.init(function(){
             cb();
             initItems();
-            //initEnemy();
+            initEnemy();
             tilesize = proto['area'].w;
 
         })
     }
 
     function initEnemy(){
-        var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
-        var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
-        console.log();
-        //TODO: mach daraus endlich ne funktion!
-        var enemy = new entity({
-            name : 'enemy1',
-            x: x,
-            y: y,
-            bot: true
-        })
-        entities.push(enemy);
-        //items.push(enemy);
-        enemy.setRef(enemy);
+        for(var i = 0; i < 5; i++){
+            var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+            var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+            createEntity({
+                name : 'enemy1',
+                x: x,
+                y: y,
+                bot: true,
+            },[entities])
+        }
+
     }
 
     function initItems(){
@@ -40,15 +38,11 @@ var map = function(){
             var whichItem = Math.max((Math.round(Math.random()*availItems.length)-1),0);
             var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
             var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
-            //TODO: mach daraus endlich ne funktion!
-            var crate = new entity({
+            createEntity({
                 name : availItems[whichItem],
                 x: x,
                 y: y
-            });
-            entities.push(crate);
-            items.push(crate);
-            crate.setRef(crate);
+            },[entities, items])
         }
     }
 
