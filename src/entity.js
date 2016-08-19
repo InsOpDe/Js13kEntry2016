@@ -25,6 +25,8 @@ var entity = function(opts,cb) {
         damage = 0,
     //todo: figure out anfangswert, ist der abstand zum mittelpunkt des spielers
         d = 100,
+        lastPositions = [],
+        lastShiftPositions = [],
         //d = 30,
         hitCd = 200,
         name,
@@ -32,6 +34,7 @@ var entity = function(opts,cb) {
         beingDestroyed,
         ticksPerFrame = 0,
         splinterSelf,
+        shift = 0,
         numberOfCols = 1,
         numberOfRows = 1,
         frameIndex = 0,
@@ -65,6 +68,7 @@ var entity = function(opts,cb) {
             dealDamage: dealDamage,
             getRealPos: getRealPos,
             setRef: setRef,
+            getWeapon: getWeapon,
             getHp: getHp,
             getRef: getRef,
             setHp: setHp,
@@ -111,6 +115,7 @@ var entity = function(opts,cb) {
             originId = opts.id;
             speed = opts.speed;
             damage = opts.damage;
+            shift = opts.shift;
             d = opts.start;
         }
 
@@ -119,8 +124,10 @@ var entity = function(opts,cb) {
         weapons.push(weapon);
 
         if(isPlayer){
-            //weapons.push(new Weapon(weaponsProto['machinegun'], id));
-            //weapons.push(new Weapon(weaponsProto['shotgun'], id));
+            //todo: slots, damit die weaponreihenfolge fest ist
+            weapons.push(new Weapon(weaponsProto['machinegun'], id));
+            weapons.push(new Weapon(weaponsProto['shotgun'], id));
+            weapons.push(new Weapon(weaponsProto['pistol'], id));
         }
 
 
@@ -140,7 +147,7 @@ var entity = function(opts,cb) {
         weaponIndex += r;
         if(weaponIndex < 0)
             weaponIndex = weapons.length + weaponIndex;
-        weaponIndex.mod(weapons.length);
+        weaponIndex = weaponIndex.mod(weapons.length);
         weapon = weapons[weaponIndex];
     }
 
@@ -148,6 +155,10 @@ var entity = function(opts,cb) {
     function update(pPos){
         pX = pPos.x;
         pY = pPos.y;
+
+        lastPositions.unshift({x:x,y:y});
+        lastPositions.splice(10,1);
+
 
         if(ai) ai.update(pPos);
 
@@ -170,6 +181,13 @@ var entity = function(opts,cb) {
 
         if(isBullet){
             d+=speed;
+            var dTemp = d;
+            for(var i=0; i<shift; i++){
+                lastShiftPositions.unshift({x:vx * dTemp + sX,y:vy * dTemp + sY});
+                lastShiftPositions.splice(shift,1);
+                dTemp--;
+            }
+
             x = vx * d + sX;
             y = vy * d + sY;
             //todo: do exports for all entities
@@ -268,10 +286,7 @@ var entity = function(opts,cb) {
 
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
-        //    x += w//*numberOfCols/2;
-            //y += h*numberOfRows;
             x += zoom*(w/4);
-            //y += h*zoom;
 
         //}
         // Set the origin to the center of the image
@@ -317,10 +332,22 @@ var entity = function(opts,cb) {
 
         }
 
-        //DEBUG
         if(isBullet){
-            context.fillStyle = '#ff0000';
-            context.fillRect(x,y,10,10);
+            context.fillStyle = '#ffffff';
+            var size = zoom / 2;
+            context.fillRect(x,y,size,size);
+            if(shift){
+                var shiftX, shiftY
+                for(var i = 0; i < shift; i++){
+                    if(lastShiftPositions[i]){
+                        context.globalAlpha = i/shift;
+                        shiftX = (cWidth/2)+lastShiftPositions[i].x-pX;
+                        shiftY = (cHeight/2)+lastShiftPositions[i].y-pY;
+                        context.fillRect(shiftX,shiftY,size,size);
+                    }
+                }
+            }
+            context.globalAlpha = 1;
         }
 
 
@@ -393,6 +420,9 @@ var entity = function(opts,cb) {
     }
     function setHp(newHp){
         hp = newHp
+    }
+    function getWeapon(){
+        return weapon
     }
     function dealDamage(d){
         gotHit = Date.now() + hitCd;

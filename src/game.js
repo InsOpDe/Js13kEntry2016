@@ -7,7 +7,7 @@ var game = function(){
         factor,
         last,
         player,
-        font = new pixelfont(),
+        gui,
         isPaused = false;
 
 
@@ -39,6 +39,7 @@ var game = function(){
             });
             entities.push(player);
             player.setRef(player);
+            gui = new Gui(player);
 
             debugWindow = new debug();
 
@@ -103,6 +104,7 @@ var game = function(){
             bullets[i].update(player.getRealPos()).draw();
         }
 
+        gui.draw();
 
         //fonts
         //context.drawImage(font.draw('Pixel Font', 24),0,0);
