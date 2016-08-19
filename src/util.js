@@ -124,6 +124,20 @@ function getAngleBetweenTwoPoints(sx,sy,tx,ty){
     return Math.atan2(ty - sy, tx - sx);
 }
 
+
+function createEntity(opts){
+    var ent = new entity({
+        name : opts.name,
+        x : opts.x,
+        y : opts.y,
+        id : opts.id,
+        vx : opts.vx,
+        vy : opts.vy
+    });
+    opts.array.push(ent);
+    ent.setRef(ent);
+}
+
 function hits(x1, y1, w1, h1,
               x2, y2, w2, h2){
     if (x1 + w1 > x2)

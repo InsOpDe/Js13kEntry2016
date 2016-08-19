@@ -35,7 +35,7 @@ var entity = function(opts,cb) {
         frameIndex = 0,
         tickCount = 0,
         lastShot = 0,
-        cooldown = 300,
+        weapon,
         sprites,
         hitSprites,
         toggleAnimation,
@@ -108,6 +108,9 @@ var entity = function(opts,cb) {
             originId = opts.id;
             damage = 10; //TODO: iwo her damage wert nehmen
         }
+
+        if(isBot || isPlayer)
+            weapon = new Weapon('pistol', id);
 
         x = sX = opts.x;
         y = sY = opts.y;
@@ -313,11 +316,9 @@ var entity = function(opts,cb) {
 
     function shoot(shooting, dest){
         isShooting = shooting;
-        var now = Date.now();
-        if(!isShooting || (lastShot > now - cooldown)){
+        if(!isShooting || weapon.checkCooldown()){
             return;
         }
-        lastShot = Date.now();
         //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
         if(isPlayer){
             var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
@@ -329,31 +330,15 @@ var entity = function(opts,cb) {
         //if(isPlayer)
             flip = sX < dest.x ? 1 : -1;
 
+        weapon.fire(sx,sy,tx,ty);
 
-        var angleRadians = getAngleBetweenTwoPoints(sx,sy,tx,ty);
-        //var angleRadians = Math.atan2(ty - sy, tx - sx);
-        //var d = Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
-        //console.log(d*Math.cos(angleRadians),d*Math.sin(angleRadians));
-        //console.log(angleDeg,angle,angleRadians);
-        var bullet = new entity({
-            name : 'bullet',
-            x : sx,
-            //y : sy,
-            //x : sx - (zoom * w/2),
-            y : sy,
-            id : id,
-            vx : Math.cos(angleRadians),
-            vy : Math.sin(angleRadians)
-        });
-        bullets.push(bullet);
-        bullet.setRef(bullet);
     }
 
 
 
     function moveX(d) {
         toggleAnimation = toggleAnimation || d;
-        if((lastShot < Date.now() - cooldown))
+        if(!weapon.checkCooldown())
             flip = d == 0 ? flip : d > 0 ? 1 : -1;
         x += d;
     }
