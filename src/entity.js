@@ -18,6 +18,7 @@ var entity = function(opts,cb) {
         pX,
         pY,
         ai,
+        speed,
         alreadyDebuged,
         hp = 0,
         tintedImg = 0,
@@ -106,11 +107,12 @@ var entity = function(opts,cb) {
 
         } else {
             originId = opts.id;
-            damage = 10; //TODO: iwo her damage wert nehmen
+            speed = opts.speed;
+            damage = opts.damage;
         }
 
         if(isBot || isPlayer)
-            weapon = new Weapon('pistol', id);
+            weapon = new Weapon(weapons['pistol'], id);
 
         x = sX = opts.x;
         y = sY = opts.y;
@@ -149,7 +151,7 @@ var entity = function(opts,cb) {
         }
 
         if(isBullet){
-            d+=30;
+            d+=speed;
             x = vx * d + sX;
             y = vy * d + sY;
             //todo: do exports for all entities
