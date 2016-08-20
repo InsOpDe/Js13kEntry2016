@@ -2,6 +2,8 @@
  * Created by Marcel Michelfelder on 14.08.2016.
  */
 
+//shinecolor: ffb400
+
 var entity = function(opts,cb) {
     idCounter++;
 
@@ -19,6 +21,7 @@ var entity = function(opts,cb) {
         pY,
         ai,
         isHovering,
+        hoverDelta = 0,
         speed,
         alreadyDebuged,
         hp = 0,
@@ -82,6 +85,7 @@ var entity = function(opts,cb) {
         isEnemy = false,
         isBot = false,
         isItem = false,
+        isCollectable = false,
         isPlayer = false;
 
 
@@ -98,8 +102,10 @@ var entity = function(opts,cb) {
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
         isEnemy = !!(name.match(/enemy/) || name.match(/drone/));
-        isHovering = name.match(/drone/);
+        isCollectable = opts.isCollectable;
+        isHovering = name.match(/drone/) || isCollectable;
         isItem = name.match(/crate/);
+
         isBot = opts.bot;
 
 
@@ -283,7 +289,7 @@ var entity = function(opts,cb) {
             posX,
            posY,
             0,
-           isBullet ? false : {
+           isBullet || isCollectable ? false : {
                img : hitSprites[offsetY][frameIndex],
                alpha : delta
            });
@@ -299,7 +305,8 @@ var entity = function(opts,cb) {
         var flopScale;
 
         if(isHovering)
-            y += Math.sin(Date.now() /100)*5;
+            y += Math.sin(hoverDelta++ /7)*5;
+            //y += Math.sin(Date.now() /100)*5;
 
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
@@ -454,6 +461,15 @@ var entity = function(opts,cb) {
         hp -= d;
         if(hp <= 0){
             beingDestroyed = that;
+            if(isItem){
+                var name = proto.items.subitems[Math.round(getRandomArbitrary(0,proto.items.subitems.length-1))];
+                createEntity({
+                    name : name,
+                    isCollectable : true,
+                    x:x,
+                    y:y
+                },[entities,collectables])
+            }
         }
         return hp;
     }

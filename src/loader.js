@@ -34,13 +34,24 @@ var proto = {
     crate: {
         name : 'crate',
         w: 20,
-        h: 20,
+        h: 18,
         hp: 30,
         variations : {
             'crate2' : {
                 tint : RGBA(17,30,30)
             }
         }
+    },
+    items: {
+        name : 'items',
+        w: 20,
+        h: 18,
+        subitems : ['pistol', 'rifle']
+        //variations : {
+        //    'crate2' : {
+        //        tint : RGBA(17,30,30)
+        //    }
+        //}
     }
 };
 
@@ -90,6 +101,16 @@ var loader = function(){
                 proto[i].hitSprites = iterateSprites(proto[i].sprites,function(sprite){
                     return tint(sprite,RGBA(hl,hl,hl));
                 })
+                for(var j in proto[i].subitems){
+                    var spritesTemp = [[proto[i].sprites[0][j]]];
+                    proto[proto[i].subitems[j]] = {
+                        w : proto[i].w,
+                        h : proto[i].h,
+                        name : proto[i].subitems[j],
+                        //todo: für 2er reihen noch machen
+                        sprites : spritesTemp
+                    }
+                }
             }
 
             cb();

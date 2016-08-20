@@ -14,11 +14,10 @@ var canvas,
     entities = [],
     bullets = [],
     items = [],
+    collectables = [],
     images = {},
     cWidth = window.innerWidth,
     cHeight = window.innerHeight,
-    //cWidth = 900,
-    //cHeight = 600,
     keysDown = [];
 window.onload = function() {
 

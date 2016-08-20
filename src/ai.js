@@ -14,7 +14,7 @@ var Ai = function(entity){
     }
 
     function shootEnemy(){
-        entity.shoot(true, {x:pX, y:pY});
+        //entity.shoot(true, {x:pX, y:pY});
     }
 
 
