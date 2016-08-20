@@ -75,7 +75,8 @@ var entity = function(opts,cb) {
             setHp: setHp,
             getImg: getImg,
             isEnemyFnct : isEnemyFnct,
-            isPlayerFnct : isPlayerFnct
+            isPlayerFnct : isPlayerFnct,
+            isItemFnct : isItemFnct
         },
         isBullet = false,
         isEnemy = false,
@@ -98,6 +99,7 @@ var entity = function(opts,cb) {
         isBullet = name == 'bullet';
         isEnemy = !!(name.match(/enemy/) || name.match(/drone/));
         isHovering = name.match(/drone/);
+        isItem = name.match(/crate/);
         isBot = opts.bot;
 
 
@@ -210,7 +212,7 @@ var entity = function(opts,cb) {
                 var w2 = ent.getBounding().w;
                 var h2 = ent.getBounding().h;
                 //TODO: nochmal überarbeiten von welchem schießer der schuss kommt und wen er trifft
-                if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.isPlayerFnct() || (ent.isEnemyFnct() && originId == player.getId()))){
+                if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.isItemFnct() ||ent.isPlayerFnct() || (ent.isEnemyFnct() && originId == player.getId()))){
                     //TODO: nach hit ggf vektoren abändern - das ist auch ne gute idee für nen glitch
                     if(!shootThrough)
                         bullets.splice(bullets.indexOf(that),1);
@@ -285,6 +287,7 @@ var entity = function(opts,cb) {
                img : hitSprites[offsetY][frameIndex],
                alpha : delta
            });
+
 
         toggleAnimation = 0;
         return exports;
@@ -373,6 +376,7 @@ var entity = function(opts,cb) {
         //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);
 
         context.restore();
+        //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);
     }
 
 
@@ -423,7 +427,9 @@ var entity = function(opts,cb) {
         return {x : x, y : y}
     }
     function getPos(){
-        return {x : x-w*zoom/2, y : y-h*zoom/2}
+        return {x : x-w*zoom/4, y : y-h*zoom/2}
+        //return {x : x-w*zoom/2, y : y-h*zoom/2}
+        //return {x : x-w*zoom/2+zoom*(w/4), y : y-h*zoom/2}
     }
     function getBounding(){
         return {w : w*zoom/2, h : h*zoom/2}
@@ -464,6 +470,9 @@ var entity = function(opts,cb) {
     }
     function isPlayerFnct(){
         return isPlayer
+    }
+    function isItemFnct(){
+        return isItem
     }
 
     return exports

@@ -2,7 +2,7 @@
  * Created by Marcel Michelfelder on 19.08.2016.
  */
 var Ai = function(entity){
-    var movementTimer = Date.now(), movementCooldown = 3000, moveOrder, movementSpeed = 5, f;
+    var movementTimer = Date.now(), movementCooldown = getRandomArbitrary(500, 2000), moveOrder, movementSpeed = 5, f;
     var pX, pY; //todo: get all enemies
 
 
@@ -14,7 +14,7 @@ var Ai = function(entity){
     }
 
     function shootEnemy(){
-        entity.shoot(true, {x:pX, y:pY});
+        //entity.shoot(true, {x:pX, y:pY});
     }
 
 
