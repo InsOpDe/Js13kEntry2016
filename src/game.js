@@ -6,7 +6,6 @@ var game = function(){
     var now,
         factor,
         last,
-        player,
         gui,
         isPaused = false;
 

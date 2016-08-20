@@ -19,6 +19,18 @@ var proto = {
             }
         }
     },
+    drone: {
+        name : 'drone',
+        w: 10,
+        h: 10,
+        hp: 10,
+        variations :  {
+            'drone1' : {
+                from : [RGBA(248,248,248)],
+                to : [RGBA(219,17,17)]
+            }
+        }
+    },
     crate: {
         name : 'crate',
         w: 20,

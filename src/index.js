@@ -5,6 +5,7 @@
 var canvas,
     context,
     stage,
+    player,
     debugWindow,
     idCounter = 0,
     overallZoom = 10,

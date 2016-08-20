@@ -18,6 +18,7 @@ var entity = function(opts,cb) {
         pX,
         pY,
         ai,
+        isHovering,
         speed,
         alreadyDebuged,
         hp = 0,
@@ -73,6 +74,8 @@ var entity = function(opts,cb) {
             getRef: getRef,
             setHp: setHp,
             getImg: getImg,
+            isEnemyFnct : isEnemyFnct,
+            isPlayerFnct : isPlayerFnct
         },
         isBullet = false,
         isEnemy = false,
@@ -93,7 +96,8 @@ var entity = function(opts,cb) {
         name = opts.name;
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
-        isEnemy = name.match(/enemy/);
+        isEnemy = !!(name.match(/enemy/) || name.match(/drone/));
+        isHovering = name.match(/drone/);
         isBot = opts.bot;
 
 
@@ -120,16 +124,20 @@ var entity = function(opts,cb) {
             d = opts.start;
         }
 
-        if(isBot || isPlayer)
-            weapon = new Weapon(weaponsProto['rifle'], id);
-        weapons.push(weapon);
+
+
+        weapons.push(new Weapon(weaponsProto['pistol'], id));
 
         if(isPlayer){
             //todo: slots, damit die weaponreihenfolge fest ist
+            weapons.push(new Weapon(weaponsProto['rifle'], id));
             weapons.push(new Weapon(weaponsProto['machinegun'], id));
             weapons.push(new Weapon(weaponsProto['shotgun'], id));
-            weapons.push(new Weapon(weaponsProto['pistol'], id));
+            //weapons.push(new Weapon(weaponsProto['pistol'], id));
         }
+
+        if(isBot || isPlayer)
+            weapon = weapons[0];
 
 
         x = sX = opts.x;
@@ -162,7 +170,6 @@ var entity = function(opts,cb) {
 
 
         if(ai) ai.update(pPos);
-
 
         if(toggleAnimation)
             tickCount += 1;
@@ -202,8 +209,8 @@ var entity = function(opts,cb) {
                 var y2 = ent.getPos().y;
                 var w2 = ent.getBounding().w;
                 var h2 = ent.getBounding().h;
-                if(hits(x,y,w,h,x2,y2,w2,h2)){
-
+                //TODO: nochmal überarbeiten von welchem schießer der schuss kommt und wen er trifft
+                if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.isPlayerFnct() || (ent.isEnemyFnct() && originId == player.getId()))){
                     //TODO: nach hit ggf vektoren abändern - das ist auch ne gute idee für nen glitch
                     if(!shootThrough)
                         bullets.splice(bullets.indexOf(that),1);
@@ -249,7 +256,7 @@ var entity = function(opts,cb) {
     function draw() {
 
         // Draw the animation
-        if(isShooting) offsetY = 1; else offsetY = 0;
+        if(isShooting && !isHovering) offsetY = 1; else offsetY = 0;
         if(!toggleAnimation) frameIndex = 0;
 
         //var posX = isPlayer ? cWidth/2 : x-pX;
@@ -287,6 +294,9 @@ var entity = function(opts,cb) {
         context.save();
         var flipScale;
         var flopScale;
+
+        if(isHovering)
+            y += Math.sin(Date.now() /100)*5;
 
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
@@ -365,11 +375,16 @@ var entity = function(opts,cb) {
         context.restore();
     }
 
+
+    //TODO: machen dass er die waffe nicht zückt wenn der cd noch nicht fertig ist
     function shoot(shooting, dest){
         isShooting = shooting;
-        if(!isShooting || weapon.checkCooldown()){
+        var cd = weapon.checkCooldown();
+        if(!shooting || cd){
+            //isShooting = !cd && shooting;
             return;
         }
+
         //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
         if(isPlayer){
             var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
@@ -443,6 +458,12 @@ var entity = function(opts,cb) {
     }
     function getRef(){
         return that
+    }
+    function isEnemyFnct(){
+        return isEnemy
+    }
+    function isPlayerFnct(){
+        return isPlayer
     }
 
     return exports
