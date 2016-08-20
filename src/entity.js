@@ -236,7 +236,7 @@ var entity = function(opts,cb) {
 
 
 
-        if(dist(pX,pY,x,y) > cWidth/1.5) {
+        if(dist(pX,pY,x,y) > cWidth) {
             deleteItem();
         }
 
