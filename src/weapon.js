@@ -5,7 +5,16 @@
 var weaponsProto = {
     pistol : {
         name : 'pistol',
-        ammo : Number.POSITIVE_INFINITY,
+        ammo : null,
+        reloadAmmo : 10,
+        cooldown : 600,
+        shots : 1,
+        speed : 20,
+        damage : 10,
+    },
+    pistols : {
+        name : 'pistols',
+        ammo : 10,
         reloadAmmo : 10,
         cooldown : 600,
         shots : 2,
@@ -45,23 +54,37 @@ var weaponsProto = {
 };
 
 
-var Weapon = function(opts, id){
+var Weapon = function(opts, id, weaponMod){
+    opts = objClone(opts);
+    for(var i in weaponMod){
+        opts[i] = weaponMod[i];
+    }
+    if(!opts.ammo) opts.ammo =  Number.POSITIVE_INFINITY;
+
     var ammo = opts.ammo, lastShot, cooldown = opts.cooldown, shots = opts.shots, type = opts.name,
         randomizer = opts.randomizer || 0, speed = opts.speed, damage = opts.damage, startRandomizer = opts.startRandomizer || 0,
         shift = opts.shift || 0, shootThrough = opts.shootThrough, isReloading, reloadProgress = 0;
     var reloadAmmo = opts.reloadAmmo || ammo;
+
     var reloadMaxAmmo = reloadAmmo;
-    var reloadTime = reloadAmmo * damage * shots /2;
+    var reloadTime = reloadAmmo * damage * shots /3;
 
     function fire(sx,sy,tx,ty){
         //todo: ggf eine ebene höher machen
         if(isReloading) return;
+        var r = 0;
+        if(type == 'pistols')
+            r = getRandomArbitrary(-randomizer, randomizer);
 
+        if(type == 'pistols')
+            console.log(r);
         for(var i=0; i < shots; i++){
 
-            var r = getRandomArbitrary(-randomizer, randomizer);
-            if(type == 'pistol')
-                r = .025 * (i==0 ? 1 : -1);
+
+            if(type == 'pistols')
+                r += .025 * (i==0 ? 1 : -1);
+            else
+                r += getRandomArbitrary(-randomizer, randomizer);
             var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 100;
 
 

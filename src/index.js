@@ -13,11 +13,14 @@ var canvas,
     screenmouseposition = {x:0,y:0},
     entities = [],
     bullets = [],
+    enemies = [],
+    timeUntilNextWave = 0,
     items = [],
     collectables = [],
     images = {},
     cWidth = window.innerWidth,
     cHeight = window.innerHeight,
+    SECOND = 1000,
     keysDown = [];
 window.onload = function() {
 

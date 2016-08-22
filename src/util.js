@@ -217,6 +217,10 @@ function RGBA(r,g,b,a){
     }
 };
 
+function objClone(obj){
+    return JSON.parse(JSON.stringify(obj));
+}
+
 function dist (sx,sy,tx,ty){
     return Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
 }

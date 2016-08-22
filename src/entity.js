@@ -25,6 +25,7 @@ var entity = function(opts,cb) {
         speed,
         alreadyDebuged,
         hp = 0,
+        maxHp = 0,
         tintedImg = 0,
         damage = 0,
     //todo: figure out anfangswert, ist der abstand zum mittelpunkt des spielers
@@ -76,6 +77,7 @@ var entity = function(opts,cb) {
             getHp: getHp,
             getRef: getRef,
             setHp: setHp,
+            addHp: addHp,
             getImg: getImg,
             isEnemyFnct : isEnemyFnct,
             isPlayerFnct : isPlayerFnct,
@@ -83,7 +85,7 @@ var entity = function(opts,cb) {
             deleteItem : deleteItem,
             isItemFnct : isItemFnct
         },
-        weaponOrder = ['pistol', 'machinegun', 'shotgun', 'rifle'],
+        weaponOrder = ['pistol', 'pistols', 'machinegun', 'shotgun', 'rifle'],
         isBullet = false,
         isEnemy = false,
         isBot = false,
@@ -117,10 +119,17 @@ var entity = function(opts,cb) {
             h = obj.h;
             w = obj.w;
             hp = opts.hp || obj.hp;
+            maxHp = hp;
             sprites = obj.sprites;
             hitSprites = obj.hitSprites;
             numberOfCols = sprites[0].length;
             numberOfRows = sprites.length;
+
+            if(isBot || isPlayer){
+                var weaponname = obj.weapon;
+                var weaponMod = obj.weaponMod;
+                weapon = weapons[weaponname] = new Weapon(weaponsProto[weaponname], id, weaponMod);
+            }
 
 
             if(!isPlayer)
@@ -137,7 +146,7 @@ var entity = function(opts,cb) {
 
 
 
-        weapons['pistol'] = new Weapon(weaponsProto['pistol'], id);
+
 
         if(isPlayer){
             //weapons['machinegun'] = new Weapon(weaponsProto['machinegun'], id);
@@ -149,8 +158,8 @@ var entity = function(opts,cb) {
             //weapons.push(new Weapon(weaponsProto['pistol'], id));
         }
 
-        if(isBot || isPlayer)
-            weapon = weapons['pistol'];
+
+
 
 
         x = sX = opts.x;
@@ -299,6 +308,10 @@ var entity = function(opts,cb) {
                 items.splice(items.indexOf(that),1);
             if(isCollectable)
                 collectables.splice(collectables.indexOf(that),1);
+            if(isEnemy)
+                enemies.splice(enemies.indexOf(that),1);
+
+
         }
     }
 
@@ -505,6 +518,10 @@ var entity = function(opts,cb) {
     function setHp(newHp){
         hp = newHp
     }
+    function addHp(addedHp){
+        hp += addedHp;
+        hp = Math.min(hp, maxHp);
+    }
     function getWeapon(){
         return weapon
     }
@@ -514,13 +531,17 @@ var entity = function(opts,cb) {
         if(hp <= 0){
             beingDestroyed = that;
             if(isItem){
-                var name = proto.items.subitems[Math.round(getRandomArbitrary(1,proto.items.subitems.length-1))];
+                var name = proto.items.subitems[Math.round(getRandomArbitrary(0,proto.items.subitems.length-1))];
                 createEntity({
                     name : name,
                     isCollectable : true,
                     x:x,
                     y:y
                 },[entities,collectables])
+            }
+            if(isEnemy) {
+                //player.addHp(10);
+                player.addHp(maxHp);
             }
         }
         return hp;

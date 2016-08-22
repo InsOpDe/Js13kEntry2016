@@ -3,30 +3,57 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize;
+    var pX, pY, lastX, lastY, tilesize, wave = 3;
+    var waves = [
+        {
+            enemies : [{name : 'drone', count : 3}],
+            lasting : 10 * SECOND
+        },
+        {
+            enemies : [{name : 'enemy1', count : 2}],
+            lasting : 20 * SECOND
+        },
+        {
+            enemies : [{name : 'drone', count : 10}],
+            lasting : 25 *SECOND
+        },
+        {
+            enemies : [ {name : 'drone1', count : 3}],
+            lasting : 30 * SECOND
+        }
+
+    ];
 
     function init(cb){
         var loaderObj = new loader();
         loaderObj.init(function(){
             cb();
             initItems();
-            initEnemy();
             tilesize = proto['area'].w;
 
         })
     }
 
-    function initEnemy(){
-        for(var i = 0; i < 5; i++){
-            var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
-            var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
-            createEntity({
-                //name : 'drone',
-                name : 'enemy1',
-                x: x,
-                y: y,
-                bot: true,
-            },[entities])
+    function nextWave(){
+        if(waves[wave]){
+            var waveInfo = waves[wave].enemies;
+            timeUntilNextWave = Date.now() + waves[wave].lasting;
+            for(var j in waveInfo){
+                for(var i = 0; i < waveInfo[j].count; i++){
+                    var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+                    var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+                    createEntity({
+                        //name : 'drone',
+                        name : waveInfo[j].name,
+                        x: x,
+                        y: y,
+                        bot: true,
+                    },[entities,enemies])
+                }
+            }
+            wave++;
+        } else {
+            //console.log("game completed");
         }
 
     }
@@ -52,6 +79,11 @@ var map = function(){
         addRandomItem();
         lastX = pX;
         lastY = pY;
+
+        if(Date.now() > timeUntilNextWave){
+            nextWave();
+        }
+
         draw();
     }
 

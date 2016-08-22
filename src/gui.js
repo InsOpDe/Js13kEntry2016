@@ -10,6 +10,7 @@ var Gui = function(player){
     function draw(){
         var weapon = player.getWeapon();
         context.drawImage(font.draw(weapon.name + " " + weapon.getAmmo().ammo, 10, "green"),margin,cHeight - margin- 50);
+        context.drawImage(font.draw("Next Wave in: " + (Date.now()-timeUntilNextWave)/1000, 10, "green"),cWidth-margin-700,cHeight - margin- 50);
         drawHp();
         drawAmmo();
     }

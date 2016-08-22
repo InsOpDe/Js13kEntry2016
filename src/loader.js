@@ -12,8 +12,14 @@ var proto = {
         w: 34,
         h: 30,
         hp: 100,
+        weapon : 'pistol',
         variations :  {
             'enemy1' : {
+                weapon : 'pistols',
+                weaponMod : {
+                    cooldown : 1000,
+                    randomizer : .35
+                },
                 from : [RGBA(248,248,248)],
                 to : [RGBA(219,17,17)]
             }
@@ -24,10 +30,21 @@ var proto = {
         w: 10,
         h: 10,
         hp: 10,
+        weapon : 'pistol',
+        weaponMod : {
+            cooldown : 1000,
+            randomizer : .35
+        },
         variations :  {
             'drone1' : {
-                from : [RGBA(248,248,248)],
-                to : [RGBA(219,17,17)]
+                weapon : 'rifle',
+                weaponMod : {
+                    cooldown : 1000,
+                    randomizer : .35,
+                    damage : 30
+                },
+                hp : 30,
+                tint : RGBA(17,30,30)
             }
         }
     },
@@ -46,7 +63,7 @@ var proto = {
         name : 'items',
         w: 20,
         h: 18,
-        subitems : ['pistol', 'rifle', 'shotgun', 'machinegun']
+        subitems : ['pistols', 'rifle', 'shotgun', 'machinegun']
         //variations : {
         //    'crate2' : {
         //        tint : RGBA(17,30,30)
@@ -73,7 +90,9 @@ var loader = function(){
                         proto[j] = {
                             w : proto[i].w,
                             h : proto[i].h,
-                            hp : proto[i].hp,
+                            hp : vars[j].hp || proto[i].hp,
+                            weapon : vars[j].weapon || proto[i].weapon,
+                            weaponMod : vars[j].weaponMod || proto[i].weaponMod,
                             name : j
                         };
                         if(vars[j].from){
