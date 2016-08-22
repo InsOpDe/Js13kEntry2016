@@ -3,7 +3,7 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave = 3;
+    var pX, pY, lastX, lastY, tilesize, wave = 0;
     var waves = [
         {
             enemies : [{name : 'drone', count : 3}],
@@ -29,9 +29,21 @@ var map = function(){
         loaderObj.init(function(){
             cb();
             initItems();
+            createGlitch();
             tilesize = proto['area'].w;
 
         })
+    }
+
+    function createGlitch(){
+        var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+        var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+        createEntity({
+            //name : 'drone',
+            name : 'glitch',
+            x: x,
+            y: y,
+        },[entities])
     }
 
     function nextWave(){

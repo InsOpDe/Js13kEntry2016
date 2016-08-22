@@ -76,8 +76,6 @@ var Weapon = function(opts, id, weaponMod){
         if(type == 'pistols')
             r = getRandomArbitrary(-randomizer, randomizer);
 
-        if(type == 'pistols')
-            console.log(r);
         for(var i=0; i < shots; i++){
 
 

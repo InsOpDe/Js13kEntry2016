@@ -9,6 +9,7 @@ var canvas,
     debugWindow,
     idCounter = 0,
     overallZoom = 10,
+    //overallZoom = 1,
     mouseposition = {x:0,y:0},
     screenmouseposition = {x:0,y:0},
     entities = [],
@@ -54,10 +55,10 @@ function init() {
     document.onkeyup = document.onmouseup = keyUp;
 
     document.onmousemove = function(e){
-        mouseposition.x = -(cWidth/2)+ e.x;
-        mouseposition.y = -(cHeight/2)+ e.y;
-        screenmouseposition.x = e.x;
-        screenmouseposition.y = e.y;
+        mouseposition.x = -(cWidth/2)+ e.clientX;
+        mouseposition.y = -(cHeight/2)+ e.clientY;
+        screenmouseposition.x = e.clientX;
+        screenmouseposition.y = e.clientY;
     };
 
     function setKey(event, down) {

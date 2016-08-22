@@ -208,6 +208,87 @@ function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
 
+function createGlitchSprites(w,h){
+    var sprites = [];
+    for(var j=0; j <10; j++){
+        sprites.push(createGlitchSprite(w,h));
+    }
+    return sprites;
+}
+
+function createGlitchSprite(w,h){
+    var buffer = document.createElement('canvas');
+    //console.log(buffer, img);
+    var fontheight = 6;
+    var size = 2;
+    buffer.width = w;
+    buffer.height = h;
+    var rows = Math.ceil(buffer.height/fontheight);
+    var bx = buffer.getContext('2d');
+    for(var i=0; i <rows; i++){
+        bx.drawImage(new pixelfont().draw(getBinaryString(rows*3),size,"lightgreen"),0,i*size*fontheight);
+    }
+    return buffer;
+}
+
+//function drawImage(sprite,x,y,w,h,x2,y2,w2,h2){
+function drawImage(sprite,w,h,w2,h2){
+    var buffer = document.createElement('canvas');
+    buffer.width = w2;
+    buffer.height = h2;
+    var bx = buffer.getContext('2d');
+    bx.imageSmoothingEnabled = false;
+    bx.drawImage(sprite, 0, 0, w, h, 0, 0, w2, h2);
+    //bx.drawImage(sprite, 0, 0, w, h, 0, 0, w2, h2);
+    //return clipObjectGlitch(buffer);
+    return buffer;
+
+}
+
+function drawZoomed(img,zoom){
+    var buffer = document.createElement('canvas');
+    buffer.width = img.width*zoom;
+    buffer.height = img.height*zoom;;
+    var bx = buffer.getContext('2d');
+    bx.imageSmoothingEnabled = false;
+    bx.drawImage(img, 0, 0, img.width, img.height, 0, 0, buffer.width, buffer.height);
+    //bx.drawImage(sprite, 0, 0, w, h, 0, 0, w*overallZoom, h*overallZoom);
+    return buffer;
+}
+
+var glitchsprite = (function(){
+    var sprites = [];
+    for(var i = 0; i < 10; i++){
+        sprites.push(createGlitchSprite(200,200));
+    }
+    return sprites;
+})();
+
+function clipObjectGlitch(img){
+    var buffer = document.createElement('canvas');
+    var w = buffer.width = img.width;
+    var h = buffer.height = img.height;
+    var bx = buffer.getContext('2d');
+    var glitchSprite = getRandomElementInArray(glitchsprite);
+    //var glitchSprite = createGlitchSprite(w,h);
+    bx.drawImage(img,0,0);
+    bx.globalCompositeOperation = "source-in";
+    bx.drawImage(glitchSprite,0,0);
+    return buffer;
+}
+
+function getRandomElementInArray(items){
+    return items[Math.floor(Math.random()*items.length)];
+}
+
+function getBinaryString(len){
+    var str = "";
+    while(len--){
+        str += Math.random()>.5?1:0;
+    }
+    return str;
+}
+
 function RGBA(r,g,b,a){
     return {
         r:r,

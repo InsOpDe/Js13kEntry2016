@@ -87,6 +87,7 @@ var entity = function(opts,cb) {
         },
         weaponOrder = ['pistol', 'pistols', 'machinegun', 'shotgun', 'rifle'],
         isBullet = false,
+        isGlitch = false,
         isEnemy = false,
         isBot = false,
         isItem = false,
@@ -106,12 +107,17 @@ var entity = function(opts,cb) {
         name = opts.name;
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
+        isGlitch = name == 'glitch';
         isEnemy = !!(name.match(/enemy/) || name.match(/drone/));
         isCollectable = opts.isCollectable;
+
         isHovering = name.match(/drone/) || isCollectable;
         isItem = name.match(/crate/);
 
         isBot = opts.bot;
+
+        if(isGlitch)
+            toggleAnimation = true;
 
 
         if (!isBullet) {
@@ -170,7 +176,12 @@ var entity = function(opts,cb) {
         ticksPerFrame = 4;
         //ticksPerFrame = opts.ticksPerFrame;
         //todo zoom
-        zoom = overallZoom;
+        //if(!isGlitch)
+            zoom = overallZoom;
+        if(isBullet)
+            zoom = 10;
+        //else
+        //    zoom = 2;
 
     }
 
@@ -269,11 +280,13 @@ var entity = function(opts,cb) {
                 var w2 = ent.getBounding().w;
                 var h2 = ent.getBounding().h;
                 //if(hits(x,y,w,h,x2,y2,w2,h2)){
-                if(hits(x,y-h*zoom/2,w,h*zoom/2,x2,y2,w2,h2)){
+                //if(hits(x,y-h*zoom/2,w,h*zoom/2,x2,y2,w2,h2)){
+                if(hits(x-w*zoom/4,y-h*zoom/2,w*zoom/2,h*zoom/2,x2,y2,w2,h2)){
                     player.giveWeapon(ent.getName());
                     ent.deleteItem();
                     //collectables.splice(collectables.indexOf(that),1);
                     //context.fillRect((cWidth/2)+x2-pX,(cHeight/2)+y2-pY,w2,h2);
+                    //context.fillRect((cWidth/2)+w,(cHeight/2)+y-pY,-w/2,-h/2);
                     //context.fillRect((cWidth/2)+w/4*zoom,(cHeight/2)+y-pY,-w*zoom/2,-h*zoom/2);
                     break;
                     //todo: shoot through?
@@ -338,34 +351,34 @@ var entity = function(opts,cb) {
             //alreadyDebuged = true;
             //console.log(name,toggleAnimation,offsetY,frameIndex);
         }
-       drawImage(
+       drawSprite(
            isBullet ? false : sprites[offsetY][frameIndex],
            //todo: only player
             posX,
            posY,
             0,
-           isBullet || isCollectable ? false : {
+           isBullet || isCollectable || isGlitch ? false : {
                img : hitSprites[offsetY][frameIndex],
                alpha : delta
            });
 
 
-        toggleAnimation = 0;
+        toggleAnimation = isGlitch || 0;
         return exports;
     }
 
-    function drawImage(sprite, x, y, deg, tintedImage) {
+    function drawSprite(sprite, X, Y, deg, tintedImage) {
         context.save();
         var flipScale;
         var flopScale;
 
         if(isHovering)
-            y += Math.sin(hoverDelta++ /7)*5;
+            Y += Math.sin(hoverDelta++ /7)*5;
             //y += Math.sin(Date.now() /100)*5;
 
         // Set rotation point to center of image, instead of top/left
 //        if(center) {
-            x += zoom*(w/4);
+            X += zoom*(w/4);
 
         //}
         // Set the origin to the center of the image
@@ -379,9 +392,9 @@ var entity = function(opts,cb) {
         // Flip/flop the canvas //TODO: enhance
         if(flop) flopScale = -1; else flopScale = 1;
         context.scale(flip, flopScale);
-        x *= flip;
-        if(flip == -1) x += w * zoom / 2;
-        y *= flopScale;
+        X *= flip;
+        if(flip == -1) X += w * zoom / 2;
+        Y *= flopScale;
 
         //if(isPlayer)
         //console.log(x);
@@ -397,14 +410,28 @@ var entity = function(opts,cb) {
                 var finished = splinterSelf.finished();
                 var sW = splinterImg.width;
                 var sH = splinterImg.height;
-                context.drawImage(splinterImg, 0, 0, sW, sH, x+sW, y+sH, -sW/2 * zoom, -sH/2 * zoom);
+                //context.drawImage(splinterImg, 0, 0, sW, sH, x, y, -sW/2 * zoom, -sH/2 * zoom);
+                //context.drawImage(splinterImg, 0, 0, sW, sH, x+sW/10, y+sH/10, -sW/2 * zoom, -sH/2 * zoom);
+                context.drawImage(splinterImg, 0, 0, sW, sH, X+sW, Y+sH, -sW/2 * zoom, -sH/2 * zoom);
                 if(finished){
                     //console.log(entities.indexOf(beingDestroyed));
                     //entities.splice(entities.indexOf(beingDestroyed),1);
                     deleteItem()
                 }
             } else {
-                context.drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+                if(Math.random()+.05>(player.getHp()/1000) && Math.random()+.05>(player.getHp()/1000) && Math.random()+.05>(player.getHp()/1000)){
+                    context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2)), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
+                } else {
+                    context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
+                }
+                //context.drawImage(drawImage(sprite, w,h,w*zoom/2, h*zoom/2), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
+                //context.drawImage(drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom),x,y);
+
+
+                //right one..
+                //context.drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+
+
                 //context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
 
             }
@@ -414,7 +441,7 @@ var entity = function(opts,cb) {
         if(isBullet){
             context.fillStyle = '#ffffff';
             var size = zoom / 2;
-            context.fillRect(x,y,size,size);
+            context.fillRect(X,Y,size,size);
             if(shift){
                 var shiftX, shiftY
                 for(var i = 0; i < shift; i++){
@@ -432,7 +459,7 @@ var entity = function(opts,cb) {
 
         if(tintedImage.alpha > 0){
             context.globalAlpha = tintedImage.alpha;
-            context.drawImage(tintedImage.img, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
+            context.drawImage(tintedImage.img, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
         }
 
         //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);

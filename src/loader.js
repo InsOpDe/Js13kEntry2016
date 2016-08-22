@@ -80,13 +80,30 @@ var loader = function(){
             toLoad.push(proto[i])
         }
 
+
+        //for(var i in proto) {
+        //    proto[i].sprites = iterateSprites(proto[i].sprites, function (sprite) {
+        //        return drawZoomed(sprite, 10);
+        //    })
+        //    proto[i].w *= 10;
+        //    proto[i].h *= 10;
+        //}
+
+        var zoom = 10;
+
         loadAssets(toLoad, function(){
             var vars, altSprites;
             for(var i in proto){
+                //proto[i].sprites = iterateSprites(proto[i].sprites, function (sprite) {
+                //    return drawZoomed(sprite, zoom);
+                //})
+                //proto[i].w *= zoom;
+                //proto[i].h *= zoom;
                 if(vars = proto[i].variations){
                     for(var j in vars){
                         altSprites = [];
                         var sprites = undefined;
+
                         proto[j] = {
                             w : proto[i].w,
                             h : proto[i].h,
@@ -95,6 +112,7 @@ var loader = function(){
                             weaponMod : vars[j].weaponMod || proto[i].weaponMod,
                             name : j
                         };
+
                         if(vars[j].from){
                             sprites = iterateSprites(proto[i].sprites, function(sprite){
                                 var tempSprite = sprite;
@@ -117,6 +135,11 @@ var loader = function(){
 
             for(var i in proto){
                 var hl = 150;
+                //proto[i].sprites = iterateSprites(proto[i].sprites,function(sprite){
+                //    return drawZoomed(sprite,10);
+                //})
+                //proto[i].w *= 10;
+                //proto[i].h *= 10;
                 proto[i].hitSprites = iterateSprites(proto[i].sprites,function(sprite){
                     return tint(sprite,RGBA(hl,hl,hl));
                 })
@@ -131,6 +154,14 @@ var loader = function(){
                     }
                 }
             }
+
+            proto.glitch ={
+                name : 'glitch',
+                w: 99,
+                h: 96,
+                sprites : [[clipObjectGlitch(proto.player.sprites[0][0])]]
+                //sprites : [createGlitchSprites(100)]
+            };
 
             cb();
 
