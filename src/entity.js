@@ -458,6 +458,11 @@ var entity = function(opts,cb) {
 
     }
 
+    function switchToWeapon(weaponname) {
+        weapon = weapons[weaponname];
+        weaponIndex = weaponOrder.indexOf(weaponname)
+    }
+
 
 
     function moveX(d) {
@@ -509,7 +514,7 @@ var entity = function(opts,cb) {
         if(hp <= 0){
             beingDestroyed = that;
             if(isItem){
-                var name = proto.items.subitems[Math.round(getRandomArbitrary(0,proto.items.subitems.length-1))];
+                var name = proto.items.subitems[Math.round(getRandomArbitrary(1,proto.items.subitems.length-1))];
                 createEntity({
                     name : name,
                     isCollectable : true,
@@ -542,6 +547,7 @@ var entity = function(opts,cb) {
             weapons[weaponname].addAmmo(weaponsProto[weaponname].ammo);
         } else {
             weapons[weaponname] =  new Weapon(weaponsProto[weaponname], id);
+            switchToWeapon(weaponname)
         }
 
     }

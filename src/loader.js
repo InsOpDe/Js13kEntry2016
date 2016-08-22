@@ -34,7 +34,7 @@ var proto = {
     crate: {
         name : 'crate',
         w: 20,
-        h: 18,
+        h: 20,
         hp: 30,
         variations : {
             'crate2' : {

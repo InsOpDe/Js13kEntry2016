@@ -59,6 +59,7 @@ var Gui = function(player){
             fillMax = weaponsProto[weapon.name].reloadAmmo | weaponsProto[weapon.name].ammo;
 
         if(reload.reloadProgress){
+            fg = "#ffffff";
             fill  = reload.reloadProgress;
             fillMax  = reload.reloadTime;
         }

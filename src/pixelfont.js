@@ -277,7 +277,7 @@ var pixelfont = function () {
 
     function draw(string, size, color) {
         size = size || 24;
-        context.fillStyle = color || 'black';
+
         width = 0;
         height = 0;
         //context.clearRect(0, 0, canvas.width, canvas.height);
@@ -298,6 +298,7 @@ var pixelfont = function () {
 
         canvas.width = width;
         canvas.height = height;
+        context.fillStyle = color || 'black';
 
 
         var currX = 0;
