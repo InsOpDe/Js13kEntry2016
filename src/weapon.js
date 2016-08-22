@@ -6,7 +6,7 @@ var weaponsProto = {
     pistol : {
         name : 'pistol',
         ammo : Number.POSITIVE_INFINITY,
-        //ammo : 10,
+        reloadAmmo : 10,
         cooldown : 600,
         shots : 2,
         speed : 20,
@@ -48,9 +48,14 @@ var weaponsProto = {
 var Weapon = function(opts, id){
     var ammo = opts.ammo, lastShot, cooldown = opts.cooldown, shots = opts.shots, type = opts.name,
         randomizer = opts.randomizer || 0, speed = opts.speed, damage = opts.damage, startRandomizer = opts.startRandomizer || 0,
-        shift = opts.shift || 0, shootThrough = opts.shootThrough;
+        shift = opts.shift || 0, shootThrough = opts.shootThrough, isReloading, reloadProgress = 0;
+    var reloadAmmo = opts.reloadAmmo || ammo;
+    var reloadMaxAmmo = reloadAmmo;
+    var reloadTime = reloadAmmo * damage * shots /2;
 
     function fire(sx,sy,tx,ty){
+        //todo: ggf eine ebene höher machen
+        if(isReloading) return;
 
         for(var i=0; i < shots; i++){
 
@@ -76,8 +81,28 @@ var Weapon = function(opts, id){
             },[bullets]);
         }
         ammo--;
+        reloadAmmo--;
+        if(reloadAmmo <= 0)
+            startReloading();
 
         lastShot = Date.now();
+    }
+
+    //todo: stop reload if its not the actual weapon
+    function reload(){
+        if(isReloading){
+            reloadProgress = reloadTime - ++isReloading;
+            //reloadProgress = ((Date.now() + reloadTime) - isReloading) / reloadTime;
+            if(reloadProgress <= 0){
+                reloadAmmo = reloadMaxAmmo;
+                isReloading = 0;
+                reloadProgress = 0;
+            }
+        }
+    }
+
+    function startReloading(){
+        isReloading = 1;
     }
 
     function checkCooldown(){
@@ -87,7 +112,10 @@ var Weapon = function(opts, id){
 
     return {
         name : type,
-        getAmmo : function(){return ammo} , //TODO: mach arrowfunctions
+        reload : reload,
+        startReloading : startReloading,
+        getReloadProgress : function(){return {reloadProgress:reloadProgress, reloadTime:reloadTime}},
+        getAmmo : function(){return {ammo : ammo,  reloadAmmo : reloadAmmo}} , //TODO: mach arrowfunctions
         addAmmo : function(addAmmo){ammo += addAmmo} ,
         fire : fire,
         checkCooldown : checkCooldown,

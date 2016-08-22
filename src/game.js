@@ -20,6 +20,10 @@ var game = function(){
             } else if (code == 88) {
                 player.switchWeapon(-1);
             }
+
+            if(code == 82){
+                player.getWeapon().startReloading();
+            }
         }
     }
 

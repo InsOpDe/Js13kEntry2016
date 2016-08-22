@@ -272,8 +272,8 @@ var entity = function(opts,cb) {
             }
         }
 
-
-
+        if(weapon)
+            weapon.reload();
 
         //todo: in Ai einbauen
         //if(isEnemy){
@@ -451,7 +451,7 @@ var entity = function(opts,cb) {
 
         weapon.fire(sx,sy,tx,ty);
 
-        if(weapon.getAmmo()<=0 && isPlayer){
+        if(weapon.getAmmo().ammo<=0 && isPlayer){
             delete weapons[weapon.name];
             switchWeapon(1);
         }
