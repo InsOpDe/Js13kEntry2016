@@ -45,7 +45,7 @@ var entity = function(opts,cb) {
         tickCount = 0,
         weaponIndex = 0,
         weapon,
-        weapons = [],
+        weapons = {},
         sprites,
         hitSprites,
         toggleAnimation,
@@ -79,14 +79,18 @@ var entity = function(opts,cb) {
             getImg: getImg,
             isEnemyFnct : isEnemyFnct,
             isPlayerFnct : isPlayerFnct,
+            giveWeapon : giveWeapon,
+            deleteItem : deleteItem,
             isItemFnct : isItemFnct
         },
+        weaponOrder = ['pistol', 'machinegun', 'shotgun', 'rifle'],
         isBullet = false,
         isEnemy = false,
         isBot = false,
         isItem = false,
         isCollectable = false,
         isPlayer = false;
+
 
 
 
@@ -97,7 +101,6 @@ var entity = function(opts,cb) {
 
     function init(opts) {
         // Create sprite sheet
-
         name = opts.name;
         isPlayer = name == 'player';
         isBullet = name == 'bullet';
@@ -134,18 +137,20 @@ var entity = function(opts,cb) {
 
 
 
-        weapons.push(new Weapon(weaponsProto['pistol'], id));
+        weapons['pistol'] = new Weapon(weaponsProto['pistol'], id);
 
         if(isPlayer){
-            //todo: slots, damit die weaponreihenfolge fest ist
-            weapons.push(new Weapon(weaponsProto['rifle'], id));
-            weapons.push(new Weapon(weaponsProto['machinegun'], id));
-            weapons.push(new Weapon(weaponsProto['shotgun'], id));
+            //weapons['machinegun'] = new Weapon(weaponsProto['machinegun'], id);
+            //weapons['shotgun'] = new Weapon(weaponsProto['shotgun'], id);
+            //weapons['rifle'] = new Weapon(weaponsProto['rifle'], id);
+            //weapons.push(new Weapon(weaponsProto['rifle'], id));
+            //weapons.push(new Weapon(weaponsProto['machinegun'], id));
+            //weapons.push(new Weapon(weaponsProto['shotgun'], id));
             //weapons.push(new Weapon(weaponsProto['pistol'], id));
         }
 
         if(isBot || isPlayer)
-            weapon = weapons[0];
+            weapon = weapons['pistol'];
 
 
         x = sX = opts.x;
@@ -162,10 +167,18 @@ var entity = function(opts,cb) {
 
     function switchWeapon(r){
         weaponIndex += r;
-        if(weaponIndex < 0)
-            weaponIndex = weapons.length + weaponIndex;
-        weaponIndex = weaponIndex.mod(weapons.length);
-        weapon = weapons[weaponIndex];
+        var tmpWeapon;
+        while(!tmpWeapon){
+
+            if(weaponIndex < 0)
+                weaponIndex = weaponOrder.length + weaponIndex;
+            weaponIndex = weaponIndex.mod(weaponOrder.length);
+            //console.log(weapons,weapons[weaponOrder[weaponIndex]],weaponOrder[weaponIndex]);
+            tmpWeapon = weapons[weaponOrder[weaponIndex]];
+            weaponIndex += r;
+        }
+        weapon = tmpWeapon;
+        weaponIndex -= r;
     }
 
 
@@ -234,6 +247,32 @@ var entity = function(opts,cb) {
         }
 
 
+        // collect items
+        if(isPlayer){
+            var ent;
+            for(var i in collectables){
+                ent = collectables[i];
+                //if(id == ent.getId() || originId == ent.getId() || ent.getHp() <= 0)
+                //    continue;
+
+                var x2 = ent.getPos().x;
+                var y2 = ent.getPos().y;
+                var w2 = ent.getBounding().w;
+                var h2 = ent.getBounding().h;
+                //if(hits(x,y,w,h,x2,y2,w2,h2)){
+                if(hits(x,y-h*zoom/2,w,h*zoom/2,x2,y2,w2,h2)){
+                    player.giveWeapon(ent.getName());
+                    ent.deleteItem();
+                    //collectables.splice(collectables.indexOf(that),1);
+                    //context.fillRect((cWidth/2)+x2-pX,(cHeight/2)+y2-pY,w2,h2);
+                    //context.fillRect((cWidth/2)+w/4*zoom,(cHeight/2)+y-pY,-w*zoom/2,-h*zoom/2);
+                    break;
+                    //todo: shoot through?
+                }
+            }
+        }
+
+
 
 
         //todo: in Ai einbauen
@@ -256,7 +295,10 @@ var entity = function(opts,cb) {
             bullets.splice(bullets.indexOf(that),1);
         } else {
             entities.splice(entities.indexOf(that),1);
-            items.splice(items.indexOf(that),1);
+            if(isItem)
+                items.splice(items.indexOf(that),1);
+            if(isCollectable)
+                collectables.splice(collectables.indexOf(that),1);
         }
     }
 
@@ -409,6 +451,11 @@ var entity = function(opts,cb) {
 
         weapon.fire(sx,sy,tx,ty);
 
+        if(weapon.getAmmo()<=0 && isPlayer){
+            delete weapons[weapon.name];
+            switchWeapon(1);
+        }
+
     }
 
 
@@ -489,6 +536,14 @@ var entity = function(opts,cb) {
     }
     function isItemFnct(){
         return isItem
+    }
+    function giveWeapon(weaponname){
+        if(weapons[weaponname]){
+            weapons[weaponname].addAmmo(weaponsProto[weaponname].ammo);
+        } else {
+            weapons[weaponname] =  new Weapon(weaponsProto[weaponname], id);
+        }
+
     }
 
     return exports

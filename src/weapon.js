@@ -5,7 +5,8 @@
 var weaponsProto = {
     pistol : {
         name : 'pistol',
-        ammo : 10,
+        ammo : Number.POSITIVE_INFINITY,
+        //ammo : 10,
         cooldown : 600,
         shots : 2,
         speed : 20,
@@ -22,7 +23,7 @@ var weaponsProto = {
     },
     shotgun : {
         name : 'shotgun',
-        ammo : 30,
+        ammo : 8,
         cooldown : 1200,
         shots : 10,
         randomizer : 0.05,
@@ -33,7 +34,7 @@ var weaponsProto = {
     },
     rifle : {
         name : 'rifle',
-        ammo : 30,
+        ammo : 7,
         cooldown : 1000,
         shots : 1,
         speed : 70,
@@ -58,7 +59,6 @@ var Weapon = function(opts, id){
                 r = .025 * (i==0 ? 1 : -1);
             var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 100;
 
-            ammo += shots;
 
             var angleRadians = getAngleBetweenTwoPoints(sx,sy,tx,ty)-r;
             createEntity({
@@ -75,6 +75,8 @@ var Weapon = function(opts, id){
                 vy : Math.sin(angleRadians),
             },[bullets]);
         }
+        ammo--;
+
         lastShot = Date.now();
     }
 
@@ -85,7 +87,8 @@ var Weapon = function(opts, id){
 
     return {
         name : type,
-        ammo : function(){return ammo} , //TODO: mach arrowfunctions
+        getAmmo : function(){return ammo} , //TODO: mach arrowfunctions
+        addAmmo : function(addAmmo){ammo += addAmmo} ,
         fire : fire,
         checkCooldown : checkCooldown,
     }

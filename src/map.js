@@ -21,8 +21,8 @@ var map = function(){
             var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
             var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
             createEntity({
-                name : 'drone',
-                //name : 'enemy1',
+                //name : 'drone',
+                name : 'enemy1',
                 x: x,
                 y: y,
                 bot: true,

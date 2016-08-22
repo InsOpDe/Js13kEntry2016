@@ -46,7 +46,7 @@ var proto = {
         name : 'items',
         w: 20,
         h: 18,
-        subitems : ['pistol', 'rifle']
+        subitems : ['pistol', 'rifle', 'shotgun', 'machinegun']
         //variations : {
         //    'crate2' : {
         //        tint : RGBA(17,30,30)
