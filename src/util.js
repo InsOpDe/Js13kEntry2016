@@ -245,11 +245,14 @@ function drawImage(sprite,w,h,w2,h2){
 
 }
 
-function isGlitching(){
+function isGlitching(sw){
+    sw = sw || 1
     return Math.random()>(player.getHp()/1000)
         && Math.random()>(player.getHp()/1000)
         && Math.random()>(player.getHp()/1000)
-        && Math.random()>(player.getHp()/1000);
+        && Math.random()>(player.getHp()/1000)
+        && Math.random()>(player.getHp()/1000)
+        && sw>(player.getHp()/1000)
 }
 
 function drawZoomed(img,zoom){

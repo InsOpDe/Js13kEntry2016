@@ -7,6 +7,9 @@ var game = function(){
         factor,
         last,
         gui,
+        beginningSequence = new video(),
+        endingSequence = new video(['Spiel vorbei du anfaenger','hahaha']),
+        gameOverTime = false,
         isPaused = false;
 
 
@@ -45,7 +48,6 @@ var game = function(){
             gui = new Gui(player);
 
             debugWindow = new debug();
-
             cb()
         });
     }
@@ -88,26 +90,43 @@ var game = function(){
     }
 
     function draw(){
+        beginningSequence.update();
+        if(!beginningSequence.finished())
+            return;
+
+        console.log(gameOverTime, typeof gameOverTime);
+        if(typeof gameOverTime == 'number'){
+            if(--gameOverTime <= 0){
+                endingSequence.update();
+                return;
+            }
+        }
 
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         _map.update(player.getRealPos());
 
-        entities.sort(function(a,b){
-            //console.log(b.getPos().y, a.getPos().y);
-            return a.getRealPos().y - b.getRealPos().y
-        });
+
+        if(player.getHp() > 0){
+            entities.sort(function(a,b){
+                //console.log(b.getPos().y, a.getPos().y);
+                return a.getRealPos().y - b.getRealPos().y
+            });
 
 
-        for(var i in entities){
-            entities[i].update(player.getRealPos()).draw();
+            for(var i in entities){
+                entities[i].update(player.getRealPos()).draw();
+            }
+            for(var i in bullets){
+                bullets[i].update(player.getRealPos()).draw();
+            }
+
+            gui.draw();
+        } else if(typeof gameOverTime == 'boolean') {
+            gameOverTime = 30;
         }
-        for(var i in bullets){
-            bullets[i].update(player.getRealPos()).draw();
-        }
 
-        gui.draw();
 
         //fonts
         //context.drawImage(font.draw('Pixel Font', 24),0,0);

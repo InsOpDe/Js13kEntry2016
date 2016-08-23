@@ -143,7 +143,7 @@ var map = function(){
                 //else {
                     context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
                 //}
-                if(isGlitching()){
+                if(isGlitching(.3)){
                     //context.globalAlpha = 1 - player.getHp()/1000;
                     context.globalAlpha = .25;
                     context.drawImage(clipObjectGlitch(drawImage(proto["area"].sprites[0][0], tilesize,tilesize,zoomedTilesize/2, zoomedTilesize/2))
