@@ -419,7 +419,7 @@ var entity = function(opts,cb) {
                     deleteItem()
                 }
             } else {
-                if(Math.random()+.05>(player.getHp()/1000) && Math.random()+.05>(player.getHp()/1000) && Math.random()+.05>(player.getHp()/1000)){
+                if(isGlitching()){
                     context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2)), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);

@@ -30,7 +30,7 @@ var map = function(){
             cb();
             initItems();
             createGlitch();
-            tilesize = proto['area'].w;
+            tilesize = proto['area'].w-1;
 
         })
     }
@@ -133,7 +133,26 @@ var map = function(){
         var zoomedTilesize = tilesize * overallZoom;
         for(var x = -zoomedTilesize;x < cWidth+zoomedTilesize; x+=zoomedTilesize){
             for(var y = -zoomedTilesize;y < cHeight+zoomedTilesize; y+=zoomedTilesize){
-                context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+                //if(isGlitching()){
+                //    context.globalAlpha = .25;
+                //    //context.globalAlpha = 1 - player.getHp()/1000;
+                //    context.drawImage(clipObjectGlitch(drawImage(proto["area"].sprites[0][0], tilesize,tilesize,zoomedTilesize/2, zoomedTilesize/2))
+                //        , 0, 0, zoomedTilesize/2, zoomedTilesize/2, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+                //    context.globalAlpha = 1;
+                //}
+                //else {
+                    context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+                //}
+                if(isGlitching()){
+                    //context.globalAlpha = 1 - player.getHp()/1000;
+                    context.globalAlpha = .25;
+                    context.drawImage(clipObjectGlitch(drawImage(proto["area"].sprites[0][0], tilesize,tilesize,zoomedTilesize/2, zoomedTilesize/2))
+                        , 0, 0, zoomedTilesize/2, zoomedTilesize/2, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+                    context.globalAlpha = 1;
+                }
+
+
+                //context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
             }
         }
         //context.fillStyle = '#000000';

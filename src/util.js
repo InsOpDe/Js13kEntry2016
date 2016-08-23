@@ -245,6 +245,13 @@ function drawImage(sprite,w,h,w2,h2){
 
 }
 
+function isGlitching(){
+    return Math.random()>(player.getHp()/1000)
+        && Math.random()>(player.getHp()/1000)
+        && Math.random()>(player.getHp()/1000)
+        && Math.random()>(player.getHp()/1000);
+}
+
 function drawZoomed(img,zoom){
     var buffer = document.createElement('canvas');
     buffer.width = img.width*zoom;
