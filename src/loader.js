@@ -171,7 +171,8 @@ var loader = function(){
             var image = new Image();
             var spriteObj = names.pop();
             var name = spriteObj.name;
-            image.src = "../res/" + name + ".png";
+            image.src = "data:image/png;base64," + img[name];
+            //image.src = "../res/" + name + ".png";
             image.addEventListener("load", function(){
                 proto[name].sprites = splitSpritesheet(this,spriteObj.w,spriteObj.h);
                 if(names.length){

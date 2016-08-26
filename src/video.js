@@ -1,9 +1,10 @@
 /**
  * Created by Marcel Michelfelder on 23.08.2016.
  */
-var video = function(textArray){
+var video = function(textArray, skipMessage){
 
     var index = 0;
+    skipMessage =  skipMessage || "Press [Space]"
     var wholeText = textArray || ["test lalala die busfahrt die macht spass", "esseidenn sie dauert zulange", "trace programm blabla"];
     var row = 0;
     var d = getRndTime();
@@ -21,6 +22,12 @@ var video = function(textArray){
     function update(){
         d--;
         dRow--;
+
+        if(keysDown[32]){
+            row = wholeText.length-1;
+            index = wholeText[row].length
+        }
+
 
         if(!wholeText[row+1] && dRow <= 0 && d<=0 && index > wholeText[row].length)
             sequenceFinished = true;
@@ -46,8 +53,6 @@ var video = function(textArray){
             nextRow = true;
         }
 
-
-
         draw();
     }
 
@@ -63,6 +68,7 @@ var video = function(textArray){
 
     return {
         update : update,
+        //finished : () => sequenceFinished
         finished : function(){return sequenceFinished}
     }
 };

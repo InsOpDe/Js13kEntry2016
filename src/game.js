@@ -47,7 +47,7 @@ var game = function(){
             player.setRef(player);
             gui = new Gui(player);
 
-            debugWindow = new debug();
+            //debugWindow = new debug();
             cb()
         });
     }
@@ -84,9 +84,9 @@ var game = function(){
         draw();
         //todo: update
 
-        debugWindow.update({
-            playerpos: player.getRealPos()
-        });
+        //debugWindow.update({
+        //    playerpos: player.getRealPos()
+        //});
     }
 
     function draw(){
@@ -94,7 +94,6 @@ var game = function(){
         if(!beginningSequence.finished())
             return;
 
-        console.log(gameOverTime, typeof gameOverTime);
         if(typeof gameOverTime == 'number'){
             if(--gameOverTime <= 0){
                 endingSequence.update();

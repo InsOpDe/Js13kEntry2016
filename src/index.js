@@ -24,7 +24,6 @@ var canvas,
     SECOND = 1000,
     keysDown = [];
 window.onload = function() {
-
     init();
 };
 

@@ -8,8 +8,16 @@
     "gulp-watch" : "*",
     "gulp-rename" : "*",
     "gulp-zip" : "*",
+    "gulp-babel" : "*",
     "gulp-sourcemaps" : "*",
+    "gulp-closure-compiler-service" : "*",
+    "gulp-closure-compiler" : "*",
+    "gulp-yuicompressor" : "*",
     "gulp-tinypng-nokey" : "*",
+    "gulp-inject" : "*",
+    "gulp-replace" : "*",
+    "gulp-htmlmin" : "*",
+    "chalk" : "*",
     "gulp-tinypng" : "*"
   }
 }
