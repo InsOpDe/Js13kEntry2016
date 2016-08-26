@@ -8,7 +8,8 @@ var game = function(){
         last,
         gui,
         beginningSequence = new video(),
-        endingSequence = new video(['Spiel vorbei du anfaenger','hahaha']),
+    //todo: get correct date
+        endingSequence = new video(['call trans opt: received. 9-18-99 14:32:21 REC:log>','warning: carrier anomaly', 'trace program: running', 'system failure']),
         gameOverTime = false,
         isPaused = false;
 
@@ -106,6 +107,7 @@ var game = function(){
 
 
         context.clearRect(0, 0, canvas.width, canvas.height);
+        //context.globalCompositeOperation = 'source-over';
 
         _map.update(player.getRealPos());
 
@@ -123,6 +125,24 @@ var game = function(){
             for(var i in bullets){
                 bullets[i].update(player.getRealPos()).draw();
             }
+
+            contextLight.fillStyle = '#000000';
+            contextLight.fillRect(0, 0, cWidth, cHeight);
+//            contextLight.beginPath();
+//            //contextLight.moveTo(cWidth/2, cWidth/2);
+//            contextLight.arc(cWidth/2, cHeight/2, 100, -1 * Math.PI, 1 * Math.PI, false);
+//
+//// fill arc with gradient
+//            contextLight.fillStyle = '#ffffff';
+//            contextLight.fill();
+            ligthenGradient(cWidth/2, cHeight/2, cHeight);
+
+            context.save();
+            context.globalCompositeOperation="multiply";
+            context.drawImage(canvasLight, 0, 0);
+            context.restore(); // sets the composite operation back to default
+
+            //darken(0, 0, cWidth, cHeight, '#000', 0.6);
 
             gui.draw();
         } else if(typeof gameOverTime == 'boolean') {

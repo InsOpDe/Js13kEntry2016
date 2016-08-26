@@ -87,7 +87,7 @@ var entity = function(opts,cb) {
             deleteItem : deleteItem,
             isItemFnct : isItemFnct,
             hack : function(){
-                if(++hacked > 200){
+                if(++hacked > isHackingMax){
                     player.addHp(100);
                     deleteItem();
                 } else {
@@ -370,6 +370,11 @@ var entity = function(opts,cb) {
             //alreadyDebuged = true;
             //console.log(name,toggleAnimation,offsetY,frameIndex);
         }
+
+        if(isPlayer){
+            //ligthenGradient(cWidth/2, cHeight/2-(h), 300);
+        }
+
        drawSprite(
            isBullet ? false : sprites[offsetY][frameIndex],
            //todo: only player
@@ -439,6 +444,7 @@ var entity = function(opts,cb) {
                 }
             } else {
                 if(isGlitching() || isGlitch){
+                    if(isGlitch) sprite = drawTriangle(20,20);
                     context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2),isGlitch?'red':'lightgreen'), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);

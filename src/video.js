@@ -16,7 +16,7 @@ var video = function(textArray, skipMessage){
     var sequenceFinished;
 
     function getRndTime(){
-        return getRandomArbitrary(0,5);
+        return getRandomArbitrary(0,3);
     }
 
     function update(){
@@ -39,7 +39,7 @@ var video = function(textArray, skipMessage){
 
         if(nextRow && dRow <= 0 && wholeText[row+1]){
             index = 0;
-            d = 60;
+            d = 40;
             row++;
             nextRow = false;
         }
@@ -49,7 +49,7 @@ var video = function(textArray, skipMessage){
         textToIndex = wholeText[row].substring(0,index);
 
         if(index > wholeText[row].length && !nextRow){
-            dRow = 100;
+            dRow = 50;
             nextRow = true;
         }
 

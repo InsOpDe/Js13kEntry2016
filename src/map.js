@@ -4,32 +4,73 @@
 
 var map = function(){
     var pX, pY, lastX, lastY, tilesize, wave =0;
-    var waves = [
-        {
-            enemies : [{name : 'drone', count : 3}],
-            lasting : 10 * SECOND
-        },
-        {
-            enemies : [{name : 'enemy1', count : 2}],
-            lasting : 20 * SECOND
-        },
-        {
-            enemies : [{name : 'drone', count : 10}],
-            lasting : 25 *SECOND
-        },
-        {
-            enemies : [ {name : 'drone1', count : 3}],
-            lasting : 30 * SECOND
+    var enemies = ['drone','enemy1','drone1'];
+    waves=(function(){
+        var waves =[];
+        for(var i = 1; i < 100; i++){
+            waves.push({
+                enemies: createEnemies(i),
+                lasting : SECOND * 4
+            });
+            //waves.push({
+            //    enemies : [createEnemyCount(i)],
+            //    lasting : SECOND
+            //});
+            //createEnemies(i)
         }
+        return waves;
+    })();
 
-    ];
+    function createEnemies(c){
+        //console.log(Math.abs(Math.sin(c/10)));
+        var en = [];
+        for(var i in enemies){
+            if(c%(Number(i)+1)==0){
+            //if(c%(i+1) == 0 || c%(i+1) == 2){
+                en.push({name:enemies[i], count:Math.floor(Math.max(1,c/20))})
+            }
+            //console.log(enemies[i],Math.sin(c/10) * i);
+            //if(Math.sin(c/10) * i ){
+            //
+            //}
+        }
+        return en;
+    }
+
+    function createEnemyCount(c){
+        //console.log(enemies[c%enemies.length], enemies.length, c,enemies.length%c);
+        return {
+            name : enemies[c%enemies.length],
+            count : c
+        }
+    }
+    //
+    //var waves = [
+    //    {
+    //        enemies : [{name : 'drone', count : 3}],
+    //        lasting : 10 * SECOND
+    //    },
+    //    {
+    //        enemies : [{name : 'enemy1', count : 2}],
+    //        lasting : 20 * SECOND
+    //    },
+    //    {
+    //        enemies : [{name : 'drone', count : 10}],
+    //        lasting : 25 *SECOND
+    //    },
+    //    {
+    //        enemies : [ {name : 'drone1', count : 3}],
+    //        lasting : 30 * SECOND
+    //    }
+    //
+    //];
 
     function init(cb){
         var loaderObj = new loader();
         loaderObj.init(function(){
             cb();
             initItems();
-            createGlitch();
+            //createGlitch();
             tilesize = proto['area'].w-1;
 
         })
@@ -63,6 +104,7 @@ var map = function(){
                     },[entities,enemies])
                 }
             }
+            createGlitch();
             wave++;
         } else {
             //console.log("game completed");

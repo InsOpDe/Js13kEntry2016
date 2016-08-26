@@ -2,8 +2,8 @@
  * Created by Marcel Michelfelder on 14.08.2016.
  */
 
-var canvas,
-    context,
+var canvas,canvasLight,
+    context,contextLight,
     stage,
     player,
     debugWindow,
@@ -12,11 +12,14 @@ var canvas,
     //overallZoom = 1,
     mouseposition = {x:0,y:0},
     screenmouseposition = {x:0,y:0},
+    π = Math.PI,
     entities = [],
     bullets = [],
     enemies = [],
     timeUntilNextWave = 0,
     isHacking = 0,
+    isHackingMax = 150,
+    waves,
     items = [],
     collectables = [],
     images = {},
@@ -38,13 +41,13 @@ window.onload = function() {
 function init() {
 
     canvas = document.getElementById('canvas');
-    //canvas.setAttribute('width', document.body.clientWidth);
-    //canvas.setAttribute('height', document.documentElement.clientHeight);
-    //canvas.setAttribute('width', window.innerWidth);
-    //canvas.setAttribute('height', window.innerHeight);
+    canvasLight = document.createElement('canvas');
+    canvasLight.setAttribute('width', cWidth);
+    canvasLight.setAttribute('height', cHeight);
     canvas.setAttribute('width', cWidth);
     canvas.setAttribute('height', cHeight);
     context = canvas.getContext('2d');
+    contextLight = canvasLight.getContext('2d');
     context.imageSmoothingEnabled = false;
     //context.webkitImageSmoothingEnabled = false;
     //context.mozImageSmoothingEnabled = false;

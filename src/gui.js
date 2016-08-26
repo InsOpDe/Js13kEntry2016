@@ -48,7 +48,7 @@ var Gui = function(player){
             bg : '#228822',
             fg : '#00ff00',
             fill : isHacking,
-            fillMax : 200
+            fillMax : isHackingMax
         })
     }
 

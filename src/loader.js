@@ -164,7 +164,8 @@ var loader = function(){
                 h: 20,
                 //sprites : [[clipObjectGlitch(proto.player.sprites[0][0])]]
                 //sprites : [[drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20)]]
-                sprites : [drawXTriangles(20,20,99)]
+                sprites : [[drawTriangle(20,20)]]
+                //sprites : [drawXTriangles(20,20,99)]
 
                 //sprites : [createGlitchSprites(100)]
             };

@@ -33,7 +33,7 @@ var weaponsProto = {
     shotgun : {
         name : 'shotgun',
         ammo : 8,
-        cooldown : 1200,
+        cooldown : 800,
         shots : 10,
         randomizer : 0.025,
         speed : 30,
@@ -46,7 +46,7 @@ var weaponsProto = {
         ammo : 7,
         cooldown : 1000,
         shots : 1,
-        speed : 70,
+        speed : 50,
         damage : 60,
         shootThrough : true
         //shift : 50

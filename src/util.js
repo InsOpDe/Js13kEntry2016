@@ -308,6 +308,39 @@ function createXGlitchSprites(x,w,h,clr){
     return sprites;
 }
 
+// http://gamedev.stackexchange.com/questions/105823/js-canvas-creating-2d-game-lighting-effect-like-terraria
+function darken(x, y, w, h, darkenColor, amount) {
+    context.fillStyle = darkenColor;
+    context.globalAlpha = amount;
+    context.fillRect(x, y, w, h);
+    context.globalAlpha = 1;
+}
+
+// http://gamedev.stackexchange.com/questions/105823/js-canvas-creating-2d-game-lighting-effect-like-terraria
+function ligthenGradient(x, y, radius) {
+    contextLight.save();
+    //contextLight.globalCompositeOperation = 'screen';
+    var rnd = 0.05 * Math.sin(1.1 * Date.now() / 1000);
+    radius = radius * (1 + rnd);
+    var radialGradient = contextLight.createRadialGradient(x, y, 0, x, y, radius);
+    radialGradient.addColorStop(0.0, '#BBB');
+    radialGradient.addColorStop(0.2 + rnd, '#AAA');
+    radialGradient.addColorStop(0.7 + rnd, '#333');
+    radialGradient.addColorStop(0.90, '#111');
+    radialGradient.addColorStop(1, '#000');
+    //radialGradient.addColorStop(0.0, '#BB9');
+    //radialGradient.addColorStop(0.2 + rnd, '#AA8');
+    //radialGradient.addColorStop(0.7 + rnd, '#330');
+    //radialGradient.addColorStop(0.90, '#110');
+    //radialGradient.addColorStop(1, '#000');
+    contextLight.fillStyle = radialGradient;
+    contextLight.beginPath();
+    contextLight.arc(x, y, radius, 0, 2 * π);
+    contextLight.fill();
+    contextLight.restore();
+}
+
+
 function clipObjectGlitch(img,clr){
     clr = clr || 'lightgreen';
     var bc = getBufferAndContext(img);
