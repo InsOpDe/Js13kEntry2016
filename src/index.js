@@ -2,26 +2,27 @@
  * Created by Marcel Michelfelder on 14.08.2016.
  */
 
+window.stage;
 var canvas,canvasLight,
     context,contextLight,
-    stage,
     player,
     debugWindow,
-    idCounter = 0,
+    idCounter,
+    score,
     overallZoom = 10,
     //overallZoom = 1,
     mouseposition = {x:0,y:0},
     screenmouseposition = {x:0,y:0},
     π = Math.PI,
-    entities = [],
-    bullets = [],
-    enemies = [],
-    timeUntilNextWave = 0,
-    isHacking = 0,
+    entities,
+    bullets,
+    enemies,
+    timeUntilNextWave,
+    isHacking,
     isHackingMax = 150,
     waves,
-    items = [],
-    collectables = [],
+    items,
+    collectables,
     images = {},
     cWidth = window.innerWidth,
     cHeight = window.innerHeight,
@@ -85,9 +86,9 @@ function init() {
     }
 
 
-    stage = new game();
-    stage.init(function(){
-        stage.run();
+    window.stage = new game();
+    window.stage.init(function(){
+        window.stage.run();
     });
 
 

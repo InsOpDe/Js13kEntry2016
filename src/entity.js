@@ -336,9 +336,14 @@ var entity = function(opts,cb) {
             bullets.splice(bullets.indexOf(that),1);
         } else {
             entities.splice(entities.indexOf(that),1);
+            if(isEnemy)
+                score += 50;
+            if(isGlitch)
+                score += 100;
+
             if(isItem)
                 items.splice(items.indexOf(that),1);
-            if(isCollectable || name == 'glitch')
+            if(isCollectable || isGlitch)
                 collectables.splice(collectables.indexOf(that),1);
             if(isEnemy)
                 enemies.splice(enemies.indexOf(that),1);
@@ -444,7 +449,7 @@ var entity = function(opts,cb) {
                 }
             } else {
                 if(isGlitching() || isGlitch){
-                    if(isGlitch) sprite = drawTriangle(20,20);
+                    if(isGlitch) sprite = drawTriangle(20,20,3);
                     context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2),isGlitch?'red':'lightgreen'), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);

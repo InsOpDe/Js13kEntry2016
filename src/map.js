@@ -183,6 +183,7 @@ var map = function(){
                 //    context.globalAlpha = 1;
                 //}
                 //else {
+                if(player.getHp() > 0)
                     context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
                 //}
                 if(isGlitching(.3)){

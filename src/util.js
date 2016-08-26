@@ -67,17 +67,19 @@ function getRandomTriangle(w,h){
     return points
 }
 
-function drawTriangle(w,h){
+function drawTriangle(w,h,x){
+    x = x || 1;
     var bc = getBufferAndContext(null,w,h);
     var buffer = bc[0], bx = bc[1];
-    var points = getRandomTriangle(w,h);
-    bx.moveTo(points[0].x,points[0].y);
-    for(var i=1;i<points.length;i++){
-        var p=points[i];
-        bx.lineTo(p.x,p.y);
+    for(var i=0; i<x;i++){
+        var points = getRandomTriangle(w,h);
+        bx.moveTo(points[0].x,points[0].y);
+        for(var i=1;i<points.length;i++){
+            var p=points[i];
+            bx.lineTo(p.x,p.y);
+        }
+        bx.fill();
     }
-    //bx.closePath();
-    bx.fill();
     return buffer;
 }
 

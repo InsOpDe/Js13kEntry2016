@@ -2,14 +2,24 @@
  * Created by Marcel Michelfelder on 14.08.2016.
  */
 
-var game = function(){
+var game = function(skpIntro){
+    idCounter = 0,
+    entities = [],
+    bullets = [],
+    enemies = [],
+    timeUntilNextWave = 0,
+    isHacking = 0,
+    score = 0,
+    items = [],
+    collectables = [];
+
     var now,
         factor,
         last,
         gui,
-        beginningSequence = new video(),
+        beginningSequence = new video(['','call trans opt: received. 9-18-99 14:32:21 REC:log>','warning: carrier anomaly', 'trace program: running..'],'to skip'),
     //todo: get correct date
-        endingSequence = new video(['call trans opt: received. 9-18-99 14:32:21 REC:log>','warning: carrier anomaly', 'trace program: running', 'system failure']),
+        endingSequence = new video(['','system failure'], 'to retry', true),
         gameOverTime = false,
         isPaused = false;
 
@@ -54,16 +64,6 @@ var game = function(){
     }
 
 
-    function getAllDistances(){
-        for(var i in items){
-            console.log(items[i].getName(),dist(player.getPos().x,player.getPos().y,items[i].getPos().x,items[i].getPos().y),items[i].getPos().x,items[i].getPos().y)
-        }
-    }
-
-    function pause() {
-        isPaused ^= true;
-    }
-
 
     /**
      * @author Marcel Michelfelder
@@ -77,12 +77,12 @@ var game = function(){
         factor = (now - last) / 16;
         last = now;
 
-
         if(isPaused) return;
 
         input();
         draw();
-        requestAnimationFrame(run);
+        if(!endingSequence.realFinished())
+            requestAnimationFrame(run);
 
 
         //todo: update
@@ -94,13 +94,29 @@ var game = function(){
     }
 
     function draw(){
-        //beginningSequence.update();
-        //if(!beginningSequence.finished())
-        //    return;
+
+        if(!skpIntro){
+            beginningSequence.update();
+            if(!beginningSequence.finished())
+                return;
+        }
 
         if(typeof gameOverTime == 'number'){
             if(--gameOverTime <= 0){
                 endingSequence.update();
+
+                if(endingSequence.realFinished()){
+                    var hs = localStorage.getItem("highscore") || 0;
+                    if(score > hs){
+                        localStorage.setItem("highscore", score)
+                    }
+
+                    delete window.stage;
+                    window.stage = new game(true);
+                    window.stage.init(function(){
+                        window.stage.run();
+                    });
+                }
                 return;
             }
         }
@@ -146,7 +162,7 @@ var game = function(){
 
             gui.draw();
         } else if(typeof gameOverTime == 'boolean') {
-            gameOverTime = 30;
+            gameOverTime = 45;
         }
 
 
@@ -167,7 +183,9 @@ var game = function(){
         } else if (keysDown[68]) {
             d = s;
         }
-        player.moveX(d);
+
+        if(player.getHp()>0)
+            player.moveX(d);
 
         d = 0;
         if (keysDown[83]) {
@@ -175,7 +193,8 @@ var game = function(){
         } else if (keysDown[87]) {
             d = s * (-1);
         }
-        player.moveY(d);
+        if(player.getHp()>0)
+            player.moveY(d);
 
 
         player.shoot(shooting, mouseposition);
@@ -183,8 +202,6 @@ var game = function(){
 
     return {
         init : init,
-        pause : pause,
         run : run,
-        getAllDistances:getAllDistances
     };
 };

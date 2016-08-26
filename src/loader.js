@@ -1,78 +1,80 @@
 /**
  * Created by Marcel Michelfelder on 18.08.2016.
  */
-var proto = {
-    area:{
-        name : 'area',
-        w: 30,
-        h: 30
-    },
-    player: {
-        name : 'player',
-        w: 34,
-        h: 30,
-        hp: 100,
-        weapon : 'pistol',
-        variations :  {
-            'enemy1' : {
-                weapon : 'pistols',
-                weaponMod : {
-                    cooldown : 1000,
-                    randomizer : .35
-                },
-                from : [RGBA(248,248,248)],
-                to : [RGBA(219,17,17)]
-            }
-        }
-    },
-    drone: {
-        name : 'drone',
-        w: 10,
-        h: 10,
-        hp: 10,
-        weapon : 'pistol',
-        weaponMod : {
-            cooldown : 1000,
-            randomizer : .35
-        },
-        variations :  {
-            'drone1' : {
-                weapon : 'rifle',
-                weaponMod : {
-                    cooldown : 1000,
-                    randomizer : .35,
-                    damage : 30
-                },
-                hp : 30,
-                tint : RGBA(17,30,30)
-            }
-        }
-    },
-    crate: {
-        name : 'crate',
-        w: 20,
-        h: 20,
-        hp: 30,
-        variations : {
-            'crate2' : {
-                tint : RGBA(17,30,30)
-            }
-        }
-    },
-    items: {
-        name : 'items',
-        w: 20,
-        h: 18,
-        subitems : ['pistols', 'rifle', 'shotgun', 'machinegun']
-        //variations : {
-        //    'crate2' : {
-        //        tint : RGBA(17,30,30)
-        //    }
-        //}
-    }
-};
+var proto;
 
 var loader = function(){
+
+    proto = {
+        area:{
+            name : 'area',
+            w: 30,
+            h: 30
+        },
+        player: {
+            name : 'player',
+            w: 34,
+            h: 30,
+            hp: 100,
+            weapon : 'pistol',
+            variations :  {
+                'enemy1' : {
+                    weapon : 'pistols',
+                    weaponMod : {
+                        cooldown : 1000,
+                        randomizer : .35
+                    },
+                    from : [RGBA(248,248,248)],
+                    to : [RGBA(219,17,17)]
+                }
+            }
+        },
+        drone: {
+            name : 'drone',
+            w: 10,
+            h: 10,
+            hp: 10,
+            weapon : 'pistol',
+            weaponMod : {
+                cooldown : 1000,
+                randomizer : .35
+            },
+            variations :  {
+                'drone1' : {
+                    weapon : 'rifle',
+                    weaponMod : {
+                        cooldown : 1000,
+                        randomizer : .35,
+                        damage : 30
+                    },
+                    hp : 30,
+                    tint : RGBA(17,30,30)
+                }
+            }
+        },
+        crate: {
+            name : 'crate',
+            w: 20,
+            h: 20,
+            hp: 30,
+            variations : {
+                'crate2' : {
+                    tint : RGBA(17,30,30)
+                }
+            }
+        },
+        items: {
+            name : 'items',
+            w: 20,
+            h: 18,
+            subitems : ['pistols', 'rifle', 'shotgun', 'machinegun']
+            //variations : {
+            //    'crate2' : {
+            //        tint : RGBA(17,30,30)
+            //    }
+            //}
+        }
+    };
 
     function init(cb){
         var toLoad = [];

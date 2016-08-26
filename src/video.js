@@ -1,11 +1,11 @@
 /**
  * Created by Marcel Michelfelder on 23.08.2016.
  */
-var video = function(textArray, skipMessage){
+var video = function(textArray, skipMessage, showScore){
 
     var index = 0;
-    skipMessage =  skipMessage || "Press [Space]"
-    var wholeText = textArray || ["test lalala die busfahrt die macht spass", "esseidenn sie dauert zulange", "trace programm blabla"];
+    skipMessage =  "Press -Space- " + skipMessage;
+    var wholeText = textArray;
     var row = 0;
     var d = getRndTime();
     var dRow = 0;
@@ -13,7 +13,7 @@ var video = function(textArray, skipMessage){
     var textToIndex = "";
     var font = new pixelfont();
     var cursorVisible;
-    var sequenceFinished;
+    var sequenceFinished, sequenceRealFinished;
 
     function getRndTime(){
         return getRandomArbitrary(0,3);
@@ -26,6 +26,7 @@ var video = function(textArray, skipMessage){
         if(keysDown[32]){
             row = wholeText.length-1;
             index = wholeText[row].length
+            sequenceRealFinished = true;
         }
 
 
@@ -63,12 +64,27 @@ var video = function(textArray, skipMessage){
         context.drawImage(textImage,100,100);
         context.fillStyle = 'lightgreen';
         if(cursorVisible)
-            context.fillRect(textImage.width+100,98,20,28);
+            context.fillRect(textImage.width + 100, 98, 20, 28);
+
+        var skipMessageImg = font.draw(skipMessage, 5, "lightgreen");
+        context.drawImage(skipMessageImg,cWidth/2-skipMessageImg.width/2,cHeight - 150);
+
+        if(showScore){
+            var hs = localStorage.getItem("highscore") || 0;
+            var text = "Your score: " + score + " - highscore: " + hs;
+            if(score > hs){
+                text = "New highscore: " + score;
+            }
+
+            var scoreMessageImg = font.draw(text, 5, "lightgreen");
+            context.drawImage(scoreMessageImg,cWidth/2-scoreMessageImg.width/2,cHeight - 200);
+        }
     }
 
     return {
         update : update,
         //finished : () => sequenceFinished
-        finished : function(){return sequenceFinished}
+        finished : function(){return sequenceFinished},
+        realFinished : function(){return sequenceRealFinished},
     }
 };
