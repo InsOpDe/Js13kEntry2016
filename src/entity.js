@@ -22,7 +22,9 @@ var entity = function(opts,cb) {
         ai,
         isHovering,
         hoverDelta = 0,
+        angleRadians = 0,
         speed,
+        hacked = 0,
         alreadyDebuged,
         hp = 0,
         maxHp = 0,
@@ -83,7 +85,16 @@ var entity = function(opts,cb) {
             isPlayerFnct : isPlayerFnct,
             giveWeapon : giveWeapon,
             deleteItem : deleteItem,
-            isItemFnct : isItemFnct
+            isItemFnct : isItemFnct,
+            hack : function(){
+                if(++hacked > 200){
+                    player.addHp(100);
+                    deleteItem();
+                } else {
+                    return hacked;
+                }
+
+            }
         },
         weaponOrder = ['pistol', 'pistols', 'machinegun', 'shotgun', 'rifle'],
         isBullet = false,
@@ -154,7 +165,7 @@ var entity = function(opts,cb) {
 
 
 
-        if(isPlayer){
+        //if(isPlayer){
             //weapons['machinegun'] = new Weapon(weaponsProto['machinegun'], id);
             //weapons['shotgun'] = new Weapon(weaponsProto['shotgun'], id);
             //weapons['rifle'] = new Weapon(weaponsProto['rifle'], id);
@@ -162,7 +173,7 @@ var entity = function(opts,cb) {
             //weapons.push(new Weapon(weaponsProto['machinegun'], id));
             //weapons.push(new Weapon(weaponsProto['shotgun'], id));
             //weapons.push(new Weapon(weaponsProto['pistol'], id));
-        }
+        //}
 
 
 
@@ -270,6 +281,7 @@ var entity = function(opts,cb) {
         // collect items
         if(isPlayer){
             var ent;
+            var hitGlitch = 0;
             for(var i in collectables){
                 ent = collectables[i];
                 //if(id == ent.getId() || originId == ent.getId() || ent.getHp() <= 0)
@@ -282,8 +294,14 @@ var entity = function(opts,cb) {
                 //if(hits(x,y,w,h,x2,y2,w2,h2)){
                 //if(hits(x,y-h*zoom/2,w,h*zoom/2,x2,y2,w2,h2)){
                 if(hits(x-w*zoom/4,y-h*zoom/2,w*zoom/2,h*zoom/2,x2,y2,w2,h2)){
-                    player.giveWeapon(ent.getName());
-                    ent.deleteItem();
+                    var name = ent.getName();
+                    if(name == 'glitch') {
+                        hitGlitch = ent.hack();
+                    } else {
+                        player.giveWeapon(name);
+                        ent.deleteItem();
+                    }
+
                     //collectables.splice(collectables.indexOf(that),1);
                     //context.fillRect((cWidth/2)+x2-pX,(cHeight/2)+y2-pY,w2,h2);
                     //context.fillRect((cWidth/2)+w,(cHeight/2)+y-pY,-w/2,-h/2);
@@ -292,6 +310,7 @@ var entity = function(opts,cb) {
                     //todo: shoot through?
                 }
             }
+            isHacking = hitGlitch;
         }
 
         if(weapon)
@@ -319,7 +338,7 @@ var entity = function(opts,cb) {
             entities.splice(entities.indexOf(that),1);
             if(isItem)
                 items.splice(items.indexOf(that),1);
-            if(isCollectable)
+            if(isCollectable || name == 'glitch')
                 collectables.splice(collectables.indexOf(that),1);
             if(isEnemy)
                 enemies.splice(enemies.indexOf(that),1);
@@ -419,10 +438,21 @@ var entity = function(opts,cb) {
                     deleteItem()
                 }
             } else {
-                if(isGlitching()){
-                    context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2)), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
+                if(isGlitching() || isGlitch){
+                    context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2),isGlitch?'red':'lightgreen'), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
+                    //if(sprites[1]){
+                    //
+                    //    //var rad = 2 * Math.PI - angleRadians * Math.PI / 180;
+                    //    var rad = angleRadians;
+                    //    context.translate(X - w * zoom, Y - h * zoom);
+                    //
+                    //    context.rotate(rad);
+                    //    context.drawImage(sprites[1][0], 0, 0, w, h, 0, 0, -w/2 * zoom, -h/2 * zoom);
+                    //
+                    //}
+
                 }
                 //context.drawImage(drawImage(sprite, w,h,w*zoom/2, h*zoom/2), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
                 //context.drawImage(drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom),x,y);
@@ -488,8 +518,10 @@ var entity = function(opts,cb) {
 
         //if(isPlayer)
             flip = sX < dest.x ? 1 : -1;
+        angleRadians = getAngleBetweenTwoPoints(sx,sy,tx,ty)
 
-        weapon.fire(sx,sy,tx,ty);
+
+        weapon.fire(sx,sy,angleRadians);
 
         if(weapon.getAmmo().ammo<=0 && isPlayer){
             delete weapons[weapon.name];

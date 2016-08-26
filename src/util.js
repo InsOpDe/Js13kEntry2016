@@ -1,15 +1,10 @@
 /**
  * Created by Marcel Michelfelder on 17.08.2016.
  */
-
 function tint(img,rgba){
 
-    var buffer = document.createElement('canvas');
-    //console.log(buffer, img);
-    buffer.width = img.width;
-    buffer.height = img.height;
-    var bx = buffer.getContext('2d');
-    bx.drawImage(img,0,0);
+    var bc = getBufferAndContext(img);
+    var buffer = bc[0], bx = bc[1];
 
     var imageData = bx.getImageData(0,0,buffer.width, buffer.height);
     var pixels = imageData.data;
@@ -31,14 +26,20 @@ function tint(img,rgba){
     //};
 }
 
+function getBufferAndContext(i,w,h){
+    var b = document.createElement('canvas');
+    //console.log(buffer, img);
+    b.width = w||i.width;
+    b.height = h||i.height;
+    var c = b.getContext('2d');
+    if(i) c.drawImage(i,0,0);
+    return [b,c]
+}
+
 
 function changeColorOfSprite(img,originRGBA,destRGBA){
-    var buffer = document.createElement('canvas');
-    //console.log(buffer, img);
-    buffer.width = img.width;
-    buffer.height = img.height;
-    var bx = buffer.getContext('2d');
-    bx.drawImage(img,0,0);
+    var bc = getBufferAndContext(img);
+    var buffer = bc[0], bx = bc[1];
 
     var imageData = bx.getImageData(0,0,buffer.width, buffer.height);
     var pixels = imageData.data;
@@ -55,14 +56,7 @@ function changeColorOfSprite(img,originRGBA,destRGBA){
     return buffer;
 }
 
-function splinterSingle(img){
-    var buffer = document.createElement('canvas');
-    //console.log(buffer, img);
-    var w = buffer.width = img.width;
-    var h = buffer.height = img.height;
-    var bx = buffer.getContext('2d');
-    //bx.drawImage(img,0,0);
-    bx.beginPath();
+function getRandomTriangle(w,h){
     var points = [];
     for(var i = 0; i < 3; i++){
         points.push({
@@ -70,6 +64,39 @@ function splinterSingle(img){
             y:getRandomArbitrary(-h/2,h/2) + h/2
         })
     }
+    return points
+}
+
+function drawTriangle(w,h){
+    var bc = getBufferAndContext(null,w,h);
+    var buffer = bc[0], bx = bc[1];
+    var points = getRandomTriangle(w,h);
+    bx.moveTo(points[0].x,points[0].y);
+    for(var i=1;i<points.length;i++){
+        var p=points[i];
+        bx.lineTo(p.x,p.y);
+    }
+    //bx.closePath();
+    bx.fill();
+    return buffer;
+}
+
+function drawXTriangles(w,h,x){
+    var sprites = [];
+    for(var i= 0; i<x;i++){
+        sprites.push(drawTriangle(w,h));
+    }
+    return sprites;
+}
+
+function splinterSingle(img){
+    var bc = getBufferAndContext(img);
+    var buffer = bc[0], bx = bc[1];
+    var w = buffer.width = img.width;
+    var h = buffer.height = img.height;
+    //bx.drawImage(img,0,0);
+    bx.beginPath();
+    var points = getRandomTriangle(w,h);
 
     bx.moveTo(points[0].x,points[0].y);
     for(var i=1;i<points.length;i++){
@@ -216,7 +243,7 @@ function createGlitchSprites(w,h){
     return sprites;
 }
 
-function createGlitchSprite(w,h){
+function createGlitchSprite(w,h,clr){
     var buffer = document.createElement('canvas');
     //console.log(buffer, img);
     var fontheight = 6;
@@ -226,7 +253,7 @@ function createGlitchSprite(w,h){
     var rows = Math.ceil(buffer.height/fontheight);
     var bx = buffer.getContext('2d');
     for(var i=0; i <rows; i++){
-        bx.drawImage(new pixelfont().draw(getBinaryString(rows*3),size,"lightgreen"),0,i*size*fontheight);
+        bx.drawImage(new pixelfont().draw(getBinaryString(rows*3),size,clr),0,i*size*fontheight);
     }
     return buffer;
 }
@@ -267,19 +294,25 @@ function drawZoomed(img,zoom){
 }
 
 var glitchsprite = (function(){
-    var sprites = [];
-    for(var i = 0; i < 10; i++){
-        sprites.push(createGlitchSprite(200,200));
-    }
-    return sprites;
+    var sprites ={}
+    sprites['red'] = createXGlitchSprites(10,200,200,'red')
+    sprites['lightgreen'] = createXGlitchSprites(10,200,200,'lightgreen')
+    return sprites
 })();
 
-function clipObjectGlitch(img){
-    var buffer = document.createElement('canvas');
-    var w = buffer.width = img.width;
-    var h = buffer.height = img.height;
-    var bx = buffer.getContext('2d');
-    var glitchSprite = getRandomElementInArray(glitchsprite);
+function createXGlitchSprites(x,w,h,clr){
+    var sprites = [];
+    for(var i = 0; i < x; i++){
+        sprites.push(createGlitchSprite(w,h,clr));
+    }
+    return sprites;
+}
+
+function clipObjectGlitch(img,clr){
+    clr = clr || 'lightgreen';
+    var bc = getBufferAndContext(img);
+    var buffer = bc[0], bx = bc[1];
+    var glitchSprite = getRandomElementInArray(glitchsprite[clr]);
     //var glitchSprite = createGlitchSprite(w,h);
     bx.drawImage(img,0,0);
     bx.globalCompositeOperation = "source-in";

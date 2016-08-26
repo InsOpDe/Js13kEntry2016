@@ -3,7 +3,7 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave = 0;
+    var pX, pY, lastX, lastY, tilesize, wave =0;
     var waves = [
         {
             enemies : [{name : 'drone', count : 3}],
@@ -43,7 +43,7 @@ var map = function(){
             name : 'glitch',
             x: x,
             y: y,
-        },[entities])
+        },[entities, collectables])
     }
 
     function nextWave(){

@@ -13,6 +13,7 @@ var Gui = function(player){
         context.drawImage(font.draw("Next Wave in: " + (Date.now()-timeUntilNextWave)/1000, 10, "green"),cWidth-margin-700,cHeight - margin- 50);
         drawHp();
         drawAmmo();
+        if(isHacking) drawHack();
     }
 
     function drawBar(opts){
@@ -35,6 +36,20 @@ var Gui = function(player){
 
         context.fillStyle = opts.fg;
         context.fillRect(x+zoom,y+zoom,(w-zoom*2)*ratio,h-zoom*2);
+    }
+
+    function drawHack(){
+        var w = 500;
+        drawBar({
+             w : w,
+             h : 20,
+             x : cWidth/2-w/2,
+             y : cHeight - margin - 20,
+            bg : '#228822',
+            fg : '#00ff00',
+            fill : isHacking,
+            fillMax : 200
+        })
     }
 
     function drawHp(){

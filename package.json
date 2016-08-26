@@ -18,6 +18,7 @@
     "gulp-replace" : "*",
     "gulp-htmlmin" : "*",
     "chalk" : "*",
+    "lebab" : "*",
     "gulp-tinypng" : "*"
   }
 }

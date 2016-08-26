@@ -72,7 +72,6 @@ var game = function(){
      */
     function run() {
 
-        requestAnimationFrame(run);
         now = Date.now();
         factor = (now - last) / 16;
         last = now;
@@ -82,7 +81,11 @@ var game = function(){
 
         input();
         draw();
+        requestAnimationFrame(run);
+
+
         //todo: update
+
 
         //debugWindow.update({
         //    playerpos: player.getRealPos()
@@ -90,9 +93,9 @@ var game = function(){
     }
 
     function draw(){
-        beginningSequence.update();
-        if(!beginningSequence.finished())
-            return;
+        //beginningSequence.update();
+        //if(!beginningSequence.finished())
+        //    return;
 
         if(typeof gameOverTime == 'number'){
             if(--gameOverTime <= 0){

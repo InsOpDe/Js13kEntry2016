@@ -155,11 +155,17 @@ var loader = function(){
                 }
             }
 
+            //var points = getRandomTriangle(99,96);
+
+
             proto.glitch ={
                 name : 'glitch',
-                w: 99,
-                h: 96,
-                sprites : [[clipObjectGlitch(proto.player.sprites[0][0])]]
+                w: 20,
+                h: 20,
+                //sprites : [[clipObjectGlitch(proto.player.sprites[0][0])]]
+                //sprites : [[drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20),drawTriangle(20,20)]]
+                sprites : [drawXTriangles(20,20,99)]
+
                 //sprites : [createGlitchSprites(100)]
             };
 

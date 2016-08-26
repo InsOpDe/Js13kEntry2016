@@ -35,7 +35,7 @@ var weaponsProto = {
         ammo : 8,
         cooldown : 1200,
         shots : 10,
-        randomizer : 0.05,
+        randomizer : 0.025,
         speed : 30,
         damage : 5,
         startRandomizer : 50
@@ -69,7 +69,7 @@ var Weapon = function(opts, id, weaponMod){
     var reloadMaxAmmo = reloadAmmo;
     var reloadTime = reloadAmmo * damage * shots /3;
 
-    function fire(sx,sy,tx,ty){
+    function fire(sx,sy,angleRadians){
         //todo: ggf eine ebene höher machen
         if(isReloading) return;
         var r = 0;
@@ -86,7 +86,7 @@ var Weapon = function(opts, id, weaponMod){
             var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 100;
 
 
-            var angleRadians = getAngleBetweenTwoPoints(sx,sy,tx,ty)-r;
+            angleRadians = angleRadians-r;
             createEntity({
                 name : 'bullet',
                 x : sx,
@@ -109,7 +109,6 @@ var Weapon = function(opts, id, weaponMod){
         lastShot = Date.now();
     }
 
-    //todo: stop reload if its not the actual weapon
     function reload(){
         if(isReloading){
             reloadProgress = reloadTime - ++isReloading;

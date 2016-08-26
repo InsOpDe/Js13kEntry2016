@@ -20,12 +20,15 @@ var gulp = require('gulp'),
     tiny = require('gulp-tinypng-nokey'),
     chalk = require('chalk'),
     gp_sourcemaps = require('gulp-sourcemaps');
+var lebab = require('lebab');
 
 var error = chalk.bold.red;
 var success = chalk.green;
 var regular = chalk.white;
 
 gulp.task('default', function () {
+
+    //console.log(lebab.transform('var f = function(){a;b;return c;};', ['arrow']));
 
     //watch('./res/*.*',{
     //    verbose : true,
@@ -37,7 +40,7 @@ gulp.task('default', function () {
     //        .pipe(gulp.dest('res'));
     //});
 
-    watch(['./src/**/*.js', "!./src/img.js"],{
+    watch(['./src/**/*.js', "!./src/img.js", './res/*.png'],{
         verbose : true,
         ignoreInitial : false
     }, function(){
@@ -52,6 +55,7 @@ gulp.task('default', function () {
 
                 fs.readFile('./res/' + name + '.png', function(err, original_data){
                     //fs.writeFile('image_orig.jpg', original_data, function(err) {});
+                    if(err) console.log('./res/' + name + '.png', err);
                     var base64Image = original_data.toString('base64');
                     resJson[name] = base64Image;
                     loadImage(res, cb)
@@ -113,6 +117,7 @@ gulp.task('default', function () {
                     //.pipe(gp_inject(gulp.src(['./build/uglify.js'], {read: false})))
                     .pipe(gp_replace('<script src="../build/uglify.js"></script>', function(s) {
                         var script = fs.readFileSync('./build/uglify.js', 'utf8');
+                        script = lebab.transform(script, ['arrow']).code;
                         return '<script>\n' + script + '\n</script>';
                     }))
                     .pipe(gp_htmlmin({collapseWhitespace: true}))
@@ -121,13 +126,13 @@ gulp.task('default', function () {
                     .pipe(zip('g.zip'))
                     .pipe(gulp.dest('build'));
 
-                var stats = fs.statSync("./build/archive.zip");
+                var stats = fs.statSync("./build/g.zip");
                 var fileSize = stats.size;
                 if (fileSize > 13312) {
-                    console.log(error("Your zip compressed game is larger than 13kb (13312 bytes)!"))
-                    console.log(regular("Your zip compressed game is " + fileSize + " bytes"));
+                    //console.log(error("Your zip compressed game is larger than 13kb (13312 bytes)!"))
+                    console.log(regular("Your zip compressed game is " + fileSize + "/13312 bytes"));
                 } else {
-                    console.log(success("Your zip compressed game is " + fileSize + " bytes."));
+                    console.log(success("Your zip compressed game is " + fileSize + "/13312 bytes."));
                 }
 
             });
