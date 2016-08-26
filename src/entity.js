@@ -376,9 +376,6 @@ var entity = function(opts,cb) {
             //console.log(name,toggleAnimation,offsetY,frameIndex);
         }
 
-        if(isPlayer){
-            //ligthenGradient(cWidth/2, cHeight/2-(h), 300);
-        }
 
        drawSprite(
            isBullet ? false : sprites[offsetY][frameIndex],

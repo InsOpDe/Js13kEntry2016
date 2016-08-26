@@ -129,6 +129,10 @@ var game = function(skpIntro){
 
 
         if(player.getHp() > 0){
+
+            contextLight.fillStyle = '#000000';
+            contextLight.fillRect(0, 0, cWidth, cHeight);
+
             entities.sort(function(a,b){
                 //console.log(b.getPos().y, a.getPos().y);
                 return a.getRealPos().y - b.getRealPos().y
@@ -142,16 +146,9 @@ var game = function(skpIntro){
                 bullets[i].update(player.getRealPos()).draw();
             }
 
-            contextLight.fillStyle = '#000000';
-            contextLight.fillRect(0, 0, cWidth, cHeight);
-//            contextLight.beginPath();
-//            //contextLight.moveTo(cWidth/2, cWidth/2);
-//            contextLight.arc(cWidth/2, cHeight/2, 100, -1 * Math.PI, 1 * Math.PI, false);
-//
-//// fill arc with gradient
-//            contextLight.fillStyle = '#ffffff';
-//            contextLight.fill();
             ligthenGradient(cWidth/2, cHeight/2, cHeight);
+            //ligthenGradient(cWidth/2, cHeight/2, 100);
+
 
             context.save();
             context.globalCompositeOperation="multiply";

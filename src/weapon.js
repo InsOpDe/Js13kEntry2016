@@ -26,7 +26,7 @@ var weaponsProto = {
         ammo : 30,
         cooldown : 100,
         shots : 1,
-        randomizer : 0.05,
+        randomizer : 0.005,
         speed : 40,
         damage : 5
     },
@@ -72,21 +72,26 @@ var Weapon = function(opts, id, weaponMod){
     function fire(sx,sy,angleRadians){
         //todo: ggf eine ebene höher machen
         if(isReloading) return;
-        var r = 0;
+        var baseR = 0;
         if(type == 'pistols')
-            r = getRandomArbitrary(-randomizer, randomizer);
+            var baseR = getRandomArbitrary(-randomizer, randomizer);
+
 
         for(var i=0; i < shots; i++){
 
+            var r = 0;
 
             if(type == 'pistols')
-                r += .025 * (i==0 ? 1 : -1);
+                r += .035 * (i==0 ? 1 : -1);
             else
                 r += getRandomArbitrary(-randomizer, randomizer);
+
+
+
             var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 100;
 
 
-            angleRadians = angleRadians-r;
+            angleRadians = angleRadians-r-baseR;
             createEntity({
                 name : 'bullet',
                 x : sx,
