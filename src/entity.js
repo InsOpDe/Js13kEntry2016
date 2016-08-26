@@ -61,6 +61,7 @@ var entity = function(opts,cb) {
         that,
         exports = {
             init: init,
+            switchToWeapon: switchToWeapon,
             draw: draw,
             update: update,
             switchWeapon: switchWeapon,
@@ -96,7 +97,6 @@ var entity = function(opts,cb) {
 
             }
         },
-        weaponOrder = ['pistol', 'pistols', 'machinegun', 'shotgun', 'rifle'],
         isBullet = false,
         isGlitch = false,
         isEnemy = false,
@@ -539,8 +539,10 @@ var entity = function(opts,cb) {
     }
 
     function switchToWeapon(weaponname) {
-        weapon = weapons[weaponname];
-        weaponIndex = weaponOrder.indexOf(weaponname)
+        if(weapons[weaponname]){
+            weapon = weapons[weaponname];
+            weaponIndex = weaponOrder.indexOf(weaponname)
+        }
     }
 
 

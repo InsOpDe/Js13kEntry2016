@@ -35,6 +35,14 @@ var game = function(skpIntro){
                 player.switchWeapon(-1);
             }
 
+            var basecode = 49;
+            for(var i=0; i<5;i++){
+                if (code == basecode+i) {
+                    player.switchToWeapon(weaponOrder[i]);
+                }
+            }
+
+
             if(code == 82){
                 player.getWeapon().startReloading();
             }
