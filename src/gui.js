@@ -14,6 +14,7 @@ var Gui = function(player){
         //context.drawImage(font.draw("Next Wave in: " + (Date.now()-timeUntilNextWave)/1000, 5, "green"),cWidth-margin-700,cHeight - margin- 50);
         drawHp();
         drawAmmo();
+        if(player.getPowerUp()) drawPowerUp();
         if(isHacking) drawHack();
     }
 
@@ -28,15 +29,17 @@ var Gui = function(player){
             ratio = 1 - ratio;
         }
 
+        if(opts.bg){
 
-        context.fillStyle = '#000000';
-        context.fillRect(x,y,w,h);
+            context.fillStyle = '#000000';
+            context.fillRect(x,y,w,h);
 
-        context.fillStyle = opts.bg;
-        context.fillRect(x+zoom,y+zoom,w-zoom*2,h-zoom*2);
+            context.fillStyle = opts.bg;
+            context.fillRect(x+zoom,y+zoom,w-zoom*2,h-zoom*2);
+        }
 
         context.fillStyle = opts.fg;
-        context.fillRect(x+zoom,y+zoom,(w-zoom*2)*ratio,h-zoom*2);
+        context.fillRect(x+zoom-(opts.bg?0:1),y+zoom,(w-zoom*2)*ratio,h-zoom*2);
     }
 
     function drawHack(){
@@ -64,7 +67,30 @@ var Gui = function(player){
             fg : '#ff0000',
             fill : player.getHp(),
             fillMax : 1000
+        });
+        drawBar({
+             w : w,
+             h : 20,
+             x : cWidth/2-w/2,
+             y : margin,
+            bg : null,
+            fg : '#8d8fb4',
+            fill : player.getArmor(),
+            fillMax : 1000
         })
+    }
+    function drawPowerUp(){
+        var w = 500;
+        drawBar({
+             w : w,
+             h : 20,
+             x : cWidth/2-w/2,
+             y : margin+60,
+            bg : '#000022',
+            fg : '#222288',
+            fill : player.getPowerUp().charges,
+            fillMax : player.getPowerUp().maxcharges
+        });
     }
     function drawAmmo(){
         var w = 500;

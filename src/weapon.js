@@ -54,7 +54,7 @@ var weaponsProto = {
 };
 
 
-var Weapon = function(opts, id, weaponMod){
+var Weapon = function(opts, id, weaponMod, isPlayer){
     opts = objClone(opts);
     for(var i in weaponMod){
         opts[i] = weaponMod[i];
@@ -67,7 +67,7 @@ var Weapon = function(opts, id, weaponMod){
     var reloadAmmo = opts.reloadAmmo || ammo;
 
     var reloadMaxAmmo = reloadAmmo;
-    var reloadTime = reloadAmmo * damage * shots /3;
+    var reloadTime = reloadAmmo * damage * shots / 4;
 
     function fire(sx,sy,angleRadians){
         //todo: ggf eine ebene höher machen
@@ -116,7 +116,7 @@ var Weapon = function(opts, id, weaponMod){
 
     function reload(){
         if(isReloading){
-            reloadProgress = reloadTime - ++isReloading;
+            reloadProgress = reloadTime - (++isReloading * powerUpMultiplier(isPlayer,1));
             //reloadProgress = ((Date.now() + reloadTime) - isReloading) / reloadTime;
             if(reloadProgress <= 0){
                 reloadAmmo = reloadMaxAmmo;
@@ -131,7 +131,7 @@ var Weapon = function(opts, id, weaponMod){
     }
 
     function checkCooldown(){
-        return lastShot + cooldown > Date.now();
+        return lastShot + (cooldown/powerUpMultiplier(isPlayer,1)) > Date.now();
     }
 
 

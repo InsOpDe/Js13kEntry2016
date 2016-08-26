@@ -4,7 +4,7 @@
 var video = function(textArray, skipMessage, showScore){
 
     var index = 0;
-    skipMessage =  "Press -Space- " + skipMessage;
+    skipMessage =  "Press <Space> " + skipMessage;
     var wholeText = textArray;
     var row = 0;
     var d = getRndTime();

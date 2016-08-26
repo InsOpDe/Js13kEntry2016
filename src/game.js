@@ -12,6 +12,7 @@ var game = function(skpIntro){
     score = 0,
     items = [],
     collectables = [];
+    var cnt = 0;
 
     var now,
         factor,
@@ -19,7 +20,7 @@ var game = function(skpIntro){
         gui,
         beginningSequence = new video(['','call trans opt: received. 9-18-99 14:32:21 REC:log>','warning: carrier anomaly', 'trace program: running..'],'to skip'),
     //todo: get correct date
-        endingSequence = new video(['','system failure'], 'to retry', true),
+        endingSequence = new video(['system failure'], 'to retry', true),
         gameOverTime = false,
         isPaused = false;
 
@@ -129,6 +130,8 @@ var game = function(skpIntro){
             }
         }
 
+        glitchSin = isGlitching();
+        //glitchSin = Math.abs(Math.sin(++cnt/10));
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         //context.globalCompositeOperation = 'source-over';
@@ -201,9 +204,20 @@ var game = function(skpIntro){
         if(player.getHp()>0)
             player.moveY(d);
 
+        var powerup = player.getPowerUp();
+        if(keysDown[16] && powerup && powerup.name =='speed'){
+            player.usePowerup();
+            pTicksPerFrame = 1;
+            speedMultiplier = 3;
+        } else {
+            pTicksPerFrame = 4;
+            speedMultiplier = 1;
+        }
+
 
         player.shoot(shooting, mouseposition);
     }
+
 
     return {
         init : init,

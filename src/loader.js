@@ -1,7 +1,7 @@
 /**
  * Created by Marcel Michelfelder on 18.08.2016.
  */
-var proto;
+var proto, collectableitems;
 
 var loader = function(){
 
@@ -67,7 +67,7 @@ var loader = function(){
             name : 'items',
             w: 20,
             h: 18,
-            subitems : ['pistols', 'rifle', 'shotgun', 'machinegun']
+            subitems : [['pistols', 'rifle', 'shotgun', 'machinegun'],['speed','armor','health','grenade','teleport']]
             //variations : {
             //    'crate2' : {
             //        tint : RGBA(17,30,30)
@@ -75,6 +75,7 @@ var loader = function(){
             //}
         }
     };
+    collectableitems = [];
 
     function init(cb){
         var toLoad = [];
@@ -146,13 +147,16 @@ var loader = function(){
                     return tint(sprite,RGBA(hl,hl,hl));
                 })
                 for(var j in proto[i].subitems){
-                    var spritesTemp = [[proto[i].sprites[0][j]]];
-                    proto[proto[i].subitems[j]] = {
-                        w : proto[i].w,
-                        h : proto[i].h,
-                        name : proto[i].subitems[j],
-                        //todo: für 2er reihen noch machen
-                        sprites : spritesTemp
+                    for(var k in proto[i].subitems[j]){
+                        var tempName = proto[i].subitems[j][k];
+                        collectableitems.push(tempName);
+                        var spritesTemp = [[proto[i].sprites[j][k]]];
+                        proto[tempName] = {
+                            w : proto[i].w,
+                            h : proto[i].h,
+                            name : tempName,
+                            sprites : spritesTemp
+                        }
                     }
                 }
             }

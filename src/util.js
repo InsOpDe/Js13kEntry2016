@@ -274,8 +274,13 @@ function drawImage(sprite,w,h,w2,h2){
 
 }
 
+function powerUpMultiplier(isPlayer,v){
+    return v * isPlayer?speedMultiplier:1
+}
+
 function isGlitching(sw){
     sw = sw || 1
+    //return glitchSin > player.getHp()/1000;
     return Math.random()>(player.getHp()/1000)
         && Math.random()>(player.getHp()/1000)
         && Math.random()>(player.getHp()/1000)

@@ -3,12 +3,12 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave =101;
+    var pX, pY, lastX, lastY, tilesize, wave = 0;
     //var enemies = ['enemy1'];
     var enemies = ['drone','enemy1','drone1'];
     waves=(function(){
         var waves =[];
-        for(var i = 1; i < 100; i++){
+        for(var i = 1; i < 1000; i++){
             waves.push({
                 enemies: createEnemies(i),
                 lasting : SECOND * 4
@@ -38,14 +38,6 @@ var map = function(){
         return en;
     }
 
-    function createEnemyCount(c){
-        //console.log(enemies[c%enemies.length], enemies.length, c,enemies.length%c);
-        return {
-            name : enemies[c%enemies.length],
-            count : c
-        }
-    }
-    //
     //var waves = [
     //    {
     //        enemies : [{name : 'drone', count : 3}],
@@ -105,8 +97,10 @@ var map = function(){
                     },[entities,enemies])
                 }
             }
-            createGlitch();
+            if(wave%3==0)
+                createGlitch();
             wave++;
+            //console.log(wave);
         } else {
             //console.log("game completed");
         }
@@ -144,7 +138,6 @@ var map = function(){
 
     function addRandomItem(){
         if(Math.random()>items.length/15 && items.length < 10 && (lastX != pX || lastY != pY)){
-            //TODO: abhängig davon machen wieviel kisten schon im spiel sind
             var x,y;
             var xOrY = true;
             if(lastX != pX && lastY != pY){
@@ -159,7 +152,7 @@ var map = function(){
             }
 
             var crate = new entity({
-                name : 'crate',
+                name : (Math.random() >.7)?'crate2':'crate',
                 x: x,
                 y: y,
                 ticksPerFrame: 4
@@ -176,33 +169,25 @@ var map = function(){
         var zoomedTilesize = tilesize * overallZoom;
         for(var x = -zoomedTilesize;x < cWidth+zoomedTilesize; x+=zoomedTilesize){
             for(var y = -zoomedTilesize;y < cHeight+zoomedTilesize; y+=zoomedTilesize){
-                //if(isGlitching()){
-                //    context.globalAlpha = .25;
-                //    //context.globalAlpha = 1 - player.getHp()/1000;
-                //    context.drawImage(clipObjectGlitch(drawImage(proto["area"].sprites[0][0], tilesize,tilesize,zoomedTilesize/2, zoomedTilesize/2))
-                //        , 0, 0, zoomedTilesize/2, zoomedTilesize/2, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
-                //    context.globalAlpha = 1;
-                //}
                 //else {
                 if(player.getHp() > 0)
                     context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
                 //}
-                if(isGlitching(.3)){
-                    //context.globalAlpha = 1 - player.getHp()/1000;
+                //todo: kann man vll wieder reinmachen aber die sprites halt schon vorherladen
+                //if(isGlitching(.3)){
+                //    //context.globalAlpha = 1 - player.getHp()/1000;
+                if(player.getHp()<=0){
                     context.globalAlpha = .25;
                     context.drawImage(clipObjectGlitch(drawImage(proto["area"].sprites[0][0], tilesize,tilesize,zoomedTilesize/2, zoomedTilesize/2))
                         , 0, 0, zoomedTilesize/2, zoomedTilesize/2, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
                     context.globalAlpha = 1;
                 }
 
+                //}
 
-                //context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
+
             }
         }
-        //context.fillStyle = '#000000';
-        //context.fillRect(0,0,cWidth,cHeight);
-        //context.fillStyle = '#00ff00';
-        //context.fillRect(cWidth/2,cHeight/2,10,10);
     }
 
     //todo: obstacles

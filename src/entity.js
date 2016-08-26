@@ -20,17 +20,19 @@ var entity = function(opts,cb) {
         pX,
         pY,
         ai,
+        hasPowerUp,
         isHovering,
+        isPowerUp,
         hoverDelta = 0,
         angleRadians = 0,
         speed,
         hacked = 0,
         alreadyDebuged,
         hp = 0,
+        armor = 0,
         maxHp = 0,
         tintedImg = 0,
         damage = 0,
-    //todo: figure out anfangswert, ist der abstand zum mittelpunkt des spielers
         d,
         lastPositions = [],
         lastShiftPositions = [],
@@ -78,16 +80,24 @@ var entity = function(opts,cb) {
             setRef: setRef,
             getWeapon: getWeapon,
             getHp: getHp,
+            getArmor: getArmor,
             getRef: getRef,
             setHp: setHp,
             addHp: addHp,
             getImg: getImg,
+            getPowerUp: getPowerUp,
             isEnemyFnct : isEnemyFnct,
             isPlayerFnct : isPlayerFnct,
             giveWeapon : giveWeapon,
+            usePowerup : usePowerup,
+            givePowerup : givePowerup,
             deleteItem : deleteItem,
             isItemFnct : isItemFnct,
+            isPowerupFnct : function(){
+                return isPowerUp;
+            },
             hack : function(){
+                hacked += powerUpMultiplier(true,1);
                 if(++hacked > isHackingMax){
                     player.addHp(100);
                     deleteItem();
@@ -121,6 +131,7 @@ var entity = function(opts,cb) {
         isGlitch = name == 'glitch';
         isEnemy = !!(name.match(/enemy/) || name.match(/drone/));
         isCollectable = opts.isCollectable;
+        isPowerUp = opts.isPowerUp;
 
         isHovering = name.match(/drone/) || isCollectable;
         isItem = name.match(/crate/);
@@ -145,7 +156,7 @@ var entity = function(opts,cb) {
             if(isBot || isPlayer){
                 var weaponname = obj.weapon;
                 var weaponMod = obj.weaponMod;
-                weapon = weapons[weaponname] = new Weapon(weaponsProto[weaponname], id, weaponMod);
+                weapon = weapons[weaponname] = new Weapon(weaponsProto[weaponname], id, weaponMod, isPlayer);
             }
 
 
@@ -185,14 +196,9 @@ var entity = function(opts,cb) {
         vx = opts.vx;
         vy = opts.vy;
         ticksPerFrame = 4;
-        //ticksPerFrame = opts.ticksPerFrame;
-        //todo zoom
-        //if(!isGlitch)
             zoom = overallZoom;
         if(isBullet)
             zoom = 10;
-        //else
-        //    zoom = 2;
 
     }
 
@@ -225,6 +231,8 @@ var entity = function(opts,cb) {
 
         if(toggleAnimation)
             tickCount += 1;
+
+        if(isPlayer) ticksPerFrame = pTicksPerFrame;
 
         if (tickCount > ticksPerFrame) {
 
@@ -297,6 +305,9 @@ var entity = function(opts,cb) {
                     var name = ent.getName();
                     if(name == 'glitch') {
                         hitGlitch = ent.hack();
+                    } else if(ent.isPowerupFnct()){
+                        player.givePowerup(name);
+                        ent.deleteItem();
                     } else {
                         player.giveWeapon(name);
                         ent.deleteItem();
@@ -445,9 +456,12 @@ var entity = function(opts,cb) {
                     deleteItem()
                 }
             } else {
-                if(isGlitching() || isGlitch){
+                if(glitchSin || isGlitch){
+                //if(isGlitching() || isGlitch){
                     if(isGlitch) sprite = drawTriangle(20,20,3);
+                    //else context.globalAlpha = glitchSin;
                     context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2),isGlitch?'red':'lightgreen'), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
+                    //context.globalAlpha = 1;
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
                     //if(sprites[1]){
@@ -539,6 +553,7 @@ var entity = function(opts,cb) {
     }
 
     function switchToWeapon(weaponname) {
+        //console.log(weaponname, weapons);
         if(weapons[weaponname]){
             weapon = weapons[weaponname];
             weaponIndex = weaponOrder.indexOf(weaponname)
@@ -549,14 +564,17 @@ var entity = function(opts,cb) {
 
     function moveX(d) {
         toggleAnimation = toggleAnimation || d;
+        d *= powerUpMultiplier(isPlayer,d);
         if(!weapon.checkCooldown())
             flip = d == 0 ? flip : d > 0 ? 1 : -1;
         x += d;
     }
     function moveY(d) {
         toggleAnimation = toggleAnimation || d;
+        d *= powerUpMultiplier(isPlayer,d);
         y += d;
     }
+
 
     function getDim(){
         return {w:w,h:h};
@@ -568,7 +586,7 @@ var entity = function(opts,cb) {
         return {x : x, y : y}
     }
     function getPos(){
-        return {x : x-w*zoom/4, y : y-h*zoom/2}
+        return {x : x-w*zoom/4, y : y-h*zoom/2};
         //return {x : x-w*zoom/2, y : y-h*zoom/2}
         //return {x : x-w*zoom/2+zoom*(w/4), y : y-h*zoom/2}
     }
@@ -584,10 +602,16 @@ var entity = function(opts,cb) {
     function getHp(){
         return hp
     }
+    function getArmor(){
+        return armor
+    }
     function setHp(newHp){
         hp = newHp
     }
-    function addHp(addedHp){
+    function addHp(addedHp, addedArmor){
+        addedArmor = addedArmor || 0;
+        armor += addedArmor;
+        armor = Math.min(armor, maxHp);
         hp += addedHp;
         hp = Math.min(hp, maxHp);
     }
@@ -596,14 +620,31 @@ var entity = function(opts,cb) {
     }
     function dealDamage(d){
         gotHit = Date.now() + hitCd;
+        if(armor){
+            var delta = armor - d;
+            if(delta < 0) {
+                d -= armor;
+                armor = 0;
+            } else {
+                armor -= d;
+                d = 0;
+            }
+        }
         hp -= d;
         if(hp <= 0){
             beingDestroyed = that;
             if(isItem){
-                var name = proto.items.subitems[Math.round(getRandomArbitrary(0,proto.items.subitems.length-1))];
+                if(name == 'crate') {
+                    var itemname = collectableitems[Math.round(getRandomArbitrary(0,3))];
+                } else {
+                    var itemname = collectableitems[Math.round(4)];
+                    //var itemname = collectableitems[Math.round(getRandomArbitrary(4,collectableitems.length-1))];
+                }
+
                 createEntity({
-                    name : name,
+                    name : itemname,
                     isCollectable : true,
+                    isPowerUp : name == 'crate2',
                     x:x,
                     y:y
                 },[entities,collectables])
@@ -632,11 +673,44 @@ var entity = function(opts,cb) {
     function isItemFnct(){
         return isItem
     }
+    function givePowerup(powerUpName){
+        var charges = 0;
+        switch(powerUpName){
+            case 'health':
+                addHp(250);
+                break;
+            case 'armor':
+                addHp(0,100);
+                break;
+            case 'speed':
+                charges = 250;
+                break;
+            case 'teleport':
+                charges = 5;
+                break;
+        }
+        if(charges)
+            hasPowerUp = {
+                name : powerUpName,
+                charges : charges,
+                maxcharges : charges,
+            };
+    }
+    function usePowerup(){
+        if(hasPowerUp){
+            if(--hasPowerUp.charges <= 0){
+                hasPowerUp = undefined;
+            }
+        }
+    }
+    function getPowerUp(){
+        return hasPowerUp;
+    }
     function giveWeapon(weaponname){
         if(weapons[weaponname]){
             weapons[weaponname].addAmmo(weaponsProto[weaponname].ammo);
         } else {
-            weapons[weaponname] =  new Weapon(weaponsProto[weaponname], id);
+            weapons[weaponname] =  new Weapon(weaponsProto[weaponname], id, null, isPlayer);
             switchToWeapon(weaponname)
         }
 
