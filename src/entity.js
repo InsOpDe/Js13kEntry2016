@@ -637,8 +637,8 @@ var entity = function(opts,cb) {
                 if(name == 'crate') {
                     var itemname = collectableitems[Math.round(getRandomArbitrary(0,3))];
                 } else {
-                    var itemname = collectableitems[Math.round(4)];
-                    //var itemname = collectableitems[Math.round(getRandomArbitrary(4,collectableitems.length-1))];
+                    //var itemname = collectableitems[Math.round(collectableitems.length-1)];
+                    var itemname = collectableitems[Math.round(getRandomArbitrary(4,collectableitems.length-1))];
                 }
 
                 createEntity({

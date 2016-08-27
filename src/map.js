@@ -4,8 +4,8 @@
 
 var map = function(){
     var pX, pY, lastX, lastY, tilesize, wave = 0;
-    //var enemies = ['enemy1'];
-    var enemies = ['drone','enemy1','drone1'];
+    var enemies = ['drone','enemy1','enemy2','drone1'];
+    //var enemies = ['enemy2'];
     waves=(function(){
         var waves =[];
         for(var i = 1; i < 1000; i++){

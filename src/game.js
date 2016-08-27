@@ -179,6 +179,8 @@ var game = function(skpIntro){
     }
 
 
+
+    var teleportCd = Date.now();
     function input(){
         var d = 0;
         var s = 5;
@@ -205,10 +207,20 @@ var game = function(skpIntro){
             player.moveY(d);
 
         var powerup = player.getPowerUp();
-        if(keysDown[16] && powerup && powerup.name =='speed'){
-            player.usePowerup();
-            pTicksPerFrame = 1;
-            speedMultiplier = 3;
+        if(keysDown[16] ){
+            if(powerup) {
+                if(powerup.name =='speed'){
+                    pTicksPerFrame = 1;
+                    speedMultiplier = 3;
+                    player.usePowerup();
+                } else if(powerup.name =='teleport' && teleportCd + 200 < Date.now()) {
+                    player.moveX(mouseposition.x);
+                    player.moveY(mouseposition.y);
+                    teleportCd = Date.now();
+                    player.usePowerup();
+                }
+
+            }
         } else {
             pTicksPerFrame = 4;
             speedMultiplier = 1;

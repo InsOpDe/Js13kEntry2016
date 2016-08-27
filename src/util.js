@@ -45,10 +45,11 @@ function changeColorOfSprite(img,originRGBA,destRGBA){
     var pixels = imageData.data;
     var numPixels = pixels.length;
     for (var i = 0; i < numPixels; i++) {
-        if(originRGBA.r == pixels[i*4] && originRGBA.g == pixels[i*4+1] && originRGBA.b == pixels[i*4+1]){
+        if(originRGBA.r == pixels[i*4] && originRGBA.g == pixels[i*4+1] && originRGBA.b == pixels[i*4+2]){
             pixels[i*4] = destRGBA.r;
             pixels[i*4+1] = destRGBA.g;
             pixels[i*4+2] = destRGBA.b;
+            pixels[i*4+3] = destRGBA.a;
         }
     }
     bx.putImageData(imageData, 0, 0);
@@ -373,11 +374,13 @@ function getBinaryString(len){
 }
 
 function RGBA(r,g,b,a){
+    //console.log(a,isNaN(a),isNaN(a)?1:a);
     return {
         r:r,
         g:g,
         b:b,
-        a:a||1
+        //a:255
+        a:255*(isNaN(a)?1:a)
     }
 };
 

@@ -26,6 +26,17 @@ var loader = function(){
                     },
                     from : [RGBA(248,248,248)],
                     to : [RGBA(219,17,17)]
+                },
+                'enemy2' : {
+                    weapon : 'machinegun',
+                    weaponMod : {
+                        cooldown : 150,
+                        speed : 20,
+                        randomizer : .1,
+                        ammo : 10
+                    },
+                    from : [RGBA(8,7,7),RGBA(9,8,8),RGBA(48,48,48),RGBA(9,8,9),RGBA(65,65,65),RGBA(248,248,248),RGBA(22,22,22)],
+                    to : [RGBA(20,150,120),RGBA(30,150,130),RGBA(70,16,16),RGBA(0,0,0,0),RGBA(161,149,17),RGBA(161,149,17),RGBA(245,199,199)]
                 }
             }
         },
@@ -120,6 +131,7 @@ var loader = function(){
                             sprites = iterateSprites(proto[i].sprites, function(sprite){
                                 var tempSprite = sprite;
                                 for(var k = 0; k < vars[j].from.length; k++){
+                                    //console.log(j,k);
                                     tempSprite = changeColorOfSprite(tempSprite,vars[j].from[k],vars[j].to[k]);
                                 }
                                 return tempSprite;

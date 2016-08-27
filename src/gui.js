@@ -9,7 +9,8 @@ var Gui = function(player){
 
     function draw(){
         var weapon = player.getWeapon();
-        context.drawImage(font.draw(weapon.name + " " + weapon.getAmmo().ammo, 5, "green"),margin,cHeight - margin- 50);
+        context.drawImage(font.draw(weapon.name + ": " + weapon.getAmmo().ammo, 5, "green"),margin,cHeight - margin- 90);
+        if(player.getPowerUp())context.drawImage(font.draw(player.getPowerUp().name + ": " + player.getPowerUp().charges, 5, "green"),margin,cHeight - margin- 50);
         context.drawImage(font.draw('score: ' + score,5, "green"),margin,margin);
         //context.drawImage(font.draw("Next Wave in: " + (Date.now()-timeUntilNextWave)/1000, 5, "green"),cWidth-margin-700,cHeight - margin- 50);
         drawHp();
