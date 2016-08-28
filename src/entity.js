@@ -348,7 +348,7 @@ var entity = function(opts,cb) {
         } else {
             entities.splice(entities.indexOf(that),1);
             if(isEnemy)
-                score += 50;
+                score += maxHp;
             if(isGlitch)
                 score += 100;
 
@@ -683,7 +683,7 @@ var entity = function(opts,cb) {
                 addHp(0,100);
                 break;
             case 'speed':
-                charges = 250;
+                charges = 200;
                 break;
             case 'teleport':
                 charges = 5;

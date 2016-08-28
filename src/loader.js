@@ -24,19 +24,74 @@ var loader = function(){
                         cooldown : 1000,
                         randomizer : .35
                     },
-                    from : [RGBA(248,248,248)],
-                    to : [RGBA(219,17,17)]
+                    from : [
+                        RGBA(8,7,7), //mantelhinten
+                        RGBA(9,8,8), //mantel
+                        RGBA(48,48,48), //hose
+                        RGBA(9,8,9), //manteluber
+                        RGBA(65,65,65), //krawatte
+                        RGBA(248,248,248), //unterhemd
+                        RGBA(22,22,22), //sunglasses
+                        RGBA(21,22,22), //eyes
+                        RGBA(7,7,7), //overhair
+                        RGBA(245,199,199), //skin light
+                        RGBA(236,154,154), //skin dark
+                        RGBA(6,6,6), //hair
+                    ],
+                    to : [
+                        RGBA(236,154,154), //mantelhinten
+                        RGBA(48,94,210),   //mantel
+                        RGBA(40,85,200), //hose
+                        RGBA(0,0,0,0),  //manteluber
+                        RGBA(236,154,154),   //krawatte
+                        RGBA(236,154,154),   //unterhemd
+                        RGBA(236,154,154),   //sunglasses
+                        RGBA(126,79,79),   //eyes
+                        RGBA(0,0,0,0),   //overhair
+                        RGBA(245,199,199), //skin light
+                        RGBA(236,154,154), //skin dark
+                        RGBA(210,71,48), //hair
+                    ]
                 },
                 'enemy2' : {
-                    weapon : 'machinegun',
+                    weapon : 'shotgun',
+                    hp:100,
                     weaponMod : {
-                        cooldown : 150,
-                        speed : 20,
-                        randomizer : .1,
-                        ammo : 10
+                        randomizer :.05,
+                        damage : 2,
+                        cooldown: 1500,
+                        ammo: 4,
                     },
-                    from : [RGBA(8,7,7),RGBA(9,8,8),RGBA(48,48,48),RGBA(9,8,9),RGBA(65,65,65),RGBA(248,248,248),RGBA(22,22,22)],
-                    to : [RGBA(20,150,120),RGBA(30,150,130),RGBA(70,16,16),RGBA(0,0,0,0),RGBA(161,149,17),RGBA(161,149,17),RGBA(245,199,199)]
+                    from : [
+                         //RGBA(8,7,7), //mantelhinten
+                         //RGBA(9,8,8), //mantel
+                         RGBA(48,48,48), //hose
+                        //RGBA(9,8,9), //manteluber
+                        RGBA(65,65,65), //krawatte
+                        RGBA(248,248,248), //unterhemd
+                         //RGBA(22,22,22), //sunglasses
+                         //RGBA(21,22,22), //eyes
+                         RGBA(7,7,7), //overhair
+                         RGBA(245,199,199), //skin light
+                         RGBA(236,154,154), //skin dark
+                         RGBA(6,6,6), //hair
+                        ],
+                    to : [
+                        //RGBA(20,150,120), //mantelhinten
+                        //RGBA(30,150,130),   //mantel
+                        RGBA(50,16,16), //hose
+                        //RGBA(0,0,0,0),  //manteluber
+                        RGBA(74,74,74),   //krawatte
+                        RGBA(44,44,44),   //unterhemd
+                        //RGBA(245,199,199),   //sunglasses
+                        //RGBA(236,154,154),   //eyes
+                        RGBA(0,0,0,0),   //overhair
+                        RGBA(100,80,49), //skin light
+                        RGBA(77,59,30), //skin dark
+                        RGBA(0,0,0), //hair
+                    ]
+                    //from : [RGBA(8,7,7),RGBA(9,8,8),RGBA(48,48,48),RGBA(9,8,9),RGBA(65,65,65),RGBA(248,248,248),RGBA(22,22,22)],
+                    //to : [RGBA(20,150,120),RGBA(30,150,130),RGBA(70,16,16),RGBA(0,0,0,0),RGBA(161,149,17),RGBA(161,149,17),RGBA(245,199,199)]
                 }
             }
         },
@@ -60,6 +115,19 @@ var loader = function(){
                     },
                     hp : 30,
                     tint : RGBA(17,30,30)
+                },
+                'drone2' : {
+                    weapon : 'rifle',
+                    weaponMod : {
+                        cooldown : 1000,
+                        randomizer : .5,
+                        damage : 30,
+                        shots : 3,
+                        ammo: 3,
+                        damage: 15,
+                    },
+                    hp : 30,
+                    tint : RGBA(170,63,0)
                 }
             }
         },

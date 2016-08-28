@@ -73,8 +73,8 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
         //todo: ggf eine ebene höher machen
         if(isReloading) return;
         var baseR = 0;
-        if(type == 'pistols')
-            var baseR = getRandomArbitrary(-randomizer, randomizer);
+        if(type == 'pistols' || type == 'shotgun')
+            baseR = getRandomArbitrary(-randomizer, randomizer);
 
 
         for(var i=0; i < shots; i++){
