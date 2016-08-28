@@ -18,11 +18,16 @@ var game = function(skpIntro){
         factor,
         last,
         gui,
-        beginningSequence = new video(['','call trans opt: received. 9-18-99 14:32:21 REC:log>','warning: carrier anomaly', 'trace program: running..'],'to skip'),
+        beginningSequence = new video(['','call trans opt: received. '+getDateTime()+' REC:log>','warning: carrier anomaly', 'trace program: running..'],'to skip'),
     //todo: get correct date
         endingSequence = new video(['system failure'], 'to retry', true),
         gameOverTime = false,
         isPaused = false;
+
+    function getDateTime(){
+        var date = new Date();
+        return date.getDay()+"-"+(date.getMonth()+1)+"-"+(1900+date.getYear())+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+    }
 
 
 

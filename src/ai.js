@@ -21,32 +21,36 @@ var Ai = function(ent){
             movementTimer = Date.now();
 
 
-
+            var eX = ent.getPos().x;
+            var eY = ent.getPos().y;
             if(moveOrder){
                 //todo: mit vektoren machen
-                f = moveOrder.x < ent.getPos().x ? -1 : 1;
+                f = moveOrder.x < eX ? -1 : 1;
                 ent.moveX(f * movementSpeed);
-                f = moveOrder.y < ent.getPos().y ? -1 : 1;
+                f = moveOrder.y < eY ? -1 : 1;
                 ent.moveY(f * movementSpeed);
             } else {
+                var d = dist(pX,pY,eX,eY);
+                var maxReach = Math.max(150,d/2);
+
                 //var dir = Math.random() <.5 ? -1 : 1;
-                var dir = ent.getPos().x > pX ? -1 : 1;
-                var dist = getRandomArbitrary(50,100);
-                var x = dir*dist + ent.getPos().x;
-                var dir = ent.getPos().y > pY ? -1 : 1;
+                var dir = eX > pX ? -1 : 1;
+                var distX = getRandomArbitrary(50,maxReach);
+                var x = dir*distX + eX;
+                dir = eY > pY ? -1 : 1;
                 //var dir = Math.random() <.5 ? -1 : 1;
-                var dist = getRandomArbitrary(50,100);
-                var y = dir*dist + ent.getPos().y;
+                var distY = getRandomArbitrary(50,maxReach);
+                var y = dir*distY + eY;
                 moveOrder = {x:x,y:y};
                 //console.log("THERE?",moveOrder);
             }
 
             if(moveOrder && hits(moveOrder.x, moveOrder.y, 10, 10,
-                    ent.getPos().x, ent.getPos().y, ent.getDim().w, ent.getDim().h)) {
+                    eX, eY, ent.getDim().w, ent.getDim().h)) {
                 //console.log(moveOrder.x, moveOrder.y, 10, 10,
-                //    ent.getPos().x, ent.getPos().y, ent.getDim().w, ent.getDim().h);
+                //    x, y, ent.getDim().w, ent.getDim().h);
 
-            //if(moveOrder.x == ent.getPos().x && moveOrder.y == ent.getPos().y) {
+            //if(moveOrder.x == x && moveOrder.y == y) {
                 moveOrder = false;
                 movementCooldown = getRandomArbitrary(500, 2000);
 

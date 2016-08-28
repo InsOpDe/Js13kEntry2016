@@ -26,18 +26,18 @@ var loader = function(){
                         randomizer : .35
                     },
                     from : [
-                        RGBA(8,7,7), //mantelhinten
+                        RGBA(29,29,29), //mantelhinten
                         RGBA(9,8,8), //mantel
                         RGBA(48,48,48), //hose
-                        RGBA(9,8,9), //manteluber
+                        RGBA(20,20,20), //manteluber
                         RGBA(65,65,65), //krawatte
-                        RGBA(248,248,248), //unterhemd
-                        RGBA(22,22,22), //sunglasses
-                        RGBA(21,22,22), //eyes
-                        RGBA(7,7,7), //overhair
+                        RGBA(249,249,249), //unterhemd
+                        RGBA(40,40,40), //sunglasses
+                        RGBA(60,60,60), //eyes
+                        RGBA(0,0,0), //overhair
                         RGBA(245,199,199), //skin light
                         RGBA(236,154,154), //skin dark
-                        RGBA(6,6,6), //hair
+                        RGBA(15,15,15), //hair
                     ],
                     to : [
                         RGBA(236,154,154), //mantelhinten
@@ -51,31 +51,32 @@ var loader = function(){
                         RGBA(0,0,0,0),   //overhair
                         RGBA(245,199,199), //skin light
                         RGBA(236,154,154), //skin dark
-                        RGBA(210,71,48), //hair
+                        RGBA(236,154,154), //hair
+                        //RGBA(210,71,48), //hair
                     ]
                 },
                 'enemy2' : { //morpheus
                     weapon : 'shotgun',
                     hp:100,
                     weaponMod : {
-                        randomizer :.05,
+                        randomizer :.15,
                         damage : 2,
                         cooldown: 1500,
                         ammo: 4,
                     },
                     from : [
-                         //RGBA(8,7,7), //mantelhinten
+                         //RGBA(29,29,29), //mantelhinten
                          //RGBA(9,8,8), //mantel
                          RGBA(48,48,48), //hose
-                        //RGBA(9,8,9), //manteluber
+                        //RGBA(20,20,20), //manteluber
                         RGBA(65,65,65), //krawatte
-                        RGBA(248,248,248), //unterhemd
-                         //RGBA(22,22,22), //sunglasses
-                         //RGBA(21,22,22), //eyes
-                         RGBA(7,7,7), //overhair
+                        RGBA(249,249,249), //unterhemd
+                         //RGBA(40,40,40), //sunglasses
+                         //RGBA(60,60,60), //eyes
+                         RGBA(0,0,0), //overhair
                          RGBA(245,199,199), //skin light
                          RGBA(236,154,154), //skin dark
-                         RGBA(6,6,6), //hair
+                         RGBA(15,15,15), //hair
                         ],
                     to : [
                         //RGBA(20,150,120), //mantelhinten
@@ -92,7 +93,7 @@ var loader = function(){
                         RGBA(0,0,0), //hair
                     ]
                 },
-                'enemy3' : {
+                'enemy3' : { //ghost
                     weapon : 'machinegun',
                     hp:75,
                     weaponMod : {
@@ -103,18 +104,18 @@ var loader = function(){
                         speed: 20,
                     },
                     from : [
-                         RGBA(8,7,7), //mantelhinten
+                         RGBA(29,29,29), //mantelhinten
                          RGBA(9,8,8), //mantel
                          RGBA(48,48,48), //hose
-                        RGBA(9,8,9), //manteluber
+                        RGBA(20,20,20), //manteluber
                         RGBA(65,65,65), //krawatte
-                        RGBA(248,248,248), //unterhemd
-                         RGBA(22,22,22), //sunglasses
-                         RGBA(21,22,22), //eyes
-                         RGBA(7,7,7), //overhair
+                        RGBA(249,249,249), //unterhemd
+                         RGBA(40,40,40), //sunglasses
+                         RGBA(60,60,60), //eyes
+                         RGBA(0,0,0), //overhair
                          //RGBA(245,199,199), //skin light
                          //RGBA(236,154,154), //skin dark
-                         RGBA(6,6,6), //hair
+                         RGBA(15,15,15), //hair
                         ],
                     to : [
                         RGBA(190,190,190), //mantelhinten
@@ -123,8 +124,8 @@ var loader = function(){
                         RGBA(220,220,220),  //manteluber
                         RGBA(74,74,74),   //krawatte
                         RGBA(190,190,190),   //unterhemd
-                        RGBA(74,74,74),   //sunglasses
-                        RGBA(74,74,74),   //eyes
+                        RGBA(180,180,180),   //sunglasses
+                        RGBA(180,180,180),   //eyes
                         RGBA(190,190,190),   //overhair
                         //RGBA(100,80,49), //skin light
                         //RGBA(77,59,30), //skin dark
@@ -174,7 +175,7 @@ var loader = function(){
             name : 'crate',
             w: 20,
             h: 20,
-            hp: 30,
+            hp: 20,
             variations : {
                 'crate2' : {
                     tint : RGBA(17,30,30)

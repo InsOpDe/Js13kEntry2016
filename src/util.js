@@ -45,7 +45,7 @@ function changeColorOfSprite(img,originRGBA,destRGBA){
     var pixels = imageData.data;
     var numPixels = pixels.length;
     for (var i = 0; i < numPixels; i++) {
-        if(originRGBA.r == pixels[i*4] && originRGBA.g == pixels[i*4+1] && originRGBA.b == pixels[i*4+2]){
+        if(originRGBA.r === pixels[i*4] && originRGBA.g === pixels[i*4+1] && originRGBA.b === pixels[i*4+2] && originRGBA.a === pixels[i*4+3]){
             pixels[i*4] = destRGBA.r;
             pixels[i*4+1] = destRGBA.g;
             pixels[i*4+2] = destRGBA.b;

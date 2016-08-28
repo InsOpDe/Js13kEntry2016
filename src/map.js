@@ -5,7 +5,7 @@
 var map = function(){
     var pX, pY, lastX, lastY, tilesize, wave = 0;
     var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
-    //var enemies = ['enemy3'];
+    //var enemies = ['enemy1'];
     waves=(function(){
         var waves =[];
         for(var i = 1; i < 1000; i++){
@@ -13,11 +13,6 @@ var map = function(){
                 enemies: createEnemies(i),
                 lasting : SECOND * 5
             });
-            //waves.push({
-            //    enemies : [createEnemyCount(i)],
-            //    lasting : SECOND
-            //});
-            //createEnemies(i)
         }
         return waves;
     })();

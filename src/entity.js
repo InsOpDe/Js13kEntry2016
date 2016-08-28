@@ -2,7 +2,6 @@
  * Created by Marcel Michelfelder on 14.08.2016.
  */
 
-//shinecolor: ffb400
 
 var entity = function(opts,cb) {
     idCounter++;
@@ -334,8 +333,8 @@ var entity = function(opts,cb) {
 
 
 
-
-        if(dist(pX,pY,x,y) > cWidth) {
+        var dst = dist(pX,pY,x,y);
+        if(dst > cWidth*1.5 || ((isBullet || isItem) && dst > cHeight)) {
             deleteItem();
         }
 
