@@ -19,11 +19,6 @@ function tint(img,rgba){
     bx.putImageData(imageData, 0, 0);
 
     return buffer;
-    //var image = new Image();
-    //image.src = buffer.toDataURL();
-    //image.onload = function(){
-    //    cb(image);
-    //};
 }
 
 function getBufferAndContext(i,w,h){
@@ -282,12 +277,12 @@ function powerUpMultiplier(isPlayer,v){
 function isGlitching(sw){
     sw = sw || 1
     //return glitchSin > player.getHp()/1000;
-    return Math.random()>(player.getHp()/1000)
-        && Math.random()>(player.getHp()/1000)
-        && Math.random()>(player.getHp()/1000)
-        && Math.random()>(player.getHp()/1000)
-        && Math.random()>(player.getHp()/1000)
-        && sw>(player.getHp()/1000)
+    return Math.random()>(player.$.hp/1000)
+        && Math.random()>(player.$.hp/1000)
+        && Math.random()>(player.$.hp/1000)
+        && Math.random()>(player.$.hp/1000)
+        && Math.random()>(player.$.hp/1000)
+        && sw>(player.$.hp/1000)
 }
 
 function drawZoomed(img,zoom){

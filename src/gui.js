@@ -8,7 +8,7 @@ var Gui = function(player){
 
 
     function draw(){
-        var weapon = player.getWeapon();
+        var weapon = player.$.weapon;
         context.drawImage(font.draw(weapon.name + ": " + weapon.getAmmo().ammo, 5, "green"),margin,cHeight - margin- 90);
         if(player.getPowerUp())context.drawImage(font.draw(player.getPowerUp().name + ": " + player.getPowerUp().charges, 5, "green"),margin,cHeight - margin- 50);
         context.drawImage(font.draw('score: ' + score,5, "green"),margin,margin);
@@ -66,7 +66,7 @@ var Gui = function(player){
              y : margin,
             bg : '#ff8888',
             fg : '#ff0000',
-            fill : player.getHp(),
+            fill : player.$.hp,
             fillMax : 1000
         });
         drawBar({
@@ -76,7 +76,7 @@ var Gui = function(player){
              y : margin,
             bg : null,
             fg : '#8d8fb4',
-            fill : player.getArmor(),
+            fill : player.$.armor,
             fillMax : 1000
         })
     }
@@ -95,7 +95,7 @@ var Gui = function(player){
     }
     function drawAmmo(){
         var w = 500;
-        var weapon = player.getWeapon();
+        var weapon = player.$.weapon;
         var reload = weapon.getReloadProgress();
         var bg = '#3b321b',
             fg = '#ffd674',

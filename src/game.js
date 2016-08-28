@@ -50,13 +50,10 @@ var game = function(skpIntro){
 
 
             if(code == 82){
-                player.getWeapon().startReloading();
+                player.$.weapon.startReloading();
             }
         }
     }
-
-
-
 
     function init(cb) {
 
@@ -125,10 +122,9 @@ var game = function(skpIntro){
                         localStorage.setItem("highscore", score)
                     }
 
-                    delete window.stage;
-                    window.stage = new game(true);
-                    window.stage.init(function(){
-                        window.stage.run();
+                    stage = new game(true);
+                    stage.init(function(){
+                        stage.run();
                     });
                 }
                 return;
@@ -144,7 +140,7 @@ var game = function(skpIntro){
         _map.update(player.getRealPos());
 
 
-        if(player.getHp() > 0){
+        if(player.$.hp > 0){
 
             contextLight.fillStyle = '#000000';
             contextLight.fillRect(0, 0, cWidth, cHeight);
@@ -199,7 +195,7 @@ var game = function(skpIntro){
             d = s;
         }
 
-        if(player.getHp()>0)
+        if(player.$.hp>0)
             player.moveX(d);
 
         d = 0;
@@ -208,7 +204,7 @@ var game = function(skpIntro){
         } else if (keysDown[87]) {
             d = s * (-1);
         }
-        if(player.getHp()>0)
+        if(player.$.hp>0)
             player.moveY(d);
 
         var powerup = player.getPowerUp();

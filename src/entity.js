@@ -6,11 +6,15 @@
 var entity = function(opts,cb) {
     idCounter++;
 
+    var $ = {
+        hp:0,
+        armor:0,
+        id :idCounter,
+    }
     var x,
         y,
         w = 1,
         h = 1,
-        id = idCounter,
         originId,
         sX,
         sY,
@@ -26,17 +30,12 @@ var entity = function(opts,cb) {
         angleRadians = 0,
         speed,
         hacked = 0,
-        alreadyDebuged,
-        hp = 0,
-        armor = 0,
         maxHp = 0,
-        tintedImg = 0,
         damage = 0,
         d,
         lastPositions = [],
         lastShiftPositions = [],
         hitCd = 200,
-        name,
         gotHit,
         shootThrough,
         beingDestroyed,
@@ -48,7 +47,6 @@ var entity = function(opts,cb) {
         frameIndex = 0,
         tickCount = 0,
         weaponIndex = 0,
-        weapon,
         weapons = {},
         sprites,
         hitSprites,
@@ -69,29 +67,21 @@ var entity = function(opts,cb) {
             moveX: moveX,
             moveY: moveY,
             shoot: shoot,
-            getId: getId,
-            getName: getName,
             getBounding: getBounding,
             getPos: getPos,
             getDim: getDim,
             dealDamage: dealDamage,
             getRealPos: getRealPos,
             setRef: setRef,
-            getWeapon: getWeapon,
-            getHp: getHp,
-            getArmor: getArmor,
             getRef: getRef,
             setHp: setHp,
             addHp: addHp,
-            getImg: getImg,
             getPowerUp: getPowerUp,
-            isEnemyFnct : isEnemyFnct,
-            isPlayerFnct : isPlayerFnct,
+            $ :$,
             giveWeapon : giveWeapon,
             usePowerup : usePowerup,
             givePowerup : givePowerup,
             deleteItem : deleteItem,
-            isItemFnct : isItemFnct,
             isPowerupFnct : function(){
                 return isPowerUp;
             },
@@ -107,12 +97,9 @@ var entity = function(opts,cb) {
             }
         },
         isBullet = false,
-        isGlitch = false,
-        isEnemy = false,
         isBot = false,
-        isItem = false,
         isCollectable = false,
-        isPlayer = false;
+        isGlitch = false;
 
 
 
@@ -124,16 +111,16 @@ var entity = function(opts,cb) {
 
     function init(opts) {
         // Create sprite sheet
-        name = opts.name;
-        isPlayer = name == 'player';
-        isBullet = name == 'bullet';
-        isGlitch = name == 'glitch';
-        isEnemy = !!(name.match(/enemy/) || name.match(/drone/));
+        $.name = opts.name;
+        $.isPlayer = $.name == 'player';
+        isBullet = $.name == 'bullet';
+        isGlitch = $.name == 'glitch';
+        $.isEnemy = !!($.name.match(/enemy/) || $.name.match(/drone/));
         isCollectable = opts.isCollectable;
         isPowerUp = opts.isPowerUp;
 
-        isHovering = name.match(/drone/) || isCollectable;
-        isItem = name.match(/crate/);
+        isHovering = $.name.match(/drone/) || isCollectable;
+        $.isItem = $.name.match(/crate/);
 
         isBot = opts.bot;
 
@@ -142,24 +129,24 @@ var entity = function(opts,cb) {
 
 
         if (!isBullet) {
-            var obj = proto[name];
+            var obj = proto[$.name];
             h = obj.h;
             w = obj.w;
-            hp = opts.hp || obj.hp;
-            maxHp = hp;
+            $.hp = opts.hp || obj.hp;
+            maxHp = $.hp;
             sprites = obj.sprites;
             hitSprites = obj.hitSprites;
             numberOfCols = sprites[0].length;
             numberOfRows = sprites.length;
 
-            if(isBot || isPlayer){
+            if(isBot || $.isPlayer){
                 var weaponname = obj.weapon;
                 var weaponMod = obj.weaponMod;
-                weapon = weapons[weaponname] = new Weapon(weaponsProto[weaponname], id, weaponMod, isPlayer);
+                $.weapon = weapons[weaponname] = new Weapon(weaponsProto[weaponname], $.id, weaponMod, $.isPlayer);
             }
 
 
-            if(!isPlayer)
+            if(!$.isPlayer)
                 splinterSelf = new splinter(sprites[0][0]);
 
         } else {
@@ -170,23 +157,6 @@ var entity = function(opts,cb) {
             shift = opts.shift;
             d = opts.start;
         }
-
-
-
-
-
-        //if(isPlayer){
-            //weapons['machinegun'] = new Weapon(weaponsProto['machinegun'], id);
-            //weapons['shotgun'] = new Weapon(weaponsProto['shotgun'], id);
-            //weapons['rifle'] = new Weapon(weaponsProto['rifle'], id);
-            //weapons.push(new Weapon(weaponsProto['rifle'], id));
-            //weapons.push(new Weapon(weaponsProto['machinegun'], id));
-            //weapons.push(new Weapon(weaponsProto['shotgun'], id));
-            //weapons.push(new Weapon(weaponsProto['pistol'], id));
-        //}
-
-
-
 
 
         x = sX = opts.x;
@@ -213,7 +183,7 @@ var entity = function(opts,cb) {
             tmpWeapon = weapons[weaponOrder[weaponIndex]];
             weaponIndex += r;
         }
-        weapon = tmpWeapon;
+        $.weapon = tmpWeapon;
         weaponIndex -= r;
     }
 
@@ -231,7 +201,7 @@ var entity = function(opts,cb) {
         if(toggleAnimation)
             tickCount += 1;
 
-        if(isPlayer) ticksPerFrame = pTicksPerFrame;
+        if($.isPlayer) ticksPerFrame = pTicksPerFrame;
 
         if (tickCount > ticksPerFrame) {
 
@@ -257,58 +227,46 @@ var entity = function(opts,cb) {
 
             x = vx * d + sX;
             y = vy * d + sY;
-            //todo: do exports for all entities
             var ent;
             for(var i in entities){
                 ent = entities[i];
-                if(id == ent.getId() || originId == ent.getId() || ent.getHp() <= 0)
+                if($.id == ent.$.id || originId == ent.$.id || ent.$.hp <= 0)
                     continue;
 
                 var x2 = ent.getPos().x;
                 var y2 = ent.getPos().y;
                 var w2 = ent.getBounding().w;
                 var h2 = ent.getBounding().h;
-                //TODO: nochmal überarbeiten von welchem schießer der schuss kommt und wen er trifft
-                if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.isItemFnct() ||ent.isPlayerFnct() || (ent.isEnemyFnct() && originId == player.getId()))){
-                    //TODO: nach hit ggf vektoren abändern - das ist auch ne gute idee für nen glitch
+                if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id))){
                     if(!shootThrough)
                         bullets.splice(bullets.indexOf(that),1);
                     ent.dealDamage(damage);
                     break;
-                    //todo: shoot through?
                 }
             }
-            //if(d > 1000) {
-            //    bullets.splice(bullets.indexOf(that),1);
-            //}
-            //todo: check for collision
         }
 
 
         // collect items
-        if(isPlayer){
+        if($.isPlayer){
             var ent;
             var hitGlitch = 0;
             for(var i in collectables){
                 ent = collectables[i];
-                //if(id == ent.getId() || originId == ent.getId() || ent.getHp() <= 0)
-                //    continue;
 
                 var x2 = ent.getPos().x;
                 var y2 = ent.getPos().y;
                 var w2 = ent.getBounding().w;
                 var h2 = ent.getBounding().h;
-                //if(hits(x,y,w,h,x2,y2,w2,h2)){
-                //if(hits(x,y-h*zoom/2,w,h*zoom/2,x2,y2,w2,h2)){
                 if(hits(x-w*zoom/4,y-h*zoom/2,w*zoom/2,h*zoom/2,x2,y2,w2,h2)){
-                    var name = ent.getName();
-                    if(name == 'glitch') {
+                    var entName = ent.$.name;
+                    if(entName == 'glitch') {
                         hitGlitch = ent.hack();
                     } else if(ent.isPowerupFnct()){
-                        player.givePowerup(name);
+                        player.givePowerup(entName);
                         ent.deleteItem();
                     } else {
-                        player.giveWeapon(name);
+                        player.giveWeapon(entName);
                         ent.deleteItem();
                     }
 
@@ -323,18 +281,18 @@ var entity = function(opts,cb) {
             isHacking = hitGlitch;
         }
 
-        if(weapon)
-            weapon.reload();
+        if($.weapon)
+            $.weapon.reload();
 
         //todo: in Ai einbauen
-        //if(isEnemy){
+        //if($.isEnemy){
         //    shoot(true, {x:pX, y:pY});
         //}
 
 
 
         var dst = dist(pX,pY,x,y);
-        if(dst > cWidth*1.5 || ((isBullet || isItem) && dst > cHeight)) {
+        if(dst > cWidth*1.5 || ((isBullet || $.isItem) && dst > cHeight)) {
             deleteItem();
         }
 
@@ -346,16 +304,16 @@ var entity = function(opts,cb) {
             bullets.splice(bullets.indexOf(that),1);
         } else {
             entities.splice(entities.indexOf(that),1);
-            if(isEnemy)
+            if($.isEnemy)
                 score += maxHp;
             if(isGlitch)
                 score += 100;
 
-            if(isItem)
+            if($.isItem)
                 items.splice(items.indexOf(that),1);
             if(isCollectable || isGlitch)
                 collectables.splice(collectables.indexOf(that),1);
-            if(isEnemy)
+            if($.isEnemy)
                 enemies.splice(enemies.indexOf(that),1);
 
 
@@ -369,22 +327,16 @@ var entity = function(opts,cb) {
         if(isShooting && !isHovering) offsetY = 1; else offsetY = 0;
         if(!toggleAnimation) frameIndex = 0;
 
-        //var posX = isPlayer ? cWidth/2 : x-pX;
-        //var posY =  isPlayer ? cHeight/2 : y-pY;
-        //var posX = isPlayer ? cWidth/2 : (cWidth/2);
-        //var posY =  isPlayer ? cHeight/2 : (cHeight/2);
-        var posX = isPlayer ? cWidth/2 : (cWidth/2)+x-pX;
-        var posY =  isPlayer ? cHeight/2 : (cHeight/2)+y-pY;
-        //if(isEnemy){
+        //var posX = $.isPlayer ? cWidth/2 : x-pX;
+        //var posY =  $.isPlayer ? cHeight/2 : y-pY;
+        //var posX = $.isPlayer ? cWidth/2 : (cWidth/2);
+        //var posY =  $.isPlayer ? cHeight/2 : (cHeight/2);
+        var posX = $.isPlayer ? cWidth/2 : (cWidth/2)+x-pX;
+        var posY = $.isPlayer ? cHeight/2 : (cHeight/2)+y-pY;
+        //if($.isEnemy){
         //    console.log(posX,posY);
         //}
         var delta = (gotHit - Date.now()) / hitCd;
-
-        //todo: determine center of screen
-        if(isBot && !alreadyDebuged){
-            //alreadyDebuged = true;
-            //console.log(name,toggleAnimation,offsetY,frameIndex);
-        }
 
 
        drawSprite(
@@ -432,7 +384,7 @@ var entity = function(opts,cb) {
         if(flip == -1) X += w * zoom / 2;
         Y *= flopScale;
 
-        //if(isPlayer)
+        //if($.isPlayer)
         //console.log(x);
 
         //TODO: alpha
@@ -446,8 +398,6 @@ var entity = function(opts,cb) {
                 var finished = splinterSelf.finished();
                 var sW = splinterImg.width;
                 var sH = splinterImg.height;
-                //context.drawImage(splinterImg, 0, 0, sW, sH, x, y, -sW/2 * zoom, -sH/2 * zoom);
-                //context.drawImage(splinterImg, 0, 0, sW, sH, x+sW/10, y+sH/10, -sW/2 * zoom, -sH/2 * zoom);
                 context.drawImage(splinterImg, 0, 0, sW, sH, X+sW, Y+sH, -sW/2 * zoom, -sH/2 * zoom);
                 if(finished){
                     //console.log(entities.indexOf(beingDestroyed));
@@ -463,27 +413,8 @@ var entity = function(opts,cb) {
                     //context.globalAlpha = 1;
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
-                    //if(sprites[1]){
-                    //
-                    //    //var rad = 2 * Math.PI - angleRadians * Math.PI / 180;
-                    //    var rad = angleRadians;
-                    //    context.translate(X - w * zoom, Y - h * zoom);
-                    //
-                    //    context.rotate(rad);
-                    //    context.drawImage(sprites[1][0], 0, 0, w, h, 0, 0, -w/2 * zoom, -h/2 * zoom);
-                    //
-                    //}
 
                 }
-                //context.drawImage(drawImage(sprite, w,h,w*zoom/2, h*zoom/2), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
-                //context.drawImage(drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom),x,y);
-
-
-                //right one..
-                //context.drawImage(sprite, 0, 0, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
-
-
-                //context.drawImage(image, indX, indY, w, h, x, y, -w/2 * zoom, -h/2 * zoom);
 
             }
 
@@ -523,29 +454,29 @@ var entity = function(opts,cb) {
     //TODO: machen dass er die waffe nicht zückt wenn der cd noch nicht fertig ist
     function shoot(shooting, dest){
         isShooting = shooting;
-        var cd = weapon.checkCooldown();
+        var cd = $.weapon.checkCooldown();
         if(!shooting || cd){
             //isShooting = !cd && shooting;
             return;
         }
 
         //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
-        if(isPlayer){
+        if($.isPlayer){
             var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
             //var sy = pY, sx = pX, tx = dest.x +pX, ty = dest.y + pY;
         } else {
             var sy = y - ((zoom * h/4)*1.3), sx = x, tx = dest.x, ty = dest.y- ((zoom * h/4)*1.3);
         }
 
-        //if(isPlayer)
+        //if($.isPlayer)
             flip = sX < dest.x ? 1 : -1;
         angleRadians = getAngleBetweenTwoPoints(sx,sy,tx,ty)
 
 
-        weapon.fire(sx,sy,angleRadians);
+        $.weapon.fire(sx,sy,angleRadians);
 
-        if(weapon.getAmmo().ammo<=0 && isPlayer){
-            delete weapons[weapon.name];
+        if($.weapon.getAmmo().ammo<=0 && $.isPlayer){
+            delete weapons[$.weapon.name];
             switchWeapon(1);
         }
 
@@ -554,7 +485,7 @@ var entity = function(opts,cb) {
     function switchToWeapon(weaponname) {
         //console.log(weaponname, weapons);
         if(weapons[weaponname]){
-            weapon = weapons[weaponname];
+            $.weapon = weapons[weaponname];
             weaponIndex = weaponOrder.indexOf(weaponname)
         }
     }
@@ -563,23 +494,20 @@ var entity = function(opts,cb) {
 
     function moveX(d) {
         toggleAnimation = toggleAnimation || d;
-        d *= powerUpMultiplier(isPlayer,d);
-        if(!weapon.checkCooldown())
+        d *= powerUpMultiplier($.isPlayer,d);
+        if(!$.weapon.checkCooldown())
             flip = d == 0 ? flip : d > 0 ? 1 : -1;
         x += d;
     }
     function moveY(d) {
         toggleAnimation = toggleAnimation || d;
-        d *= powerUpMultiplier(isPlayer,d);
+        d *= powerUpMultiplier($.isPlayer,d);
         y += d;
     }
 
 
     function getDim(){
         return {w:w,h:h};
-    }
-    function getImg(){
-        return image;
     }
     function getRealPos(){
         return {x : x, y : y}
@@ -592,48 +520,33 @@ var entity = function(opts,cb) {
     function getBounding(){
         return {w : w*zoom/2, h : h*zoom/2}
     }
-    function getName(){
-        return name
-    }
-    function getId(){
-        return id
-    }
-    function getHp(){
-        return hp
-    }
-    function getArmor(){
-        return armor
-    }
     function setHp(newHp){
-        hp = newHp
+        $.hp = newHp
     }
     function addHp(addedHp, addedArmor){
         addedArmor = addedArmor || 0;
-        armor += addedArmor;
-        armor = Math.min(armor, maxHp);
-        hp += addedHp;
-        hp = Math.min(hp, maxHp);
-    }
-    function getWeapon(){
-        return weapon
+        $.armor += addedArmor;
+        $.armor = Math.min($.armor, maxHp);
+        $.hp += addedHp;
+        $.hp = Math.min($.hp, maxHp);
     }
     function dealDamage(d){
         gotHit = Date.now() + hitCd;
-        if(armor){
-            var delta = armor - d;
+        if($.armor){
+            var delta = $.armor - d;
             if(delta < 0) {
-                d -= armor;
-                armor = 0;
+                d -= $.armor;
+                $.armor = 0;
             } else {
-                armor -= d;
+                $.armor -= d;
                 d = 0;
             }
         }
-        hp -= d;
-        if(hp <= 0){
+        $.hp -= d;
+        if($.hp <= 0){
             beingDestroyed = that;
-            if(isItem){
-                if(name == 'crate') {
+            if($.isItem){
+                if($.name == 'crate') {
                     var itemname = collectableitems[Math.round(getRandomArbitrary(0,3))];
                 } else {
                     //var itemname = collectableitems[Math.round(collectableitems.length-1)];
@@ -643,17 +556,17 @@ var entity = function(opts,cb) {
                 createEntity({
                     name : itemname,
                     isCollectable : true,
-                    isPowerUp : name == 'crate2',
+                    isPowerUp : $.name == 'crate2',
                     x:x,
                     y:y
                 },[entities,collectables])
             }
-            if(isEnemy) {
+            if($.isEnemy) {
                 //player.addHp(10);
                 player.addHp(maxHp);
             }
         }
-        return hp;
+        return $.hp;
     }
     function setRef(ref){
         if(isBot)
@@ -663,15 +576,7 @@ var entity = function(opts,cb) {
     function getRef(){
         return that
     }
-    function isEnemyFnct(){
-        return isEnemy
-    }
-    function isPlayerFnct(){
-        return isPlayer
-    }
-    function isItemFnct(){
-        return isItem
-    }
+
     function givePowerup(powerUpName){
         var charges = 0;
         switch(powerUpName){
@@ -709,7 +614,7 @@ var entity = function(opts,cb) {
         if(weapons[weaponname]){
             weapons[weaponname].addAmmo(weaponsProto[weaponname].ammo);
         } else {
-            weapons[weaponname] =  new Weapon(weaponsProto[weaponname], id, null, isPlayer);
+            weapons[weaponname] =  new Weapon(weaponsProto[weaponname], $.id, null, $.isPlayer);
             switchToWeapon(weaponname)
         }
 

@@ -146,13 +146,13 @@ var map = function(){
         for(var x = -zoomedTilesize;x < cWidth+zoomedTilesize; x+=zoomedTilesize){
             for(var y = -zoomedTilesize;y < cHeight+zoomedTilesize; y+=zoomedTilesize){
                 //else {
-                if(player.getHp() > 0)
+                if(player.$.hp > 0)
                     context.drawImage(proto["area"].sprites[0][0], 0, 0, tilesize, tilesize, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
                 //}
                 //todo: kann man vll wieder reinmachen aber die sprites halt schon vorherladen
                 //if(isGlitching(.3)){
                 //    //context.globalAlpha = 1 - player.getHp()/1000;
-                if(player.getHp()<=0){
+                if(player.$.hp<=0){
                     context.globalAlpha = .25;
                     context.drawImage(clipObjectGlitch(drawImage(proto["area"].sprites[0][0], tilesize,tilesize,zoomedTilesize/2, zoomedTilesize/2))
                         , 0, 0, zoomedTilesize/2, zoomedTilesize/2, x-pX.mod(zoomedTilesize), y-pY.mod(zoomedTilesize), zoomedTilesize, zoomedTilesize);
