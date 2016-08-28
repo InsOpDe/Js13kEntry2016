@@ -680,13 +680,13 @@ var entity = function(opts,cb) {
                 addHp(250);
                 break;
             case 'armor':
-                addHp(0,100);
+                addHp(0,250);
                 break;
             case 'speed':
                 charges = 200;
                 break;
             case 'teleport':
-                charges = 5;
+                charges = 3;
                 break;
         }
         if(charges)

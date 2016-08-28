@@ -14,16 +14,17 @@ var weaponsProto = {
     },
     pistols : {
         name : 'pistols',
-        ammo : 10,
-        reloadAmmo : 10,
-        cooldown : 600,
+        ammo : 48,
+        reloadAmmo : 14,
+        cooldown : 300,
         shots : 2,
         speed : 20,
         damage : 10,
     },
     machinegun : {
         name : 'machinegun',
-        ammo : 30,
+        ammo : 90,
+        reloadAmmo : 30,
         cooldown : 100,
         shots : 1,
         randomizer : 0.005,
@@ -32,10 +33,11 @@ var weaponsProto = {
     },
     shotgun : {
         name : 'shotgun',
-        ammo : 8,
+        ammo : 16,
+        reloadAmmo : 8,
         cooldown : 800,
         shots : 10,
-        randomizer : 0.025,
+        randomizer : 0.035,
         speed : 30,
         damage : 5,
         startRandomizer : 50
@@ -43,7 +45,8 @@ var weaponsProto = {
     },
     rifle : {
         name : 'rifle',
-        ammo : 7,
+        ammo : 14,
+        reloadAmmo : 7,
         cooldown : 1000,
         shots : 1,
         speed : 50,
@@ -67,7 +70,7 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
     var reloadAmmo = opts.reloadAmmo || ammo;
 
     var reloadMaxAmmo = reloadAmmo;
-    var reloadTime = reloadAmmo * damage * shots / 4;
+    var reloadTime = reloadAmmo * damage * shots / (isPlayer?4 :.2);
 
     function fire(sx,sy,angleRadians){
         //todo: ggf eine ebene höher machen

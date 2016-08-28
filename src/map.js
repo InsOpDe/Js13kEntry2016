@@ -4,14 +4,14 @@
 
 var map = function(){
     var pX, pY, lastX, lastY, tilesize, wave = 0;
-    //var enemies = ['drone','enemy1','enemy2','drone1','drone2'];
-    var enemies = ['enemy1'];
+    var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
+    //var enemies = ['enemy3'];
     waves=(function(){
         var waves =[];
         for(var i = 1; i < 1000; i++){
             waves.push({
                 enemies: createEnemies(i),
-                lasting : SECOND * 4
+                lasting : SECOND * 5
             });
             //waves.push({
             //    enemies : [createEnemyCount(i)],
@@ -38,25 +38,6 @@ var map = function(){
         return en;
     }
 
-    //var waves = [
-    //    {
-    //        enemies : [{name : 'drone', count : 3}],
-    //        lasting : 10 * SECOND
-    //    },
-    //    {
-    //        enemies : [{name : 'enemy1', count : 2}],
-    //        lasting : 20 * SECOND
-    //    },
-    //    {
-    //        enemies : [{name : 'drone', count : 10}],
-    //        lasting : 25 *SECOND
-    //    },
-    //    {
-    //        enemies : [ {name : 'drone1', count : 3}],
-    //        lasting : 30 * SECOND
-    //    }
-    //
-    //];
 
     function init(cb){
         var loaderObj = new loader();
@@ -111,7 +92,7 @@ var map = function(){
 
         var availItems = ['crate', 'crate2'];
 
-        for(var i = getRandomArbitrary(2,7); i > 0; i--){
+        for(var i = getRandomArbitrary(4,7); i > 0; i--){
             var whichItem = Math.max((Math.round(Math.random()*availItems.length)-1),0);
             var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
             var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
@@ -137,7 +118,7 @@ var map = function(){
     }
 
     function addRandomItem(){
-        if(Math.random()>items.length/15 && items.length < 10 && (lastX != pX || lastY != pY)){
+        if(Math.random()>items.length/10 && items.length < 10 && (lastX != pX || lastY != pY)){
             var x,y;
             var xOrY = true;
             if(lastX != pX && lastY != pY){

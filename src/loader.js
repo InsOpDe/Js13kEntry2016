@@ -20,6 +20,7 @@ var loader = function(){
             variations :  {
                 'enemy1' : {
                     weapon : 'pistols',
+                    hp : 40,
                     weaponMod : {
                         cooldown : 1000,
                         randomizer : .35
@@ -53,7 +54,7 @@ var loader = function(){
                         RGBA(210,71,48), //hair
                     ]
                 },
-                'enemy2' : {
+                'enemy2' : { //morpheus
                     weapon : 'shotgun',
                     hp:100,
                     weaponMod : {
@@ -90,8 +91,45 @@ var loader = function(){
                         RGBA(77,59,30), //skin dark
                         RGBA(0,0,0), //hair
                     ]
-                    //from : [RGBA(8,7,7),RGBA(9,8,8),RGBA(48,48,48),RGBA(9,8,9),RGBA(65,65,65),RGBA(248,248,248),RGBA(22,22,22)],
-                    //to : [RGBA(20,150,120),RGBA(30,150,130),RGBA(70,16,16),RGBA(0,0,0,0),RGBA(161,149,17),RGBA(161,149,17),RGBA(245,199,199)]
+                },
+                'enemy3' : {
+                    weapon : 'machinegun',
+                    hp:75,
+                    weaponMod : {
+                        randomizer :.35,
+                        damage : 2,
+                        cooldown: 200,
+                        ammo: 10,
+                        speed: 20,
+                    },
+                    from : [
+                         RGBA(8,7,7), //mantelhinten
+                         RGBA(9,8,8), //mantel
+                         RGBA(48,48,48), //hose
+                        RGBA(9,8,9), //manteluber
+                        RGBA(65,65,65), //krawatte
+                        RGBA(248,248,248), //unterhemd
+                         RGBA(22,22,22), //sunglasses
+                         RGBA(21,22,22), //eyes
+                         RGBA(7,7,7), //overhair
+                         //RGBA(245,199,199), //skin light
+                         //RGBA(236,154,154), //skin dark
+                         RGBA(6,6,6), //hair
+                        ],
+                    to : [
+                        RGBA(190,190,190), //mantelhinten
+                        RGBA(220,220,220),   //mantel
+                        RGBA(190,190,190), //hose
+                        RGBA(220,220,220),  //manteluber
+                        RGBA(74,74,74),   //krawatte
+                        RGBA(190,190,190),   //unterhemd
+                        RGBA(74,74,74),   //sunglasses
+                        RGBA(74,74,74),   //eyes
+                        RGBA(190,190,190),   //overhair
+                        //RGBA(100,80,49), //skin light
+                        //RGBA(77,59,30), //skin dark
+                        RGBA(190,190,190), //hair
+                    ]
                 }
             }
         },
@@ -111,9 +149,10 @@ var loader = function(){
                     weaponMod : {
                         cooldown : 1000,
                         randomizer : .35,
-                        damage : 30
+                        ammo : 4,
+                        damage : 20
                     },
-                    hp : 30,
+                    hp : 15,
                     tint : RGBA(17,30,30)
                 },
                 'drone2' : {
@@ -127,7 +166,7 @@ var loader = function(){
                         damage: 15,
                     },
                     hp : 30,
-                    tint : RGBA(170,63,0)
+                    tint : RGBA(190,83,20)
                 }
             }
         },
