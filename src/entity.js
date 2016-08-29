@@ -336,7 +336,7 @@ var entity = function(opts,cb) {
         //if($.isEnemy){
         //    console.log(posX,posY);
         //}
-        var delta = (gotHit - Date.now()) / hitCd;
+        var delta = (gotHit - Dn()) / hitCd;
 
 
        drawSprite(
@@ -357,38 +357,18 @@ var entity = function(opts,cb) {
 
     function drawSprite(sprite, X, Y, deg, tintedImage) {
         context.save();
-        var flipScale;
         var flopScale;
 
         if(isHovering)
-            Y += Math.sin(hoverDelta++ /7)*5;
-            //y += Math.sin(Date.now() /100)*5;
-
-        // Set rotation point to center of image, instead of top/left
-//        if(center) {
+            Y += Sin(hoverDelta++ /7)*5;
             X += zoom*(w/4);
 
-        //}
-        // Set the origin to the center of the image
-        //todo: zoom
-        //context.translate(x + w/2, y + h/2);
-
-        // Rotate the canvas around the origin
-        //var rad = 2 * Math.PI - deg * Math.PI / 180;
-        //context.rotate(rad);
-
-        // Flip/flop the canvas //TODO: enhance
         if(flop) flopScale = -1; else flopScale = 1;
         context.scale(flip, flopScale);
         X *= flip;
         if(flip == -1) X += w * zoom / 2;
         Y *= flopScale;
 
-        //if($.isPlayer)
-        //console.log(x);
-
-        //TODO: alpha
-        //context.globalAlpha = 0.5;
 
 
         // Draw the image
@@ -400,8 +380,6 @@ var entity = function(opts,cb) {
                 var sH = splinterImg.height;
                 context.drawImage(splinterImg, 0, 0, sW, sH, X+sW, Y+sH, -sW/2 * zoom, -sH/2 * zoom);
                 if(finished){
-                    //console.log(entities.indexOf(beingDestroyed));
-                    //entities.splice(entities.indexOf(beingDestroyed),1);
                     deleteItem()
                 }
             } else {
@@ -444,10 +422,8 @@ var entity = function(opts,cb) {
             context.drawImage(tintedImage.img, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
         }
 
-        //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);
 
         context.restore();
-        //context.fillRect(x,y,-w*zoom/2,-h*zoom/2);
     }
 
 
@@ -526,12 +502,12 @@ var entity = function(opts,cb) {
     function addHp(addedHp, addedArmor){
         addedArmor = addedArmor || 0;
         $.armor += addedArmor;
-        $.armor = Math.min($.armor, maxHp);
+        $.armor = Mi($.armor, maxHp);
         $.hp += addedHp;
-        $.hp = Math.min($.hp, maxHp);
+        $.hp = Mi($.hp, maxHp);
     }
     function dealDamage(d){
-        gotHit = Date.now() + hitCd;
+        gotHit = Dn() + hitCd;
         if($.armor){
             var delta = $.armor - d;
             if(delta < 0) {
@@ -547,10 +523,9 @@ var entity = function(opts,cb) {
             beingDestroyed = that;
             if($.isItem){
                 if($.name == 'crate') {
-                    var itemname = collectableitems[Math.round(getRandomArbitrary(0,3))];
+                    var itemname = collectableitems[Ro(getRandomArbitrary(0,3))];
                 } else {
-                    //var itemname = collectableitems[Math.round(collectableitems.length-1)];
-                    var itemname = collectableitems[Math.round(getRandomArbitrary(4,collectableitems.length-1))];
+                    var itemname = collectableitems[Ro(getRandomArbitrary(4,collectableitems.length-1))];
                 }
 
                 createEntity({

@@ -106,8 +106,8 @@ function splinterSingle(img){
     bx.drawImage(img,0,0);
 
     var angleRadians = Math.atan2(getRandomArbitrary(-1,1), getRandomArbitrary(-1,1));
-    var vx = Math.cos(angleRadians);
-    var vy = Math.sin(angleRadians);
+    var vx = Cos(angleRadians);
+    var vy = Sin(angleRadians);
     //console.log(buffer.toDataURL());
 
     //bx.putImageData(imageData, 0, 0);
@@ -230,7 +230,7 @@ function splinter(img){
 }
 
 function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
+    return R() * (max - min) + min;
 }
 
 function createGlitchSprites(w,h){
@@ -248,7 +248,7 @@ function createGlitchSprite(w,h,clr){
     var size = 2;
     buffer.width = w;
     buffer.height = h;
-    var rows = Math.ceil(buffer.height/fontheight);
+    var rows = C(buffer.height/fontheight);
     var bx = buffer.getContext('2d');
     for(var i=0; i <rows; i++){
         bx.drawImage(new pixelfont().draw(getBinaryString(rows*3),size,clr),0,i*size*fontheight);
@@ -277,11 +277,11 @@ function powerUpMultiplier(isPlayer,v){
 function isGlitching(sw){
     sw = sw || 1
     //return glitchSin > player.getHp()/1000;
-    return Math.random()>(player.$.hp/1000)
-        && Math.random()>(player.$.hp/1000)
-        && Math.random()>(player.$.hp/1000)
-        && Math.random()>(player.$.hp/1000)
-        && Math.random()>(player.$.hp/1000)
+    return R()>(player.$.hp/1000)
+        && R()>(player.$.hp/1000)
+        && R()>(player.$.hp/1000)
+        && R()>(player.$.hp/1000)
+        && R()>(player.$.hp/1000)
         && sw>(player.$.hp/1000)
 }
 
@@ -323,7 +323,7 @@ function darken(x, y, w, h, darkenColor, amount) {
 function ligthenGradient(x, y, radius) {
     contextLight.save();
     //contextLight.globalCompositeOperation = 'screen';
-    var rnd = 0.05 * Math.sin(1.1 * Date.now() / 1000);
+    var rnd = 0.05 * Sin(1.1 * Dn() / 1000);
     radius = radius * (1 + rnd);
     var radialGradient = contextLight.createRadialGradient(x, y, 0, x, y, radius);
     radialGradient.addColorStop(0.0, '#BBB');
@@ -338,7 +338,7 @@ function ligthenGradient(x, y, radius) {
     //radialGradient.addColorStop(1, '#000');
     contextLight.fillStyle = radialGradient;
     contextLight.beginPath();
-    contextLight.arc(x, y, radius, 0, 2 * π);
+    contextLight.arc(x, y, radius, 0, 2 * P);
     contextLight.fill();
     contextLight.restore();
 }
@@ -357,13 +357,13 @@ function clipObjectGlitch(img,clr){
 }
 
 function getRandomElementInArray(items){
-    return items[Math.floor(Math.random()*items.length)];
+    return items[F(R()*items.length)];
 }
 
 function getBinaryString(len){
     var str = "";
     while(len--){
-        str += Math.random()>.5?1:0;
+        str += R()>.5?1:0;
     }
     return str;
 }

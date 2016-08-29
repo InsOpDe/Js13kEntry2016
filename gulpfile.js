@@ -109,6 +109,7 @@ gulp.task('default', function () {
                     .pipe(gp_sourcemaps.write('./'))
                     .pipe(gulp.dest('build'))
 
+                    zipIt()
 
 
             });
@@ -116,7 +117,6 @@ gulp.task('default', function () {
 
 
         });
-        zipIt()
 
 
     })

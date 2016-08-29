@@ -311,18 +311,12 @@ var pixelfont = function () {
 
     var width,height;
 
-    //input.addEventListener('change', function() {
-    //    var size = 1000 / (input.value.length * 4.8);
-    //    size -= size % 4;
-    //    draw(input.value, Math.min(24, size));
-    //});
 
     function draw(string, size, color) {
         size = size || 24;
 
         width = 0;
         height = 0;
-        //context.clearRect(0, 0, canvas.width, canvas.height);
 
         var needed = [];
         string = string.toUpperCase(); // because I only did uppercase letters
@@ -342,7 +336,6 @@ var pixelfont = function () {
         canvas.height = height;
         context.fillStyle = color || 'black';
 
-
         var currX = 0;
         for (i = 0; i < needed.length; i++) {
             letter = needed[i];
@@ -355,7 +348,7 @@ var pixelfont = function () {
                         context.fillRect(currX + x * size, currY, size, size);
                     }
                 }
-                addX = Math.max(addX, row.length * size);
+                addX = Ma(addX, row.length * size);
                 currY += size;
             }
             currX += size + addX;

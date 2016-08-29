@@ -18,17 +18,11 @@ var map = function(){
     })();
 
     function createEnemies(c){
-        //console.log(Math.abs(Math.sin(c/10)));
         var en = [];
         for(var i in enemies){
             if(c%(Number(i)+1)==0){
-            //if(c%(i+1) == 0 || c%(i+1) == 2){
-                en.push({name:enemies[i], count:Math.floor(Math.max(1,c/20))})
+                en.push({name:enemies[i], count:F(Ma(1,c/20))})
             }
-            //console.log(enemies[i],Math.sin(c/10) * i);
-            //if(Math.sin(c/10) * i ){
-            //
-            //}
         }
         return en;
     }
@@ -59,7 +53,7 @@ var map = function(){
     function nextWave(){
         if(waves[wave]){
             var waveInfo = waves[wave].enemies;
-            timeUntilNextWave = Date.now() + waves[wave].lasting;
+            timeUntilNextWave = Dn() + waves[wave].lasting;
             for(var j in waveInfo){
                 for(var i = 0; i < waveInfo[j].count; i++){
                     var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
@@ -84,11 +78,10 @@ var map = function(){
     }
 
     function initItems(){
-
         var availItems = ['crate', 'crate2'];
 
         for(var i = getRandomArbitrary(4,7); i > 0; i--){
-            var whichItem = Math.max((Math.round(Math.random()*availItems.length)-1),0);
+            var whichItem = Ma((Ro(R()*availItems.length)-1),0);
             var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
             var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
             createEntity({
@@ -105,7 +98,7 @@ var map = function(){
         lastX = pX;
         lastY = pY;
 
-        if(Date.now() > timeUntilNextWave){
+        if(Dn() > timeUntilNextWave){
             nextWave();
         }
 
@@ -113,11 +106,11 @@ var map = function(){
     }
 
     function addRandomItem(){
-        if(Math.random()>items.length/10 && items.length < 10 && (lastX != pX || lastY != pY)){
+        if(R()>items.length/10 && items.length < 10 && (lastX != pX || lastY != pY)){
             var x,y;
             var xOrY = true;
             if(lastX != pX && lastY != pY){
-                xOrY = Math.random() > .5;
+                xOrY = R() > .5;
             }
             if(lastX != pX && xOrY){
                 x = (lastX > pX?-1:1) * cWidth/2 + pX;
@@ -128,7 +121,7 @@ var map = function(){
             }
 
             var crate = new entity({
-                name : (Math.random() >.7)?'crate2':'crate',
+                name : (R() >.7)?'crate2':'crate',
                 x: x,
                 y: y,
                 ticksPerFrame: 4

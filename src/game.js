@@ -84,7 +84,7 @@ var game = function(skpIntro){
      */
     function run() {
 
-        now = Date.now();
+        now = Dn();
         factor = (now - last) / 16;
         last = now;
 
@@ -158,7 +158,7 @@ var game = function(skpIntro){
                 bullets[i].update(player.getRealPos()).draw();
             }
 
-            ligthenGradient(cWidth/2, cHeight/2, cHeight);
+            ligthenGradient(cWidth/2, cHeight/2, cHeight*1.2);
             //ligthenGradient(cWidth/2, cHeight/2, 100);
 
 
@@ -181,7 +181,7 @@ var game = function(skpIntro){
 
 
 
-    var teleportCd = Date.now();
+    var teleportCd = Dn();
     function input(){
         var d = 0;
         var s = 5;
@@ -213,10 +213,10 @@ var game = function(skpIntro){
                 pTicksPerFrame = 1;
                 speedMultiplier = 3;
                 player.usePowerup();
-            } else if(powerup.name =='teleport' && teleportCd + 200 < Date.now()) {
+            } else if(powerup.name =='teleport' && teleportCd + 200 < Dn()) {
                 player.moveX(mouseposition.x);
                 player.moveY(mouseposition.y);
-                teleportCd = Date.now();
+                teleportCd = Dn();
                 player.usePowerup();
             }
         } else {

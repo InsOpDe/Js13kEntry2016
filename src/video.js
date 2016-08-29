@@ -45,7 +45,7 @@ var video = function(textArray, skipMessage, showScore){
             nextRow = false;
         }
 
-        cursorVisible = Math.sin(Date.now()/100) > 0;
+        cursorVisible = Sin(Dn()/100) > 0;
 
         textToIndex = wholeText[row].substring(0,index);
 

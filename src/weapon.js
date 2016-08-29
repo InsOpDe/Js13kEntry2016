@@ -105,8 +105,8 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
                 damage : damage,
                 shift : speed,
                 shootThrough : shootThrough,
-                vx : Math.cos(angleRadians),
-                vy : Math.sin(angleRadians),
+                vx : Cos(angleRadians),
+                vy : Sin(angleRadians),
             },[bullets]);
         }
         ammo--;
@@ -114,13 +114,13 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
         if(reloadAmmo <= 0)
             startReloading();
 
-        lastShot = Date.now();
+        lastShot = Dn();
     }
 
     function reload(){
         if(isReloading){
             reloadProgress = reloadTime - (++isReloading * powerUpMultiplier(isPlayer,1));
-            //reloadProgress = ((Date.now() + reloadTime) - isReloading) / reloadTime;
+            //reloadProgress = ((Dn() + reloadTime) - isReloading) / reloadTime;
             if(reloadProgress <= 0){
                 reloadAmmo = reloadMaxAmmo;
                 isReloading = 0;
@@ -134,7 +134,7 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
     }
 
     function checkCooldown(){
-        return lastShot + (cooldown/powerUpMultiplier(isPlayer,1)) > Date.now();
+        return lastShot + (cooldown/powerUpMultiplier(isPlayer,1)) > Dn();
     }
 
 
