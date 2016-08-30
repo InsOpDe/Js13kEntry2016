@@ -186,7 +186,7 @@ var loader = function(){
             name : 'items',
             w: 20,
             h: 18,
-            subitems : [['pistols', 'rifle', 'shotgun', 'machinegun'],['speed','armor','health','grenade','teleport']]
+            subitems : [['pistols', 'rifle', 'shotgun', 'machinegun', 'explosion'],['speed','armor','health','grenade','teleport']]
             //variations : {
             //    'crate2' : {
             //        tint : RGBA(17,30,30)
@@ -280,6 +280,8 @@ var loader = function(){
                     }
                 }
             }
+
+            //console.log(proto['explosion'].sprites[0][0].toDataURL());
 
             //var points = getRandomTriangle(99,96);
 

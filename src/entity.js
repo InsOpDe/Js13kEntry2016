@@ -103,8 +103,10 @@ var entity = function(opts,cb) {
         },
         isBullet = false,
         isGrenade = false,
+        isExplosion = false,
         gDt = 0,
         gDtT = 0,
+        explDs = [],
         isBot = false,
         isCollectable = false,
         isGlitch = false;
@@ -121,9 +123,10 @@ var entity = function(opts,cb) {
         // Create sprite sheet
         $.name = opts.name;
         $.isPlayer = $.name == 'player';
-        isBullet = $.name == 'bullet' || $.name == 'grenade';
+        isBullet = $.name == 'bullet' || $.name == 'grenade' || $.name == 'explosion';
         isGrenade = $.name == 'grenade';
         isGlitch = $.name == 'glitch';
+        isExplosion = $.name == 'explosion';
         $.isEnemy = !!($.name.match(/enemy/) || $.name.match(/drone/));
         isCollectable = opts.isCollectable;
         isPowerUp = opts.isPowerUp;
@@ -162,6 +165,8 @@ var entity = function(opts,cb) {
             originId = opts.id;
             speed = opts.speed;
             damage = opts.damage;
+            if(proto[$.name])
+                sprites = proto[$.name].sprites;
             shootThrough = opts.shootThrough;
             shift = opts.shift;
             d = opts.start;
@@ -178,10 +183,16 @@ var entity = function(opts,cb) {
             zoom = 10;
 
         if(isGrenade){
-            gDtT = dist(sX,sY,vx,vy)/1.5,
+            gDtT = dist(sX,sY,vx,vy)/3,
                 angleRadians = getAngleBetweenTwoPoints(sX,sY,vx,vy);
             b = new Bezier({x:sX,y:sY},{x:Math.cos(angleRadians)*gDtT+sX, y:Math.sin(angleRadians)*gDtT+sY-300},{x:vx,y:vy});
             gDtT /= 10;
+        }
+
+        if(isExplosion){
+            for(var i = 0; i<20;i++){
+                explDs.push([Math.cos(getRandomArbitrary(0,100)),Math.sin(getRandomArbitrary(0,100))]);
+            }
         }
 
     }
@@ -258,10 +269,16 @@ var entity = function(opts,cb) {
                 //gDtT
                 x = b.x(gDt/gDtT);
                 y = b.y(gDt/gDtT);
-                gDt++
+                gDt++;
                 if(gDt>gDtT){
-                    console.log("explode");
                     bullets.splice(bullets.indexOf(that),1);
+                    createEntity({
+                        name : 'explosion',
+                        x : vx,
+                        y : vy,
+                        id : originId,
+                        damage : 10
+                    },[bullets]);
                 }
 
             } else {
@@ -273,8 +290,19 @@ var entity = function(opts,cb) {
                     dTemp--;
                 }
 
-                x = vx * d + sX;
-                y = vy * d + sY;
+                if(!isExplosion){
+                    x = vx * d + sX;
+                    y = vy * d + sY;
+                }
+                var X = x,Y = y;
+                var W = w, H = h;
+                if(isExplosion){
+                    X -= 15*zoom;
+                    Y -= 15*zoom;
+                    W = 30*zoom;
+                    H = 30*zoom;
+                    //context.fillRect((cWidth/2)+X-pX,(cHeight/2)+Y-pY,W,H);
+                }
                 var ent;
                 for(var i in entities){
                     ent = entities[i];
@@ -285,11 +313,13 @@ var entity = function(opts,cb) {
                     var y2 = ent.getPos().y;
                     var w2 = ent.getBounding().w;
                     var h2 = ent.getBounding().h;
-                    if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id))){
-                        if(!shootThrough)
-                            bullets.splice(bullets.indexOf(that),1);
+                    if(hits(X,Y,W,H,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id))){
                         ent.dealDamage(damage);
-                        break;
+                        if(!shootThrough && !isExplosion){
+                            bullets.splice(bullets.indexOf(that),1);
+                            break;
+                        }
+
                     }
                 }
             }
@@ -454,9 +484,30 @@ var entity = function(opts,cb) {
 
         }
 
-        if(isBullet){
+        if(isExplosion){
+          context.fillStyle = '#ffffff';
+            var size = zoom / 2;
+            var shiftX, shiftY
+            for(var i in explDs){
+                context.globalAlpha = 1 - gDt/10;
+                var dx = explDs[i][0]*gDt*10;
+                var dy = explDs[i][1]*gDt*10;
+                shiftX = (cWidth/2)+dx+sX-pX+5*zoom;
+                shiftY = (cHeight/2)+dy+sY-pY+4*zoom;
+                context.drawImage(sprites[0][0], 0, 0, 20, 18, shiftX, shiftY, -20/2 * zoom, -18/2 * zoom);
+            }
+            if(++gDt>10){
+                bullets.splice(bullets.indexOf(that),1);
+            }
+
+        } else if(isBullet){
             context.fillStyle = '#ffffff';
             var size = zoom / 2;
+            if(isGrenade) {
+                context.fillStyle = '#94947f';
+                size = zoom;
+            }
+
             context.fillRect(X,Y,size,size);
             if(shift){
                 var shiftX, shiftY

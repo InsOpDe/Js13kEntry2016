@@ -3,7 +3,7 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave = 1000;
+    var pX, pY, lastX, lastY, tilesize, wave = 0;
     var enemies = ['enemy1','glitch','enemy3','enemy2'];
     //var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
     //var enemies = ['enemy1'];
