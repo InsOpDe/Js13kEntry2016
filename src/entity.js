@@ -23,6 +23,8 @@ var entity = function(opts,cb) {
         pX,
         pY,
         ai,
+        startCd = Dn(),
+        startCdAdd = 2000,
         hasPowerUp,
         isHovering,
         isPowerUp,
@@ -42,6 +44,7 @@ var entity = function(opts,cb) {
         ticksPerFrame = 0,
         splinterSelf,
         shift = 0,
+        glitchCooldown = 0,
         numberOfCols = 1,
         numberOfRows = 1,
         frameIndex = 0,
@@ -195,8 +198,30 @@ var entity = function(opts,cb) {
         lastPositions.unshift({x:x,y:y});
         lastPositions.splice(10,1);
 
+        if(isGlitch){
+            glitchCooldown++;
+            if(glitchCooldown > 150){
+                //var X = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+                //var Y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+                var X = getRandomArbitrary(-1,1)*5*zoom + x;
+                var Y = getRandomArbitrary(-1,1)*5*zoom + y;
+                createEntity({
+                    //name : 'drone',
+                    name : getRandomElementInArray(['drone','drone1','drone2']),
+                    x: X,
+                    y: Y,
+                    bot: true,
+                },[entities,enemies])
+                glitchCooldown = 0;
+            }
+        }
 
-        if(ai) ai.update(pPos);
+
+        if(startCd + startCdAdd < Dn())
+            if(ai) {
+                ai.update(pPos);
+            }
+
 
         if(toggleAnimation)
             tickCount += 1;
@@ -383,12 +408,18 @@ var entity = function(opts,cb) {
                     deleteItem()
                 }
             } else {
-                if(glitchSin || isGlitch){
+                if(glitchSin || isGlitch || startCd + startCdAdd > Dn()){
                 //if(isGlitching() || isGlitch){
                     if(isGlitch) sprite = drawTriangle(20,20,3);
-                    //else context.globalAlpha = glitchSin;
+                    if(startCd + startCdAdd > Dn() && !isGlitch){
+                        context.globalAlpha = 1 - (Dn()-startCd)/startCdAdd;
+                    }
                     context.drawImage(clipObjectGlitch(drawImage(sprite, w,h,w*zoom/2, h*zoom/2),isGlitch?'red':'lightgreen'), 0, 0, w*zoom/2, h*zoom/2, X, Y, -w/2*zoom, -h/2*zoom);
-                    //context.globalAlpha = 1;
+                    if(startCd + startCdAdd > Dn() && !isGlitch){
+                        context.globalAlpha = (Dn()-startCd)/startCdAdd;
+                        context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
+                    }
+                    context.globalAlpha = 1;
                 } else {
                     context.drawImage(sprite, 0, 0, w, h, X, Y, -w/2 * zoom, -h/2 * zoom);
 
@@ -544,8 +575,10 @@ var entity = function(opts,cb) {
         return $.hp;
     }
     function setRef(ref){
-        if(isBot)
+        if(isBot){
             ai = new Ai(ref);
+
+        }
         that = ref
     }
     function getRef(){

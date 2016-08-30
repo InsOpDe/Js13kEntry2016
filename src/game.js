@@ -108,8 +108,11 @@ var game = function(skpIntro){
 
         if(!skpIntro){
             beginningSequence.update();
-            if(!beginningSequence.finished())
+            if(!beginningSequence.finished()){
+                timeUntilNextWave = Dn() + 5000;
                 return;
+
+            }
         }
 
         if(typeof gameOverTime == 'number'){

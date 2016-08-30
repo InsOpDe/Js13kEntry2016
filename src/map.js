@@ -3,15 +3,16 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave = 0;
-    var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
+    var pX, pY, lastX, lastY, tilesize, wave = -1;
+    var enemies = ['enemy1','glitch','enemy3','enemy2'];
+    //var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
     //var enemies = ['enemy1'];
     waves=(function(){
         var waves =[];
         for(var i = 1; i < 1000; i++){
             waves.push({
                 enemies: createEnemies(i),
-                lasting : SECOND * 5
+                lasting : SECOND * 7
             });
         }
         return waves;
@@ -21,7 +22,7 @@ var map = function(){
         var en = [];
         for(var i in enemies){
             if(c%(Number(i)+1)==0){
-                en.push({name:enemies[i], count:F(Ma(1,c/20))})
+                en.push({name:enemies[i], count:F(Ma(1,c/10))})
             }
         }
         return en;
@@ -40,8 +41,8 @@ var map = function(){
     }
 
     function createGlitch(){
-        var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
-        var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+        var x = getRandomArbitrary(-1,1)*cWidth/3 + pX;
+        var y = getRandomArbitrary(-1,1)*cHeight/3 + pY;
         createEntity({
             //name : 'drone',
             name : 'glitch',
@@ -55,25 +56,31 @@ var map = function(){
             var waveInfo = waves[wave].enemies;
             timeUntilNextWave = Dn() + waves[wave].lasting;
             for(var j in waveInfo){
-                for(var i = 0; i < waveInfo[j].count; i++){
-                    var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
-                    var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
-                    createEntity({
-                        //name : 'drone',
-                        name : waveInfo[j].name,
-                        x: x,
-                        y: y,
-                        bot: true,
-                    },[entities,enemies])
+                if(waveInfo[j].name == 'glitch'){
+                    createGlitch();
+                } else {
+                    for(var i = 0; i < waveInfo[j].count; i++){
+                        var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
+                        var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+                        createEntity({
+                            //name : 'drone',
+                            name : waveInfo[j].name,
+                            x: x,
+                            y: y,
+                            bot: true,
+                        },[entities,enemies])
+                    }
                 }
+
             }
-            if(wave%3==0)
-                createGlitch();
-            wave++;
+            //if(wave%3==0)
+            //    createGlitch();
             //console.log(wave);
         } else {
             //console.log("game completed");
         }
+        wave++;
+
 
     }
 

@@ -29,7 +29,7 @@ var weaponsProto = {
         shots : 1,
         randomizer : 0.005,
         speed : 40,
-        damage : 5
+        damage : 7
     },
     shotgun : {
         name : 'shotgun',
