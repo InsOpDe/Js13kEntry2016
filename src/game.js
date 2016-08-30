@@ -12,7 +12,6 @@ var game = function(skpIntro){
     score = 0,
     items = [],
     collectables = [];
-    var cnt = 0;
 
     var now,
         factor,
@@ -39,6 +38,10 @@ var game = function(skpIntro){
                 player.switchWeapon(1);
             } else if (code == 88) {
                 player.switchWeapon(-1);
+            }
+
+            if(code == 69){
+                player.throws(mouseposition);
             }
 
             var basecode = 49;

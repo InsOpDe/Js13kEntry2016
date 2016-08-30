@@ -23,6 +23,7 @@ var entity = function(opts,cb) {
         pX,
         pY,
         ai,
+        b,
         startCd = Dn(),
         startCdAdd = 2000,
         hasPowerUp,
@@ -70,6 +71,7 @@ var entity = function(opts,cb) {
             moveX: moveX,
             moveY: moveY,
             shoot: shoot,
+            throws: throws,
             getBounding: getBounding,
             getPos: getPos,
             getDim: getDim,
@@ -100,6 +102,9 @@ var entity = function(opts,cb) {
             }
         },
         isBullet = false,
+        isGrenade = false,
+        gDt = 0,
+        gDtT = 0,
         isBot = false,
         isCollectable = false,
         isGlitch = false;
@@ -116,7 +121,8 @@ var entity = function(opts,cb) {
         // Create sprite sheet
         $.name = opts.name;
         $.isPlayer = $.name == 'player';
-        isBullet = $.name == 'bullet';
+        isBullet = $.name == 'bullet' || $.name == 'grenade';
+        isGrenade = $.name == 'grenade';
         isGlitch = $.name == 'glitch';
         $.isEnemy = !!($.name.match(/enemy/) || $.name.match(/drone/));
         isCollectable = opts.isCollectable;
@@ -164,13 +170,19 @@ var entity = function(opts,cb) {
 
         x = sX = opts.x;
         y = sY = opts.y;
-        //todo: streuung
         vx = opts.vx;
         vy = opts.vy;
         ticksPerFrame = 4;
             zoom = overallZoom;
         if(isBullet)
             zoom = 10;
+
+        if(isGrenade){
+            gDtT = dist(sX,sY,vx,vy)/1.5,
+                angleRadians = getAngleBetweenTwoPoints(sX,sY,vx,vy);
+            b = new Bezier({x:sX,y:sY},{x:Math.cos(angleRadians)*gDtT+sX, y:Math.sin(angleRadians)*gDtT+sY-300},{x:vx,y:vy});
+            gDtT /= 10;
+        }
 
     }
 
@@ -242,33 +254,46 @@ var entity = function(opts,cb) {
         }
 
         if(isBullet){
-            d+=speed;
-            var dTemp = d;
-            for(var i=0; i<shift; i++){
-                lastShiftPositions.unshift({x:vx * dTemp + sX,y:vy * dTemp + sY});
-                lastShiftPositions.splice(shift,1);
-                dTemp--;
-            }
+            if(isGrenade){
+                //gDtT
+                x = b.x(gDt/gDtT);
+                y = b.y(gDt/gDtT);
+                gDt++
+                if(gDt>gDtT){
+                    console.log("explode");
+                    bullets.splice(bullets.indexOf(that),1);
+                }
 
-            x = vx * d + sX;
-            y = vy * d + sY;
-            var ent;
-            for(var i in entities){
-                ent = entities[i];
-                if($.id == ent.$.id || originId == ent.$.id || ent.$.hp <= 0)
-                    continue;
+            } else {
+                d+=speed;
+                var dTemp = d;
+                for(var i=0; i<shift; i++){
+                    lastShiftPositions.unshift({x:vx * dTemp + sX,y:vy * dTemp + sY});
+                    lastShiftPositions.splice(shift,1);
+                    dTemp--;
+                }
 
-                var x2 = ent.getPos().x;
-                var y2 = ent.getPos().y;
-                var w2 = ent.getBounding().w;
-                var h2 = ent.getBounding().h;
-                if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id))){
-                    if(!shootThrough)
-                        bullets.splice(bullets.indexOf(that),1);
-                    ent.dealDamage(damage);
-                    break;
+                x = vx * d + sX;
+                y = vy * d + sY;
+                var ent;
+                for(var i in entities){
+                    ent = entities[i];
+                    if($.id == ent.$.id || originId == ent.$.id || ent.$.hp <= 0)
+                        continue;
+
+                    var x2 = ent.getPos().x;
+                    var y2 = ent.getPos().y;
+                    var w2 = ent.getBounding().w;
+                    var h2 = ent.getBounding().h;
+                    if(hits(x,y,w,h,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id))){
+                        if(!shootThrough)
+                            bullets.splice(bullets.indexOf(that),1);
+                        ent.dealDamage(damage);
+                        break;
+                    }
                 }
             }
+
         }
 
 
@@ -457,8 +482,29 @@ var entity = function(opts,cb) {
         context.restore();
     }
 
+    function throws(dest){
+        var calc = getST(dest);
+        var sx = calc[0],sy = calc[1],tx = calc[2],ty = calc[3];
 
-    //TODO: machen dass er die waffe nicht zückt wenn der cd noch nicht fertig ist
+        createEntity({
+            name : 'grenade',
+            x : sx,
+            y : sy,
+            id : $.id,
+            vx : tx,
+            vy : ty,
+        },[bullets]);
+    }
+
+    function getST(dest){
+        if($.isPlayer){
+            var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
+        } else {
+            var sy = y - ((zoom * h/4)*1.3), sx = x, tx = dest.x, ty = dest.y- ((zoom * h/4)*1.3);
+        }
+        return [sx,sy,tx,ty];
+    }
+
     function shoot(shooting, dest){
         isShooting = shooting;
         var cd = $.weapon.checkCooldown();
@@ -467,13 +513,9 @@ var entity = function(opts,cb) {
             return;
         }
 
-        //var sy = cHeight/ 2, sx = cWidth/ 2, tx = mouseposition.x, ty = mouseposition.y;
-        if($.isPlayer){
-            var sy = pY - ((zoom * h/4)*1.3), sx = pX, tx = dest.x +pX, ty = dest.y + pY;
-            //var sy = pY, sx = pX, tx = dest.x +pX, ty = dest.y + pY;
-        } else {
-            var sy = y - ((zoom * h/4)*1.3), sx = x, tx = dest.x, ty = dest.y- ((zoom * h/4)*1.3);
-        }
+        var calc = getST(dest);
+        var sx = calc[0],sy = calc[1],tx = calc[2],ty = calc[3];
+
 
         //if($.isPlayer)
             flip = sX < dest.x ? 1 : -1;

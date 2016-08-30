@@ -386,3 +386,15 @@ function objClone(obj){
 function dist (sx,sy,tx,ty){
     return Math.sqrt( (sx-=tx)*sx + (sy-=ty)*sy );
 }
+
+function Bezier(a, b, c) {
+    return {
+        x: function (t) {
+            return (1 - t) * (1 - t) * a.x + 2 * (1 - t) * t * b.x + t * t * c.x;
+        },
+
+        y: function (t) {
+            return (1 - t) * (1 - t) * a.y + 2 * (1 - t) * t * b.y + t * t * c.y;
+        }
+    }
+}
