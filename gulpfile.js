@@ -6,8 +6,8 @@ var gulp = require('gulp'),
     fs = require('fs'),
     gp_concat = require('gulp-concat'),
     gp_rename = require('gulp-rename'),
-    gp_uglify = require('gulp-uglifyjs'),
-    //gp_uglify = require('gulp-uglify'),
+    //gp_uglify = require('gulp-uglifyjs'),
+    gp_uglify = require('gulp-uglify'),
     gp_replace = require('gulp-replace'),
     gp_wrap = require("gulp-wrap"),
     gp_babel = require('gulp-babel'),
@@ -71,7 +71,11 @@ gulp.task('default', function () {
                     .pipe(gp_sourcemaps.init())
                     .pipe(gp_concat('../build/uglify.js'))
                     //.pipe(gp_wrap('window.onload = function(){\n<%= contents %>\n}'))
+
+
                     .pipe(gp_wrap('(function(){\n<%= contents %>\n})()'))
+
+
                     //.pipe(gp_replace(/.*/, function(s) {
                     //    return '(function(){' + s + '})()';
                     //}))
@@ -89,20 +93,7 @@ gulp.task('default', function () {
                     //        warning_level: 'VERBOSE'
                     //    }
                     //}))
-                    .pipe(gp_uglify(null,{
-                        //mangle : {
-                        //    screw_ie8 : true,
-                        //    sort : true,
-                        //    toplevel : true,
-                        //    keep_fnames : false
-                        //},
-                        //mangle : true,
-                        //output : {
-                        //    ie_proof : false
-                        //},
-                        //wrap:"_",
-                        //exportAll : true
-                    }))
+                    .pipe(gp_uglify())
                     //.pipe(gp_yuicompress({
                     //    type: 'js'
                     //}))

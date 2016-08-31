@@ -179,6 +179,9 @@ var loader = function(){
             variations : {
                 'crate2' : {
                     tint : RGBA(17,30,30)
+                },
+                'crate3' : {
+                    tint : RGBA(100,20,20)
                 }
             }
         },

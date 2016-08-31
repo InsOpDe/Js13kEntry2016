@@ -9,6 +9,8 @@ var entity = function(opts,cb) {
     var $ = {
         hp:0,
         armor:0,
+        grenadeCount:3,
+        isPowerUp:false,
         id :idCounter,
     }
     var x,
@@ -28,7 +30,6 @@ var entity = function(opts,cb) {
         startCdAdd = 2000,
         hasPowerUp,
         isHovering,
-        isPowerUp,
         hoverDelta = 0,
         angleRadians = 0,
         speed,
@@ -87,9 +88,6 @@ var entity = function(opts,cb) {
             usePowerup : usePowerup,
             givePowerup : givePowerup,
             deleteItem : deleteItem,
-            isPowerupFnct : function(){
-                return isPowerUp;
-            },
             hack : function(){
                 hacked += powerUpMultiplier(true,1);
                 if(++hacked > isHackingMax){
@@ -123,13 +121,13 @@ var entity = function(opts,cb) {
         // Create sprite sheet
         $.name = opts.name;
         $.isPlayer = $.name == 'player';
-        isBullet = $.name == 'bullet' || $.name == 'grenade' || $.name == 'explosion';
-        isGrenade = $.name == 'grenade';
+        isBullet = $.name == 'bullet' || $.name == 'playersGrenade' || $.name == 'explosion';
+        isGrenade = $.name == 'playersGrenade';
         isGlitch = $.name == 'glitch';
         isExplosion = $.name == 'explosion';
         $.isEnemy = !!($.name.match(/enemy/) || $.name.match(/drone/));
         isCollectable = opts.isCollectable;
-        isPowerUp = opts.isPowerUp;
+        $.isPowerUp = opts.isPowerUp;
 
         isHovering = $.name.match(/drone/) || isCollectable;
         $.isItem = $.name.match(/crate/);
@@ -144,7 +142,7 @@ var entity = function(opts,cb) {
             var obj = proto[$.name];
             h = obj.h;
             w = obj.w;
-            $.hp = opts.hp || obj.hp;
+            $.hp = opts.hp || obj.hp || 0;
             maxHp = $.hp;
             sprites = obj.sprites;
             hitSprites = obj.hitSprites;
@@ -277,7 +275,7 @@ var entity = function(opts,cb) {
                         x : vx,
                         y : vy,
                         id : originId,
-                        damage : 10
+                        damage : 6
                     },[bullets]);
                 }
 
@@ -313,9 +311,16 @@ var entity = function(opts,cb) {
                     var y2 = ent.getPos().y;
                     var w2 = ent.getBounding().w;
                     var h2 = ent.getBounding().h;
-                    if(hits(X,Y,W,H,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id))){
-                        ent.dealDamage(damage);
-                        if(!shootThrough && !isExplosion){
+                    if(hits(X,Y,W,H,x2,y2,w2,h2) && (ent.$.isItem ||ent.$.isPlayer || (ent.$.isEnemy && originId == player.$.id) || originId == -1)){
+                        var restDamage = ent.dealDamage(damage);
+                        if(restDamage >= damage){
+                            shootThrough = false;
+                        }
+                        if(!isExplosion)
+                            damage -= restDamage;
+
+
+                        if((!shootThrough && !isExplosion) || damage < 0){
                             bullets.splice(bullets.indexOf(that),1);
                             break;
                         }
@@ -342,7 +347,7 @@ var entity = function(opts,cb) {
                     var entName = ent.$.name;
                     if(entName == 'glitch') {
                         hitGlitch = ent.hack();
-                    } else if(ent.isPowerupFnct()){
+                    } else if(ent.$.isPowerUp){
                         player.givePowerup(entName);
                         ent.deleteItem();
                     } else {
@@ -354,8 +359,6 @@ var entity = function(opts,cb) {
                     //context.fillRect((cWidth/2)+x2-pX,(cHeight/2)+y2-pY,w2,h2);
                     //context.fillRect((cWidth/2)+w,(cHeight/2)+y-pY,-w/2,-h/2);
                     //context.fillRect((cWidth/2)+w/4*zoom,(cHeight/2)+y-pY,-w*zoom/2,-h*zoom/2);
-                    break;
-                    //todo: shoot through?
                 }
             }
             isHacking = hitGlitch;
@@ -534,17 +537,20 @@ var entity = function(opts,cb) {
     }
 
     function throws(dest){
-        var calc = getST(dest);
-        var sx = calc[0],sy = calc[1],tx = calc[2],ty = calc[3];
+        if($.grenadeCount > 0){
+            var calc = getST(dest);
+            var sx = calc[0],sy = calc[1],tx = calc[2],ty = calc[3];
 
-        createEntity({
-            name : 'grenade',
-            x : sx,
-            y : sy,
-            id : $.id,
-            vx : tx,
-            vy : ty,
-        },[bullets]);
+            createEntity({
+                name : 'playersGrenade',
+                x : sx,
+                y : sy,
+                id : $.id,
+                vx : tx,
+                vy : ty,
+            },[bullets]);
+            $.grenadeCount--;
+        }
     }
 
     function getST(dest){
@@ -631,6 +637,9 @@ var entity = function(opts,cb) {
         $.hp = Mi($.hp, maxHp);
     }
     function dealDamage(d){
+        var restDamage = $.hp + ($.armor||0);
+        //if(shootThrough)
+        //    console.log(restDamage,d, $.hp, $.armor,($.armor||0));
         gotHit = Dn() + hitCd;
         if($.armor){
             var delta = $.armor - d;
@@ -646,26 +655,32 @@ var entity = function(opts,cb) {
         if($.hp <= 0){
             beingDestroyed = that;
             if($.isItem){
+                var itemname = collectableitems[4]; //explosion
                 if($.name == 'crate') {
-                    var itemname = collectableitems[Ro(getRandomArbitrary(0,3))];
-                } else {
-                    var itemname = collectableitems[Ro(getRandomArbitrary(4,collectableitems.length-1))];
+                    itemname = collectableitems[Ro(getRandomArbitrary(0,3))];
+                } else if($.name == 'crate2') {
+                    itemname = collectableitems[Ro(getRandomArbitrary(5,collectableitems.length-1))];
                 }
+                //todo: explosionkiste reinmachen, kann man eig gleich so nennen lassen
+
+
 
                 createEntity({
                     name : itemname,
-                    isCollectable : true,
+                    isCollectable : itemname=='explosion'?false:true,
+                    damage : itemname=='explosion'?4:0,
                     isPowerUp : $.name == 'crate2',
+                    id:-1,
                     x:x,
                     y:y
-                },[entities,collectables])
+                },itemname=='explosion'?[bullets]:[entities,collectables])
             }
             if($.isEnemy) {
                 //player.addHp(10);
                 player.addHp(maxHp);
             }
         }
-        return $.hp;
+        return restDamage;
     }
     function setRef(ref){
         if(isBot){
@@ -692,6 +707,9 @@ var entity = function(opts,cb) {
                 break;
             case 'teleport':
                 charges = 3;
+                break;
+            case 'grenade':
+                $.grenadeCount += 3;
                 break;
         }
         if(charges)

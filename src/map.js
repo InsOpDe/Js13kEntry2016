@@ -3,10 +3,13 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave = 0;
-    var enemies = ['enemy1','glitch','enemy3','enemy2'];
+    var pX, pY, lastX, lastY, tilesize, wave = 1000;
+    var enemies = ['enemy2'];
+    //var enemies = ['enemy1','glitch','enemy3','enemy2'];
+    //var availItems = ['crate3'];
+    var availItems = ['crate', 'crate2', 'crate3'];
+
     //var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
-    //var enemies = ['enemy1'];
     waves=(function(){
         var waves =[];
         for(var i = 1; i < 1000; i++){
@@ -85,14 +88,12 @@ var map = function(){
     }
 
     function initItems(){
-        var availItems = ['crate', 'crate2'];
 
         for(var i = getRandomArbitrary(4,7); i > 0; i--){
-            var whichItem = Ma((Ro(R()*availItems.length)-1),0);
-            var x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
-            var y = getRandomArbitrary(-1,1)*cHeight/2 + pY;
+            var x = getRandomArbitrary(-1,1)*cWidth/2;
+            var y = getRandomArbitrary(-1,1)*cHeight/2;
             createEntity({
-                name : availItems[whichItem],
+                name : getRandomElementInArray(availItems),
                 x: x,
                 y: y
             },[entities, items])
@@ -113,7 +114,7 @@ var map = function(){
     }
 
     function addRandomItem(){
-        if(R()>items.length/10 && items.length < 10 && (lastX != pX || lastY != pY)){
+        if(R()>items.length/5 && items.length < 5 && (lastX != pX || lastY != pY)){
             var x,y;
             var xOrY = true;
             if(lastX != pX && lastY != pY){
@@ -127,15 +128,19 @@ var map = function(){
                 x = getRandomArbitrary(-1,1)*cWidth/2 + pX;
             }
 
-            var crate = new entity({
-                name : (R() >.7)?'crate2':'crate',
+            createEntity({
+                name : getRandomElementInArray(availItems),
                 x: x,
                 y: y,
-                ticksPerFrame: 4
-            });
-            entities.push(crate);
-            items.push(crate);
-            crate.setRef(crate);
+            },[entities, items])
+            //var crate = new entity({
+            //    name : getRandomElementInArray(availItems),
+            //    x: x,
+            //    y: y,
+            //});
+            //entities.push(crate);
+            //items.push(crate);
+            //crate.setRef(crate);
 
         }
     }
