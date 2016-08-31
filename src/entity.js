@@ -131,6 +131,8 @@ var entity = function(opts,cb) {
 
         isHovering = $.name.match(/drone/) || isCollectable;
         $.isItem = $.name.match(/crate/);
+        if($.isItem)
+            startCdAdd /= 2;
 
         isBot = opts.bot;
 
@@ -392,7 +394,7 @@ var entity = function(opts,cb) {
             if($.isEnemy)
                 score += maxHp;
             if(isGlitch)
-                score += 100;
+                score += 200;
 
             if($.isItem)
                 items.splice(items.indexOf(that),1);
@@ -468,7 +470,7 @@ var entity = function(opts,cb) {
                     deleteItem()
                 }
             } else {
-                if(glitchSin || isGlitch || startCd + startCdAdd > Dn()){
+                if(glitchSin || (isGlitch || startCd + startCdAdd > Dn()) && !isCollectable){
                 //if(isGlitching() || isGlitch){
                     if(isGlitch) sprite = drawTriangle(20,20,3);
                     if(startCd + startCdAdd > Dn() && !isGlitch){

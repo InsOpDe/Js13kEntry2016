@@ -49,7 +49,7 @@ var weaponsProto = {
         reloadAmmo : 7,
         cooldown : 800,
         shots : 1,
-        speed : 50,
+        speed : 40,
         damage : 100,
         shootThrough : true
         //shift : 50
@@ -70,7 +70,7 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
     var reloadAmmo = opts.reloadAmmo || ammo;
 
     var reloadMaxAmmo = reloadAmmo;
-    var reloadTime = reloadAmmo * damage * shots / (isPlayer?4 :.2);
+    var reloadTime = reloadAmmo * damage * shots / (isPlayer?6 :.2);
 
     function fire(sx,sy,angleRadians){
         //todo: ggf eine ebene höher machen
@@ -130,7 +130,8 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
     }
 
     function startReloading(){
-        isReloading = 1;
+        if(!isReloading)
+            isReloading = 1;
     }
 
     function checkCooldown(){

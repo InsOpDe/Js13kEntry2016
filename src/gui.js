@@ -3,9 +3,9 @@
  */
 
 var Gui = function(player){
-    var font = new pixelfont();
-    var margin = 100;
-
+    var font = new pixelfont(),
+         margin = 100,
+         w = 400;
 
     function draw(){
         var weapon = player.$.weapon;
@@ -45,7 +45,6 @@ var Gui = function(player){
     }
 
     function drawHack(){
-        var w = 500;
         drawBar({
              w : w,
              h : 20,
@@ -59,7 +58,6 @@ var Gui = function(player){
     }
 
     function drawHp(){
-        var w = 500;
         drawBar({
              w : w,
              h : 20,
@@ -82,7 +80,6 @@ var Gui = function(player){
         })
     }
     function drawPowerUp(){
-        var w = 500;
         drawBar({
              w : w,
              h : 20,
@@ -95,13 +92,13 @@ var Gui = function(player){
         });
     }
     function drawAmmo(){
-        var w = 500;
+
         var weapon = player.$.weapon;
         var reload = weapon.getReloadProgress();
         var bg = '#3b321b',
             fg = '#ffd674',
             fill = weapon.getAmmo().reloadAmmo,
-            fillMax = weaponsProto[weapon.name].reloadAmmo | weaponsProto[weapon.name].ammo;
+            fillMax = weaponsProto[weapon.name].reloadAmmo || weaponsProto[weapon.name].ammo;
 
         if(reload.reloadProgress){
             fg = "#ffffff";
