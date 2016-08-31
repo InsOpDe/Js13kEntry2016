@@ -143,6 +143,8 @@ var entity = function(opts,cb) {
             h = obj.h;
             w = obj.w;
             $.hp = opts.hp || obj.hp || 0;
+            if($.name == 'crate3')
+                $.hp = 1;
             maxHp = $.hp;
             sprites = obj.sprites;
             hitSprites = obj.hitSprites;
@@ -499,7 +501,10 @@ var entity = function(opts,cb) {
                 shiftY = (cHeight/2)+dy+sY-pY+4*zoom;
                 context.drawImage(sprites[0][0], 0, 0, 20, 18, shiftX, shiftY, -20/2 * zoom, -18/2 * zoom);
             }
+            var c = document.getElementById('canvas')
+            c.style.left = (Math.sin(gDt)*20)+"px";
             if(++gDt>10){
+                c.style.left = "0px";
                 bullets.splice(bullets.indexOf(that),1);
             }
 

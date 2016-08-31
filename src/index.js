@@ -10,7 +10,7 @@ var canvas,canvasLight, stage,
     score,
     pTicksPerFrame,
     speedMultiplier = 1,
-    overallZoom = 10,
+    overallZoom = 8,
     mouseposition = {x:0,y:0},
     screenmouseposition = {x:0,y:0},
     P = Math.PI,
@@ -35,8 +35,10 @@ var canvas,canvasLight, stage,
     weaponOrder = ['pistol', 'pistols', 'machinegun', 'shotgun', 'rifle'],
     collectables,
     images = {},
-    cWidth = window.innerWidth,
-    cHeight = window.innerHeight,
+    //cWidth = window.innerWidth,
+    //cHeight = window.innerHeight,
+    cWidth = 1200,
+    cHeight = 800,
     SECOND = 1000,
     keysDown = [];
 window.onload = function() {
@@ -60,11 +62,16 @@ function init() {
     document.onkeydown = document.onmousedown = keyDown;
     document.onkeyup = document.onmouseup = keyUp;
 
-    document.onmousemove = function(e){
-        mouseposition.x = -(cWidth/2)+ e.clientX;
-        mouseposition.y = -(cHeight/2)+ e.clientY;
-        screenmouseposition.x = e.clientX;
-        screenmouseposition.y = e.clientY;
+    canvas.onmousemove = function(e){
+        //console.log(e);
+        mouseposition.x = -(cWidth/2)+ (e.offsetX || e.layerX);
+        mouseposition.y = -(cHeight/2)+ (e.offsetY || e.layerY);
+        screenmouseposition.x = (e.offsetX || e.layerX);
+        screenmouseposition.y = (e.offsetY || e.layerY);
+        //mouseposition.x = -(cWidth/2)+ e.clientX;
+        //mouseposition.y = -(cHeight/2)+ e.clientY;
+        //screenmouseposition.x = e.clientX;
+        //screenmouseposition.y = e.clientY;
     };
 
     function setKey(event, down) {

@@ -3,11 +3,11 @@
  */
 
 var map = function(){
-    var pX, pY, lastX, lastY, tilesize, wave = 1000;
-    var enemies = ['enemy2'];
-    //var enemies = ['enemy1','glitch','enemy3','enemy2'];
+    var pX, pY, lastX, lastY, tilesize, wave = -1;
+    //var enemies = ['enemy2'];
+    var enemies = ['enemy1','glitch','enemy3','enemy2'];
     //var availItems = ['crate3'];
-    var availItems = ['crate', 'crate2', 'crate3'];
+    var availItems = ['crate', 'crate', 'crate', 'crate2','crate', 'crate2', 'crate2', 'crate3'];
 
     //var enemies = ['drone','enemy1','enemy3','drone1','enemy2','drone2'];
     waves=(function(){

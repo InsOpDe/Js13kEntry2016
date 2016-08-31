@@ -47,10 +47,10 @@ var weaponsProto = {
         name : 'rifle',
         ammo : 14,
         reloadAmmo : 7,
-        cooldown : 1000,
+        cooldown : 800,
         shots : 1,
         speed : 50,
-        damage : 60,
+        damage : 100,
         shootThrough : true
         //shift : 50
     }
