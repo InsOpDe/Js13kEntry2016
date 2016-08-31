@@ -163,6 +163,9 @@ var game = function(skpIntro){
             for(var i in bullets){
                 bullets[i].update(player.getRealPos()).draw();
             }
+            for(var i in points){
+                points[i].update(player.getRealPos()).draw();
+            }
 
             ligthenGradient(cWidth/2, cHeight/2, cHeight*1.2);
             //ligthenGradient(cWidth/2, cHeight/2, 100);
