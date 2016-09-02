@@ -66,87 +66,85 @@ var Weapon = function(opts, id, weaponMod, isPlayer){
 
     var ammo = opts.ammo, lastShot, cooldown = opts.cooldown, shots = opts.shots, type = opts.name,
         randomizer = opts.randomizer || 0, speed = opts.speed, damage = opts.damage, startRandomizer = opts.startRandomizer || 0,
-        shift = opts.shift || 0, shootThrough = opts.shootThrough, isReloading, reloadProgress = 0;
+        shootThrough = opts.shootThrough, isReloading, reloadProgress = 0;
     var reloadAmmo = opts.reloadAmmo || ammo;
 
     var reloadMaxAmmo = reloadAmmo;
-    var reloadTime = reloadAmmo * damage * shots / (isPlayer?6 :.2);
-
-    function fire(sx,sy,angleRadians){
-        //todo: ggf eine ebene höher machen
-        if(isReloading) return;
-        var baseR = 0;
-        if(type == 'pistols' || (type == 'shotgun' && !isPlayer))
-            baseR = getRandomArbitrary(-randomizer, randomizer);
-
-
-        for(var i=0; i < shots; i++){
-
-            var r = 0;
-
-            if(type == 'pistols')
-                r += .035 * (i==0 ? 1 : -1);
-            else
-                r += getRandomArbitrary(-randomizer, randomizer);
+    var reloadTime = reloadAmmo * damage * shots / (isPlayer?12 :.2);
 
 
 
-            var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 100;
 
-
-            angleRadians = angleRadians-r-baseR;
-            createEntity({
-                name : 'bullet',
-                x : sx,
-                y : sy,
-                id : id,
-                speed : speed,
-                start : start,
-                damage : damage,
-                shift : speed,
-                shootThrough : shootThrough,
-                vx : Cos(angleRadians),
-                vy : Sin(angleRadians),
-            },[bullets]);
-        }
-        ammo--;
-        reloadAmmo--;
-        if(reloadAmmo <= 0)
-            startReloading();
-
-        lastShot = Dn();
-    }
-
-    function reload(){
-        if(isReloading){
-            reloadProgress = reloadTime - (++isReloading * powerUpMultiplier(isPlayer,1));
-            //reloadProgress = ((Dn() + reloadTime) - isReloading) / reloadTime;
-            if(reloadProgress <= 0){
-                reloadAmmo = reloadMaxAmmo;
-                isReloading = 0;
-                reloadProgress = 0;
-            }
-        }
-    }
 
     function startReloading(){
         if(!isReloading)
             isReloading = 1;
     }
 
-    function checkCooldown(){
-        return lastShot + (cooldown/powerUpMultiplier(isPlayer,1)) > Dn();
-    }
-
 
     return {
         name : type,
-        reload : reload,
+        reload : function (){
+            if(isReloading){
+                reloadProgress = reloadTime - (++isReloading * powerUpMultiplier(isPlayer,1));
+                //reloadProgress = ((Dn() + reloadTime) - isReloading) / reloadTime;
+                if(reloadProgress <= 0){
+                    reloadAmmo = reloadMaxAmmo;
+                    isReloading = 0;
+                    reloadProgress = 0;
+                }
+            }
+        },
         startReloading : startReloading,
         getReloadProgress : function(){return {reloadProgress:reloadProgress, reloadTime:reloadTime}},
         getAmmo : function(){return {ammo : ammo,  reloadAmmo : reloadAmmo}} , //TODO: mach arrowfunctions
         addAmmo : function(addAmmo){ammo += addAmmo} ,
-        fire : fire,
-        checkCooldown : checkCooldown,
+        fire : function (sx,sy,angleRadians){
+            //todo: ggf eine ebene höher machen
+            if(isReloading) return;
+            var baseR = 0;
+            if(type == 'pistols' || (type == 'shotgun' && !isPlayer))
+                baseR = getRandomArbitrary(-randomizer, randomizer);
+
+
+            for(var i=0; i < shots; i++){
+
+                var r = 0;
+
+                if(type == 'pistols')
+                    r += .035 * (i==0 ? 1 : -1);
+                else
+                    r += getRandomArbitrary(-randomizer, randomizer);
+
+
+
+                var start = getRandomArbitrary(-startRandomizer, startRandomizer) + 80;
+
+
+                angleRadians = angleRadians-r-baseR;
+                createEntity({
+                    name : 'bullet',
+                    x : sx,
+                    y : sy,
+                    id : id,
+                    speed : speed,
+                    start : start,
+                    damage : damage,
+                    shift : speed,
+                    shootThrough : shootThrough,
+                    vx : Cos(angleRadians),
+                    vy : Sin(angleRadians),
+                },[bullets]);
+            }
+            ammo--;
+            reloadAmmo--;
+            if(reloadAmmo <= 0)
+                startReloading();
+
+            lastShot = Dn();
+        },
+        checkCooldown : function(){
+            return lastShot + (cooldown/powerUpMultiplier(isPlayer,1)) > Dn();
+        },
     }
 };

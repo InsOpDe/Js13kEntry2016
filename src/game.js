@@ -14,14 +14,10 @@ var game = function(skpIntro){
     collectables = [];
 
     var now,
-        factor,
-        last,
-        gui,
         beginningSequence = new video(['','call trans opt: received. '+getDateTime()+' REC:log>','warning: carrier anomaly', 'trace program: running..'],'to skip'),
     //todo: get correct date
         endingSequence = new video(['system failure'], 'to retry', true),
-        gameOverTime = false,
-        isPaused = false;
+        gameOverTime = false;
 
     function getDateTime(){
         var date = new Date();
@@ -58,26 +54,6 @@ var game = function(skpIntro){
         }
     }
 
-    function init(cb) {
-
-        _map = new map();
-        _map.init(function(){
-            player = new entity({
-                name : 'player',
-                x: 0,
-                y: 0,
-                hp: 1000
-            });
-            entities.push(player);
-            player.setRef(player);
-            gui = new Gui(player);
-
-            //debugWindow = new debug();
-            cb()
-        });
-    }
-
-
 
     /**
      * @author Marcel Michelfelder
@@ -87,24 +63,10 @@ var game = function(skpIntro){
      */
     function run() {
 
-        now = Dn();
-        factor = (now - last) / 16;
-        last = now;
-
-        if(isPaused) return;
-
         input();
         draw();
         if(!endingSequence.realFinished())
             requestAnimationFrame(run);
-
-
-        //todo: update
-
-
-        //debugWindow.update({
-        //    playerpos: player.getRealPos()
-        //});
     }
 
     function draw(){
@@ -114,7 +76,6 @@ var game = function(skpIntro){
             if(!beginningSequence.finished()){
                 timeUntilNextWave = Dn() + 5000;
                 return;
-
             }
         }
 
@@ -148,9 +109,6 @@ var game = function(skpIntro){
 
         if(player.$.hp > 0){
 
-            contextLight.fillStyle = '#000000';
-            contextLight.fillRect(0, 0, cWidth, cHeight);
-
             entities.sort(function(a,b){
                 //console.log(b.getPos().y, a.getPos().y);
                 return a.getRealPos().y - b.getRealPos().y
@@ -167,25 +125,22 @@ var game = function(skpIntro){
                 points[i].update(player.getRealPos()).draw();
             }
 
-            ligthenGradient(cWidth/2, cHeight/2, cHeight*1.2);
-            //ligthenGradient(cWidth/2, cHeight/2, 100);
+            if(!isFF){
+                contextLight.fillStyle = '#000000';
+                contextLight.fillRect(0, 0, cWidth, cHeight);
+                ligthenGradient(cWidth/2, cHeight/2, cHeight*1.2);
+                context.save();
+                context.globalCompositeOperation = "multiply";
+                context.drawImage(canvasLight, 0, 0);
+                context.restore(); // sets the composite operation back to default
+            }
 
-
-            context.save();
-            context.globalCompositeOperation="multiply";
-            context.drawImage(canvasLight, 0, 0);
-            context.restore(); // sets the composite operation back to default
-
-            //darken(0, 0, cWidth, cHeight, '#000', 0.6);
 
             gui.draw();
         } else if(typeof gameOverTime == 'boolean') {
             gameOverTime = 45;
         }
 
-
-        //fonts
-        //context.drawImage(font.draw('Pixel Font', 24),0,0);
     }
 
 
@@ -222,7 +177,7 @@ var game = function(skpIntro){
                 pTicksPerFrame = 1;
                 speedMultiplier = 2;
                 player.usePowerup();
-            } else if(powerup.name =='teleport' && teleportCd + 200 < Dn()) {
+            } else if(powerup.name =='teleport' && teleportCd + 500 < Dn()) {
                 player.moveX(mouseposition.x);
                 player.moveY(mouseposition.y);
                 teleportCd = Dn();
@@ -239,7 +194,33 @@ var game = function(skpIntro){
 
 
     return {
-        init : init,
+        init : function(cb) {
+
+
+            _map = new map();
+            _map.init(function(){
+                //player = new entity({
+                //    name : 'player',
+                //    x: 0,
+                //    y: 0,
+                //    hp: 1000
+                //});
+                //entities.push(player);
+                //player.setRef(player);
+                player = createEntity({
+                    name : 'player',
+                    x: 0,
+                    y: 0,
+                    hp: 1000
+                },[entities]);
+
+
+                gui = new Gui(player);
+
+                //debugWindow = new debug();
+                cb()
+            });
+        },
         run : run,
     };
 };

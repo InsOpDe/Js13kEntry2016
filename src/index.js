@@ -23,6 +23,7 @@ var canvas,canvasLight, stage,
     Sin = Math.sin,
     Cos = Math.cos,
     Dn = Date.now,
+    isFF = navigator.userAgent.search("Firefox") != -1,
     entities,
     points = [],
     bullets,
@@ -46,6 +47,7 @@ window.onload = function() {
     init();
 };
 
+
 function init() {
 
     canvas = document.getElementById('canvas');
@@ -56,7 +58,11 @@ function init() {
     canvas.setAttribute('height', cHeight);
     context = canvas.getContext('2d');
     contextLight = canvasLight.getContext('2d');
-    context.imageSmoothingEnabled = false;
+    context.imageSmoothingEnabled       = false;
+    //context.webkitImageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled    = false;
+    context.msImageSmoothingEnabled     = false;
+    context.oImageSmoothingEnabled      = false;
 
 
 

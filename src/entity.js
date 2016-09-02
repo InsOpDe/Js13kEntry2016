@@ -529,10 +529,9 @@ var entity = function(opts,cb) {
                 shiftY = (cHeight/2)+dy+sY-pY+4*zoom;
                 context.drawImage(sprites[0][0], 0, 0, 20, 18, shiftX, shiftY, -20/2 * zoom, -18/2 * zoom);
             }
-            var c = document.getElementById('canvas')
-            c.style.left = (Math.sin(gDt)*20)+"px";
+            canvas.style.left = (Math.sin(gDt)*20)+"px";
             if(++gDt>10){
-                c.style.left = "0px";
+                canvas.style.left = "0px";
                 bullets.splice(bullets.indexOf(that),1);
             }
 

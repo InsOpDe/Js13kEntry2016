@@ -38,7 +38,7 @@ var map = function(){
             cb();
             initItems();
             //createGlitch();
-            tilesize = proto['area'].w-1;
+            tilesize = proto['area'].w;
 
         })
     }

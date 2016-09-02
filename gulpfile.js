@@ -31,6 +31,8 @@ var regular = chalk.white;
 
 gulp.task('default', function () {
 
+    zipIt()
+
 
     watch(['./src/**/*.js', "!./src/img.js", './res/*.png'],{
         verbose : true,
@@ -70,7 +72,6 @@ gulp.task('default', function () {
                 gulp.src(['./src/**/*.js', "!./src/debug.js"])
                     .pipe(gp_sourcemaps.init())
                     .pipe(gp_concat('../build/uglify.js'))
-                    //.pipe(gp_wrap('window.onload = function(){\n<%= contents %>\n}'))
 
 
                     .pipe(gp_wrap('(function(){\n<%= contents %>\n})()'))
@@ -93,14 +94,15 @@ gulp.task('default', function () {
                     //        warning_level: 'VERBOSE'
                     //    }
                     //}))
+
                     .pipe(gp_uglify())
+
                     //.pipe(gp_yuicompress({
                     //    type: 'js'
                     //}))
                     .pipe(gp_sourcemaps.write('./'))
                     .pipe(gulp.dest('build'))
 
-                    zipIt()
 
 
             });
@@ -115,25 +117,30 @@ gulp.task('default', function () {
 });
 
 function zipIt(){
-    gulp.src(['./build/uglify.js'/*, './res/*.*'*/, './src/index.html'])
-    //    gulp.src([/*'./build/uglify.js', './res/*.*'*/, './src/index.html'])
-    //    .pipe(gp_replace('<script src="../build/uglify.js"></script>', function(s) {
-    //        var script = fs.readFileSync('./build/uglify.js', 'utf8');
-    //        script = lebab.transform(script, ['arrow']).code;
-    //        return '<script>\n' + script + '\n</script>';
-    //    }))
-    //    .pipe(gp_htmlmin({collapseWhitespace: true}))
-    //    .pipe(gulp.dest('build'))
-    //    .pipe(gp_rename('i.html'))
-        .pipe(zip('g.zip'))
-        .pipe(gulp.dest('build'));
+    watch(['./build/uglify.js'/*, './res/*.*'*/, './src/index.html'],{
+        verbose : true,
+        ignoreInitial : false
+    }, function() {
+        gulp.src(['./build/uglify.js'/*, './res/*.*'*/, './src/index.html'])
+            //    gulp.src([/*'./build/uglify.js', './res/*.*'*/, './src/index.html'])
+            //    .pipe(gp_replace('<script src="../build/uglify.js"></script>', function(s) {
+            //        var script = fs.readFileSync('./build/uglify.js', 'utf8');
+            //        script = lebab.transform(script, ['arrow']).code;
+            //        return '<script>\n' + script + '\n</script>';
+            //    }))
+            //    .pipe(gp_htmlmin({collapseWhitespace: true}))
+            //    .pipe(gulp.dest('build'))
+            //    .pipe(gp_rename('i.html'))
+            .pipe(zip('g.zip'))
+            .pipe(gulp.dest('build'));
 
-    var stats = fs.statSync("./build/g.zip");
-    var fileSize = stats.size;
-    if (fileSize > 13312) {
-        //console.log(error("Your zip compressed game is larger than 13kb (13312 bytes)!"))
-        console.log(regular("Your zip compressed game is " + fileSize + "/13312 bytes"));
-    } else {
-        console.log(success("Your zip compressed game is " + fileSize + "/13312 bytes."));
-    }
+        var stats = fs.statSync("./build/g.zip");
+        var fileSize = stats.size;
+        if (fileSize > 13312) {
+            //console.log(error("Your zip compressed game is larger than 13kb (13312 bytes)!"))
+            console.log(regular("Your zip compressed game is " + fileSize + "/13312 bytes"));
+        } else {
+            console.log(success("Your zip compressed game is " + fileSize + "/13312 bytes."));
+        }
+    });
 }

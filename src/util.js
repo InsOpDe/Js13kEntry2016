@@ -156,6 +156,7 @@ function createEntity(opts,array){
         array[i].push(ent);
     }
     ent.setRef(ent);
+    return ent;
 }
 
 function hits(x1, y1, w1, h1,

@@ -1,5 +1,6 @@
 /**
  * Created by Marcel Michelfelder on 18.08.2016.
+ * mainly token from https://github.com/PaulBGD/PixelFont
  */
 var pixelfont = function () {
     var letters = letters = {
@@ -315,8 +316,8 @@ var pixelfont = function () {
     function draw(string, size, color) {
         size = size || 24;
 
-        width = 0;
-        height = 0;
+        width = 1;
+        height = 1;
 
         var needed = [];
         string = string.toUpperCase(); // because I only did uppercase letters
