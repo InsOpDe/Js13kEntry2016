@@ -171,7 +171,7 @@ var game = function(skpIntro){
         if(player.$.hp>0)
             player.moveY(d);
 
-        var powerup = player.getPowerUp();
+        var powerup = player.$.hasPowerUp;
         if(keysDown[16] && powerup){
             if(powerup.name =='speed'){
                 pTicksPerFrame = 1;

@@ -11,12 +11,12 @@ var Gui = function(player){
         var weapon = player.$.weapon;
         context.drawImage(font.draw(weapon.name + ": " + weapon.getAmmo().ammo, 5, "green"),margin,cHeight - margin- 130);
         context.drawImage(font.draw("Grenades: " +player.$.grenadeCount, 5, "green"),margin,cHeight - margin- 90);
-        if(player.getPowerUp())context.drawImage(font.draw(player.getPowerUp().name + ": " + player.getPowerUp().charges, 5, "green"),margin,cHeight - margin- 50);
+        if(player.$.hasPowerUp)context.drawImage(font.draw(player.$.hasPowerUp.name + ": " + player.$.hasPowerUp.charges, 5, "green"),margin,cHeight - margin- 50);
         context.drawImage(font.draw('score: ' + score,5, "green"),margin,margin);
         //context.drawImage(font.draw("Next Wave in: " + (Date.now()-timeUntilNextWave)/1000, 5, "green"),cWidth-margin-700,cHeight - margin- 50);
         drawHp();
         drawAmmo();
-        if(player.getPowerUp()) drawPowerUp();
+        if(player.$.hasPowerUp) drawPowerUp();
         if(isHacking) drawHack();
     }
 
@@ -87,8 +87,8 @@ var Gui = function(player){
              y : margin+60,
             bg : '#000022',
             fg : '#222288',
-            fill : player.getPowerUp().charges,
-            fillMax : player.getPowerUp().maxcharges
+            fill : player.$.hasPowerUp.charges,
+            fillMax : player.$.hasPowerUp.maxcharges
         });
     }
     function drawAmmo(){

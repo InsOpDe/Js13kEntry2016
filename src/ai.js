@@ -6,14 +6,6 @@ var Ai = function(ent){
     var pX, pY; //todo: get all enemies
 
 
-    function update(posPlayer){
-        pX = posPlayer.x;
-        pY = posPlayer.y;
-        move();
-        ent.shoot(true, {x:pX, y:pY});
-    }
-
-
     function move(){
         var now = Dn();
         if(movementCooldown + movementTimer < now || moveOrder){
@@ -45,12 +37,16 @@ var Ai = function(ent){
                 moveOrder = false;
                 movementCooldown = getRandomArbitrary(500, 2000);
             }
-
         }
     }
 
     return {
-        update : update
+        update : function(posPlayer){
+            pX = posPlayer.x;
+            pY = posPlayer.y;
+            move();
+            ent.shoot(true, {x:pX, y:pY});
+        }
     }
 
 };

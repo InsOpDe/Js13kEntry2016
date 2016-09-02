@@ -28,7 +28,6 @@ var entity = function(opts,cb) {
         b,
         startCd = Dn(),
         startCdAdd = 2000,
-        hasPowerUp,
         isHovering,
         hoverDelta = 0,
         angleRadians = 0,
@@ -82,11 +81,49 @@ var entity = function(opts,cb) {
             getRef: getRef,
             setHp: setHp,
             addHp: addHp,
-            getPowerUp: getPowerUp,
+            getPowerUp: $.hasPowerUp,
             $ :$,
-            giveWeapon : giveWeapon,
-            usePowerup : usePowerup,
-            givePowerup : givePowerup,
+            giveWeapon : function (weaponname){
+                if(weapons[weaponname]){
+                    weapons[weaponname].addAmmo(weaponsProto[weaponname].ammo);
+                } else {
+                    weapons[weaponname] =  new Weapon(weaponsProto[weaponname], $.id, null, $.isPlayer);
+                    switchToWeapon(weaponname)
+                }
+            },
+            usePowerup : function (){
+                if($.hasPowerUp){
+                    if(--$.hasPowerUp.charges <= 0){
+                        $.hasPowerUp = undefined;
+                    }
+                }
+            },
+            givePowerup : function (powerUpName){
+                var charges = 0;
+                switch(powerUpName){
+                    case 'health':
+                        addHp(250);
+                        break;
+                    case 'armor':
+                        addHp(0,250);
+                        break;
+                    case 'speed':
+                        charges = 200;
+                        break;
+                    case 'teleport':
+                        charges = 3;
+                        break;
+                    case 'grenade':
+                        $.grenadeCount += 3;
+                        break;
+                }
+                if(charges)
+                    $.hasPowerUp = {
+                        name : powerUpName,
+                        charges : charges,
+                        maxcharges : charges,
+                    };
+            },
             deleteItem : deleteItem,
             hack : function(){
                 hacked += powerUpMultiplier(true,1);
@@ -733,51 +770,6 @@ var entity = function(opts,cb) {
         return that
     }
 
-    function givePowerup(powerUpName){
-        var charges = 0;
-        switch(powerUpName){
-            case 'health':
-                addHp(250);
-                break;
-            case 'armor':
-                addHp(0,250);
-                break;
-            case 'speed':
-                charges = 200;
-                break;
-            case 'teleport':
-                charges = 3;
-                break;
-            case 'grenade':
-                $.grenadeCount += 3;
-                break;
-        }
-        if(charges)
-            hasPowerUp = {
-                name : powerUpName,
-                charges : charges,
-                maxcharges : charges,
-            };
-    }
-    function usePowerup(){
-        if(hasPowerUp){
-            if(--hasPowerUp.charges <= 0){
-                hasPowerUp = undefined;
-            }
-        }
-    }
-    function getPowerUp(){
-        return hasPowerUp;
-    }
-    function giveWeapon(weaponname){
-        if(weapons[weaponname]){
-            weapons[weaponname].addAmmo(weaponsProto[weaponname].ammo);
-        } else {
-            weapons[weaponname] =  new Weapon(weaponsProto[weaponname], $.id, null, $.isPlayer);
-            switchToWeapon(weaponname)
-        }
-
-    }
 
     return exports
 };
