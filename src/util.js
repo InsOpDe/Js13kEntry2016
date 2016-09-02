@@ -271,7 +271,7 @@ function drawImage(sprite,w,h,w2,h2){
 }
 
 function powerUpMultiplier(isPlayer,v){
-    return v * isPlayer?speedMultiplier:1
+    return v * isPlayer?(speedMultiplier):1
 }
 
 function isGlitching(sw){

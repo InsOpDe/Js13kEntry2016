@@ -70,7 +70,7 @@ var video = function(textArray, skipMessage, showScore){
         context.drawImage(skipMessageImg,cWidth/2-skipMessageImg.width/2,cHeight - 150);
 
         if(showScore){
-            var hs = localStorage.getItem("highscore") || 0;
+            var hs = localStorage.getItem("stm_highscore") || 0;
             var text = "Your score: " + score + " - highscore: " + hs;
             if(score > hs){
                 text = "New highscore: " + score;

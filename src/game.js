@@ -123,9 +123,9 @@ var game = function(skpIntro){
                 endingSequence.update();
 
                 if(endingSequence.realFinished()){
-                    var hs = localStorage.getItem("highscore") || 0;
+                    var hs = localStorage.getItem("stm_highscore") || 0;
                     if(score > hs){
-                        localStorage.setItem("highscore", score)
+                        localStorage.setItem("stm_highscore", score)
                     }
 
                     stage = new game(true);
@@ -220,7 +220,7 @@ var game = function(skpIntro){
         if(keysDown[16] && powerup){
             if(powerup.name =='speed'){
                 pTicksPerFrame = 1;
-                speedMultiplier = 3;
+                speedMultiplier = 2;
                 player.usePowerup();
             } else if(powerup.name =='teleport' && teleportCd + 200 < Dn()) {
                 player.moveX(mouseposition.x);
